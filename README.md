@@ -1,7 +1,7 @@
 FPGA implementation microphone system for a theatre stage:
 
 -- Block diagram(demo from EDA234, instead of what we design)
-![Block_Diagram](D:\Work Files\EESDQ\DAT096-PASS\Diagram\Block_Diagram.png)
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/Block_Diagram.png)
 
 
 
