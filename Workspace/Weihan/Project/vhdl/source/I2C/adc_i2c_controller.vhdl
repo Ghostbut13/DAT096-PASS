@@ -6,7 +6,7 @@
 -- Author     : Weihan Gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-04
+-- Last update: 2023-02-06
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -90,19 +90,53 @@ architecture arch_adc_i2c_fsm_controller of adc_i2c_controller is
   signal IN_bit : std_logic;
   -- flag reg
   signal flag_sent : std_logic;
-  signal flag_stop_scl : std_logic;
+  signal flag_TURN_OFF_I2C : std_logic;
+  signal flag_TURN_ON_I2C : std_logic;
   -- clk reg
   signal clk_scl : std_logic;
   -- data reg
   signal data_config : std_logic_vector(7 downto 0) := x"91";
   -- addr reg
   signal addr_config : std_logic_vector(7 downto 0) := x"72";
-  
+  -- reg
+  signal start_d1 : std_logic;
+  signal start_d2 : std_logic;
+  signal local_start : std_logic;
 begin  -- architecture arch_adc_i2c_fsm_controller
+  
   SCL           <=      clk_scl;
   IN_bit        <=      SDA;
   SDA           <=      OUT_BIT when flag_sent='1' else
                         'Z';
+  done          <=      flag_TURN_OFF_I2C;
+  ----------------------------------------
+  -- purpose: edge detecting in start signal (input port, from config-fsm-flow)
+  edge_detecting_proc : process (clk, rstn) is
+  begin  -- process flag_of_Turn_ON_proc
+    if rstn = '0' then                  -- asynchronous reset (active low)
+      start_d1 <= '0';
+      start_d2 <= '0';
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      start_d1 <= start;
+      start_d2 <= start_d1;
+    end if;
+  end process edge_detecting_proc;
+  flag_TURN_ON_I2C <= start_d1 and not(start_d2);
+  ----------------------------------------
+  -- purpose: using the local_start, rather than input port "start", to launch the I2C
+  i2claunch_proc : process (clk, rstn) is
+  begin  -- process flag_of_Turn_ON_proc
+    if rstn = '0' then                  -- asynchronous reset (active low)
+      local_start <= '0';
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      if flag_TURN_ON_I2C = '1' then
+        local_start <= '1';
+      end if;
+      if flag_TURN_OFF_I2C = '1' then
+        local_start <= '0';
+      end if;
+    end if;
+  end process i2claunch_proc;
   ----------------------------------------
   -- purpose: count to period
   clk_divide_proc: process (clk, rstn) is
@@ -110,16 +144,16 @@ begin  -- architecture arch_adc_i2c_fsm_controller
     if rstn = '0' then                  -- asynchronous reset (active low)
       cnt_clk <= 0;
     elsif clk'event and clk = '1' then  -- rising clock edge
-      if start='0' then
+      if local_start='0' then
         cnt_clk <= 0;
-      else      -- start = '1'
-        if flag_stop_scl='0' then
+      else      -- flag_TURN_ON = '1'
+        if flag_TURN_OFF_I2C='0' then
           if (cnt_clk < const_SCL_period) then
             cnt_clk <= cnt_clk + 1;
           else
             cnt_clk <= 0;
           end if;
-        else    -- flag_stop_scl='1'
+        else    -- flag_TURN_OFF_I2C='1'
           if (cnt_clk>300 and cnt_clk<const_SCL_period) then 
             cnt_clk <= cnt_clk+1;
           elsif (cnt_clk = const_SCL_period-1) then
@@ -137,14 +171,14 @@ begin  -- architecture arch_adc_i2c_fsm_controller
     if rstn = '0' then                  -- asynchronous reset (active low)
       clk_scl <= '1';
     elsif clk'event and clk = '1' then  -- rising clock edge
-      if start='0' then
+      if local_start='0' then
         clk_scl <= '1';
-      else      -- start='1'
-        if flag_stop_scl='0' then
+      else      -- local_start='1'
+        if flag_TURN_OFF_I2C='0' then
           if cnt_clk = const_SCL_period then
             clk_scl <= not(clk_scl);
           end if;
-        else    -- flag_stop_scl='1'
+        else    -- flag_TURN_OFF_I2C='1'
           if cnt_clk = const_SCL_period then
             clk_scl <= '1';
           else
@@ -154,7 +188,8 @@ begin  -- architecture arch_adc_i2c_fsm_controller
       end if;
     end if;
   end process scl_gen_proc;
-  ----------------------------------------
+
+
   -- purpose: i2c_protocol_fsm
   state_transimit_proc: process (clk, rstn) is
   begin  -- process state_transimit_proc
@@ -165,11 +200,11 @@ begin  -- architecture arch_adc_i2c_fsm_controller
     end if;
   end process state_transimit_proc;
 
-  state_flow_proc: process (state,start,clk_scl,cnt_clk,flag_stop_scl) is
+  state_flow_proc: process (state,local_start,clk_scl,cnt_clk,flag_TURN_OFF_I2C) is
   begin  -- process state_flow_proc
     case state is
       when  idle_state =>
-        if start = '1' and flag_stop_scl='0' then
+        if local_start = '1' and flag_TURN_OFF_I2C='0' then
           next_state <= start_state;
         else
           next_state <= idle_state;
@@ -367,7 +402,7 @@ begin  -- architecture arch_adc_i2c_fsm_controller
   begin  -- process assignment_proc
     case state is
       when  idle_state =>
-        flag_stop_scl <= '0';
+        flag_TURN_OFF_I2C <= '0';
         flag_sent <= '1';
         OUT_BIT   <= '1';
       when start_state =>
@@ -455,11 +490,11 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         flag_sent <= '0';
         
       when stop_state =>
-        flag_stop_scl <= '1';           -- SCL = '1'
+        flag_TURN_OFF_I2C <= '1';           -- SCL = '1'
         flag_sent <= '1';
         OUT_BIT   <= '0';               --SDA = '0', SCL = '0'
       when end_state =>
-        flag_stop_scl <= '1';           -- SCL = '1'
+        flag_TURN_OFF_I2C <= '1';           -- SCL = '1'
         flag_sent <= '1';
         OUT_BIT   <= '1';               -- SDA = '0' -> '1'
         
