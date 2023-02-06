@@ -1,0 +1,236 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="test_dialog_mono_data" version="1.3.0" audacityversion="2.3.0" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="10.6585264627" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags>
+		<tag name="TITLE" value="HAL 9000: &quot;I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that&quot;"/>
+		<tag name="COMMENTS" value="https://www.youtube.com/watch?v=ARJ8cAGm6JE"/>
+		<tag name="ARTIST" value="dNk"/>
+		<tag name="YEAR" value="20120408"/>
+		<tag name="Software" value="Lavf58.76.100"/>
+	</tags>
+	<wavetrack name="test_dialog_mono" channel="2" linked="0" mute="1" solo="0" height="149" minimized="0" isSelected="0" rate="48000" gain="1.0" pan="1.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e08085f9.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="0" min="-0.107819" max="0.103821" rms="0.015373"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808118.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="0" min="-0.082489" max="0.089081" rms="0.010201"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e0808902.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="0" min="-0.097504" max="0.085388" rms="0.008131"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808545.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="0" min="-0.15213" max="0.15506" rms="0.014753"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808a89.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="0" min="-0.08902" max="0.053101" rms="0.010347"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="13">
+				<controlpoint t="5.230554166667" val="1.000000000000"/>
+				<controlpoint t="5.984507920420" val="0.000000100000"/>
+				<controlpoint t="8.222808126877" val="1.000000000000"/>
+				<controlpoint t="10.013448292042" val="1.000000000000"/>
+				<controlpoint t="10.508230442943" val="0.000000100000"/>
+				<controlpoint t="13.971705499249" val="0.042253494263"/>
+				<controlpoint t="14.089510773273" val="1.000000000000"/>
+				<controlpoint t="15.196880349099" val="1.000000000000"/>
+				<controlpoint t="16.351372034535" val="0.000000100000"/>
+				<controlpoint t="19.272942830330" val="0.000000100000"/>
+				<controlpoint t="19.744163926426" val="1.000000000000"/>
+				<controlpoint t="21.110705105105" val="1.000000000000"/>
+				<controlpoint t="21.676170420420" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="test_dialog_mono" channel="2" linked="0" mute="1" solo="0" height="149" minimized="0" isSelected="0" rate="48000" gain="1.0" pan="-1.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e080838e.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="1" min="-0.107849" max="0.104523" rms="0.015467"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808191.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="1" min="-0.082336" max="0.093536" rms="0.010423"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e08083c6.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="1" min="-0.11026" max="0.096344" rms="0.008617"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808438.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="1" min="-0.158417" max="0.160217" rms="0.015221"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808da0.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="1" min="-0.095123" max="0.058563" rms="0.011084"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="16">
+				<controlpoint t="4.476600412913" val="0.000000100000"/>
+				<controlpoint t="5.419042605105" val="1.000000000000"/>
+				<controlpoint t="7.963636524024" val="1.000000000000"/>
+				<controlpoint t="8.128563907658" val="0.000000100000"/>
+				<controlpoint t="9.989887237237" val="0.070422530174"/>
+				<controlpoint t="10.201936730480" val="1.000000000000"/>
+				<controlpoint t="13.901022334835" val="1.000000000000"/>
+				<controlpoint t="14.513609759760" val="0.000000100000"/>
+				<controlpoint t="15.880150938438" val="0.098591566086"/>
+				<controlpoint t="16.304249924925" val="1.000000000000"/>
+				<controlpoint t="19.367187049550" val="1.000000000000"/>
+				<controlpoint t="19.909091310060" val="0.000000100000"/>
+				<controlpoint t="21.346315653153" val="0.000000100000"/>
+				<controlpoint t="21.605487256006" val="1.000000000000"/>
+				<controlpoint t="25.233889695946" val="1.000000000000"/>
+				<controlpoint t="26.152770833333" val="0.092198610306"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Ljudspår" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="48000" gain="1.0" pan="-1.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e080838e.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="1" min="-0.107849" max="0.104523" rms="0.015467"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808191.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="1" min="-0.082336" max="0.093536" rms="0.010423"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e08083c6.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="1" min="-0.11026" max="0.096344" rms="0.008617"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808438.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="1" min="-0.158417" max="0.160217" rms="0.015221"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808da0.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="1" min="-0.095123" max="0.058563" rms="0.011084"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="16">
+				<controlpoint t="4.476600412913" val="0.000000100000"/>
+				<controlpoint t="5.419042605105" val="1.000000000000"/>
+				<controlpoint t="7.963636524024" val="1.000000000000"/>
+				<controlpoint t="8.128563907658" val="0.000000100000"/>
+				<controlpoint t="9.989887237237" val="0.070422530174"/>
+				<controlpoint t="10.201936730480" val="1.000000000000"/>
+				<controlpoint t="13.901022334835" val="1.000000000000"/>
+				<controlpoint t="14.513609759760" val="0.000000100000"/>
+				<controlpoint t="15.880150938438" val="0.098591566086"/>
+				<controlpoint t="16.304249924925" val="1.000000000000"/>
+				<controlpoint t="19.367187049550" val="1.000000000000"/>
+				<controlpoint t="19.909091310060" val="0.000000100000"/>
+				<controlpoint t="21.346315653153" val="0.000000100000"/>
+				<controlpoint t="21.605487256006" val="1.000000000000"/>
+				<controlpoint t="25.233889695946" val="1.000000000000"/>
+				<controlpoint t="26.152770833333" val="0.092198610306"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Ljudspår" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="48000" gain="0.398107" pan="1.0" colorindex="0">
+		<waveclip offset="0.03043750" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e080838e.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="1" min="-0.107849" max="0.104523" rms="0.015467"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808191.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="1" min="-0.082336" max="0.093536" rms="0.010423"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e08083c6.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="1" min="-0.11026" max="0.096344" rms="0.008617"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808438.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="1" min="-0.158417" max="0.160217" rms="0.015221"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808da0.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="1" min="-0.095123" max="0.058563" rms="0.011084"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="16">
+				<controlpoint t="4.476600412913" val="0.000000100000"/>
+				<controlpoint t="5.419042605105" val="1.000000000000"/>
+				<controlpoint t="7.963636524024" val="1.000000000000"/>
+				<controlpoint t="8.128563907658" val="0.000000100000"/>
+				<controlpoint t="9.989887237237" val="0.070422530174"/>
+				<controlpoint t="10.201936730480" val="1.000000000000"/>
+				<controlpoint t="13.901022334835" val="1.000000000000"/>
+				<controlpoint t="14.513609759760" val="0.000000100000"/>
+				<controlpoint t="15.880150938438" val="0.098591566086"/>
+				<controlpoint t="16.304249924925" val="1.000000000000"/>
+				<controlpoint t="19.367187049550" val="1.000000000000"/>
+				<controlpoint t="19.909091310060" val="0.000000100000"/>
+				<controlpoint t="21.346315653153" val="0.000000100000"/>
+				<controlpoint t="21.605487256006" val="1.000000000000"/>
+				<controlpoint t="25.233889695946" val="1.000000000000"/>
+				<controlpoint t="26.152770833333" val="0.092198610306"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Ljudspår" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="48000" gain="0.398107" pan="-1.0" colorindex="0">
+		<waveclip offset="0.03043750" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e08085f9.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="0" min="-0.107819" max="0.103821" rms="0.015373"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808118.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="0" min="-0.082489" max="0.089081" rms="0.010201"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e0808902.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="0" min="-0.097504" max="0.085388" rms="0.008131"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808545.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="0" min="-0.15213" max="0.15506" rms="0.014753"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808a89.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="0" min="-0.08902" max="0.053101" rms="0.010347"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="13">
+				<controlpoint t="5.230554166667" val="1.000000000000"/>
+				<controlpoint t="5.984507920420" val="0.000000100000"/>
+				<controlpoint t="8.222808126877" val="1.000000000000"/>
+				<controlpoint t="10.013448292042" val="1.000000000000"/>
+				<controlpoint t="10.508230442943" val="0.000000100000"/>
+				<controlpoint t="13.971705499249" val="0.042253494263"/>
+				<controlpoint t="14.089510773273" val="1.000000000000"/>
+				<controlpoint t="15.196880349099" val="1.000000000000"/>
+				<controlpoint t="16.351372034535" val="0.000000100000"/>
+				<controlpoint t="19.272942830330" val="0.000000100000"/>
+				<controlpoint t="19.744163926426" val="1.000000000000"/>
+				<controlpoint t="21.110705105105" val="1.000000000000"/>
+				<controlpoint t="21.676170420420" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Ljudspår" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="48000" gain="1.0" pan="1.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="1255333">
+				<waveblock start="0">
+					<pcmaliasblockfile summaryfile="e08085f9.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="0" aliaslen="262144" aliaschannel="0" min="-0.107819" max="0.103821" rms="0.015373"/>
+				</waveblock>
+				<waveblock start="262144">
+					<pcmaliasblockfile summaryfile="e0808118.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="262144" aliaslen="262144" aliaschannel="0" min="-0.082489" max="0.089081" rms="0.010201"/>
+				</waveblock>
+				<waveblock start="524288">
+					<pcmaliasblockfile summaryfile="e0808902.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="524288" aliaslen="262144" aliaschannel="0" min="-0.097504" max="0.085388" rms="0.008131"/>
+				</waveblock>
+				<waveblock start="786432">
+					<pcmaliasblockfile summaryfile="e0808545.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="786432" aliaslen="262144" aliaschannel="0" min="-0.15213" max="0.15506" rms="0.014753"/>
+				</waveblock>
+				<waveblock start="1048576">
+					<pcmaliasblockfile summaryfile="e0808a89.auf" aliasfile="C:\Users\danne\OneDrive\Dokument\MATLAB\dat096\test_dialog_mono.wav" aliasstart="1048576" aliaslen="206757" aliaschannel="0" min="-0.08902" max="0.053101" rms="0.010347"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="13">
+				<controlpoint t="5.230554166667" val="1.000000000000"/>
+				<controlpoint t="5.984507920420" val="0.000000100000"/>
+				<controlpoint t="8.222808126877" val="1.000000000000"/>
+				<controlpoint t="10.013448292042" val="1.000000000000"/>
+				<controlpoint t="10.508230442943" val="0.000000100000"/>
+				<controlpoint t="13.971705499249" val="0.042253494263"/>
+				<controlpoint t="14.089510773273" val="1.000000000000"/>
+				<controlpoint t="15.196880349099" val="1.000000000000"/>
+				<controlpoint t="16.351372034535" val="0.000000100000"/>
+				<controlpoint t="19.272942830330" val="0.000000100000"/>
+				<controlpoint t="19.744163926426" val="1.000000000000"/>
+				<controlpoint t="21.110705105105" val="1.000000000000"/>
+				<controlpoint t="21.676170420420" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+</project>
