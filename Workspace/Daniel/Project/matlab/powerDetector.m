@@ -6,8 +6,7 @@ SingFreq = 440; % test signal frequency
 
 %********generate signal*********%
 X = linspace(0, t, CLK*t); % vector with each sampling points in time
-for II = 1:2;
-Y = sin(2*pi.*X*SingFreq)./II; % generate signal
+Y = sin(2*pi.*X*SingFreq); % generate signal
 qY = uint16((Y+1).*2^15); % quantize signal to 16 bit (matlab doesn't have 
 %24bit like the ADC has, but close enough)
 
@@ -53,7 +52,7 @@ pY = pY - 2^15;
 %****** Smooth power signal *****
 % rolling average
 
-num = 1000; % amount of samples to be used for averageing.
+num = 100; % amount of samples to be used for averageing.
 
 a = uint16((1:num) .*0);
 spY = pY; % smoothen power vector
@@ -65,7 +64,6 @@ end
 
 plot(X,spY, '-o'); %<-------
 hold on
-end
 
 
 
