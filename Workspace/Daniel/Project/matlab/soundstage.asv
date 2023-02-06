@@ -1,0 +1,39 @@
+clc, clear all, close all
+[Y, Fs] = audioread("test_dialog_superStereo.wav");
+
+micDist = 1; % distance between microphones (meters).
+
+micCordX = micDist.*[-1.5, -0.5, 0.5, 1.5];
+micCordY = [ 0,    0,   0,   0];
+plot(micCordX, micCordY, 'o');
+speakerX = [1, -1];
+speakerY = [1, 1];
+hold on
+plot(speakerX, speakerY, 'X');
+
+
+mY = zeros(length(Y(:,1)),4);
+
+minAttenuation =0;
+for i=1:4 % for each microphone
+    for a=1:length(Y(1,:)) % for each speaker
+        distance = (speakerX(a)-micCordX(i))^2;
+        distance = distance + (speakerY(a)-micCordY(i))^2;
+        distance = sqrt(distance);
+        delayFs = round(Fs*distance/343);
+        attenuation = distance^-2;
+        
+        mY(delayFs:length(Y(:,1)),i) = mY(delayFs:length(Y(:,1)),i) + attenuation.*Y(1:length(Y(:,1))-delayFs+1,a);
+        if(attenuation > minAttenuation)
+           minAttenuation = attenuation; 
+        end
+    end
+end
+mY=mY./minAttenuation; % auto gain
+figure(2)
+subplot(2,1,1)
+plot(Y);
+subplot(2,1,2);
+plot(mY)
+%sound(mY(:, [1,4]), Fs)
+Y=mY(:,[1,4]
