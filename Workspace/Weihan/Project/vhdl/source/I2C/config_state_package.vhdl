@@ -14,14 +14,16 @@ PACKAGE config_state_package IS
    TYPE adc_config_state_type IS (
     idle_state,
     hardware_shutdown_state,
-    SHDNZ_state,
+    SHDNZ_state,                        --waiting 1ms
     wakeup_state,
+    woke_state,                         --waiting 1ms
     powerdown_state,
     config_channel_state,
     enable_input_state,
     enable_output_state,
     powerup_state,
     APPLY_BCLK_FSYNC_state,
+    I2S_working_state,                  --waiting 10ms
     enable_diagnostics_state,
     disable_diagnostics_state,
     stop_state,
