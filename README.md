@@ -4,7 +4,7 @@ FPGA implementation microphone system for a theatre stage:
 
 
 
-![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/Block_Diagram.png)
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/DAT096-Block_Diagram.png)
 
 
 
