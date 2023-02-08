@@ -1,6 +1,6 @@
 FPGA implementation microphone system for a theatre stage:
 
--- Block diagram
+Block diagram
 
 
 
@@ -10,7 +10,7 @@ FPGA implementation microphone system for a theatre stage:
 
 
 
--- Description  
+Description  
 
 In the theatre it’s sometimes hard to hear what’s being said since the actors want to speak in a natural voice; shouting when acting in a play would be strange. Since this is a problem people have been looking into ways to solve this. An obvious solution is to use microphones but it will look awkward if the actors go round holding microphones, so we need another way. In most cases we don’t want to give full amplification of the voices but just some gentle boost and support to the voice coming from the stage.
 
