@@ -14,9 +14,12 @@ architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb
     port (
       clk  : in std_logic;
       rstn : in std_logic;
+      -- signals between i2c and ACFC
       start : in std_logic;
       done : out std_logic;
-
+      config_addr : in  std_logic_vector(7 downto 0);
+      config_value : in  std_logic_vector(7 downto 0);
+      -- i2c communication
       SDA : inout std_logic;
       SCL : out std_logic
 
@@ -27,6 +30,8 @@ architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb
   signal rstn_tb : std_logic := '1';
   signal SCL_tb : std_logic;
   signal SDA_tb : std_logic;
+  signal config_value_tb : std_logic_vector(7 downto 0):= x"18";
+  signal config_addr_tb : std_logic_vector(7 downto 0):=x"91";
   signal done_tb : std_logic;
   signal start_tb : std_logic := '0';
 
@@ -39,6 +44,8 @@ begin  -- architecture arch_I2C_master_for_temperature
       rstn => rstn_tb,
       SCL  => SCL_tb,
       SDA  => SDA_tb,
+      config_addr => config_addr_tb,
+      config_value => config_value_tb,
       done => done_tb,
       start => start_tb
       );
@@ -53,9 +60,9 @@ begin  -- architecture arch_I2C_master_for_temperature
   rstn_tb <= '0' after 1 ns,
           '1' after 2 ns;
    start_tb <= '1' after 1000 ns,
-               '0' after 281570 ns,
-	       '1' after 400000 ns,
-	       '0' after 680570 ns;
+               '0' after 281570 ns +800000 ns,
+	       '1' after 400000 ns +800000 ns,
+	       '0' after 680570 ns +800000 ns;
   --start_tb <= '1' after 1000 ns;
 
 
