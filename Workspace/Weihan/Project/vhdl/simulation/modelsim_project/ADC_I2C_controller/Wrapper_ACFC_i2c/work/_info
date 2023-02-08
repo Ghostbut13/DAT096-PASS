@@ -1,0 +1,235 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/I2C_control
+T_opt
+!s110 1675875075
+VAM6_i9RnJZXZNC>CAT@SP2
+04 19 4 work wrapper_acfc_i2c_tb arch 1
+=5-244bfebc3e76-63e3d303-284-70f0
+o-quiet -auto_acc_if_foreign -work work +acc
+tCvgOpt 0
+n@_opt
+OL;O;10.5;63
+Eadc_config
+Z0 w1675861497
+Z1 DPx4 work 20 config_state_package 0 22 2En=<PO;@8m:R:ALe84^^3
+Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z5 dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/Wrapper_ACFC_i2c
+Z6 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_config.vhdl
+Z7 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_config.vhdl
+l0
+L30
+VgWQbkiZ?Y]fP_TejS71TQ3
+!s100 YMM4Ih7@0gQZgYbLRRXdi2
+Z8 OL;C;10.5;63
+32
+Z9 !s110 1675875043
+!i10b 1
+Z10 !s108 1675875043.000000
+Z11 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_config.vhdl|
+Z12 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_config.vhdl|
+!i113 0
+Z13 o-work work -2002 -explicit
+Z14 tExplicit 1 CvgOpt 0
+Aarch_adc_config
+R1
+R2
+R3
+R4
+DEx4 work 10 adc_config 0 22 gWQbkiZ?Y]fP_TejS71TQ3
+l119
+L63
+Vi_5n3^P`GQ9`[i[je92AL2
+!s100 NKe9ei7IAI3mkj6dfK``J0
+R8
+32
+R9
+!i10b 1
+R10
+R11
+R12
+!i113 0
+R13
+R14
+Eadc_i2c_controller
+Z15 w1675869678
+Z16 DPx4 work 16 i2c_type_package 0 22 Z@Da;LPhB?3b9P2J?Sc>B2
+R2
+R3
+R4
+R5
+Z17 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl
+Z18 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl
+l0
+L30
+V5_;Y_M5D5FK7;NVEcKYfU2
+!s100 74g=PRGhb4=^7P[GMFUF;2
+R8
+32
+R9
+!i10b 1
+R10
+Z19 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl|
+Z20 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl|
+!i113 0
+R13
+R14
+Aarch_adc_i2c_fsm_controller
+R16
+R2
+R3
+R4
+DEx4 work 18 adc_i2c_controller 0 22 5_;Y_M5D5FK7;NVEcKYfU2
+l124
+L45
+VXdGJz2WfjmzdH8Q@9KcZE3
+!s100 XlgKg_?IV_F3DfEQB@:Tj1
+R8
+32
+R9
+!i10b 1
+R10
+R19
+R20
+!i113 0
+R13
+R14
+Pconfig_state_package
+R2
+R3
+R4
+w1675790106
+R5
+8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl
+FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl
+l0
+L13
+V2En=<PO;@8m:R:ALe84^^3
+!s100 ]4;GWoe6;o^M=;JA5Gnf?2
+R8
+32
+Z21 !s110 1675875042
+!i10b 1
+Z22 !s108 1675875042.000000
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl|
+!s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl|
+!i113 0
+R13
+R14
+Pi2c_type_package
+R2
+R3
+R4
+w1675533204
+R5
+8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+l0
+L13
+VZ@Da;LPhB?3b9P2J?Sc>B2
+!s100 WC<mZLn7=lh6c?NXn9SF_1
+R8
+32
+R21
+!i10b 1
+R22
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!i113 0
+R13
+R14
+Ewrapper_acfc_i2c
+Z23 w1675875039
+R2
+R3
+R4
+R5
+Z24 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c.vhdl
+Z25 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c.vhdl
+l0
+L26
+VRzHJ9<;GVUJ7e6DS<QY`j3
+!s100 f^im=iXG[Q7Xhf>cf7j9c3
+R8
+32
+R9
+!i10b 1
+R22
+Z26 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c.vhdl|
+Z27 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c.vhdl|
+!i113 0
+R13
+R14
+Aarch_wrapper_acfc_i2c
+R2
+R3
+R4
+DEx4 work 16 wrapper_acfc_i2c 0 22 RzHJ9<;GVUJ7e6DS<QY`j3
+l99
+L46
+VUl<3[dnlF=>Pm`Wf?g<fR1
+!s100 adYj6MI74<J4SVB[><Bho1
+R8
+32
+R9
+!i10b 1
+R22
+R26
+R27
+!i113 0
+R13
+R14
+Ewrapper_acfc_i2c_tb
+Z28 w1675874977
+R16
+R1
+R2
+R3
+R4
+R5
+Z29 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c_tb.vhdl
+Z30 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c_tb.vhdl
+l0
+L8
+VdlCeoTmklcfgF3aTI;U0b0
+!s100 A27M?WSzi8nBN0AE7=YBa2
+R8
+32
+R9
+!i10b 1
+R10
+Z31 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c_tb.vhdl|
+Z32 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\wrapper_test\Wrapper_ACFC_i2c_tb.vhdl|
+!i113 0
+R13
+R14
+Aarch
+R16
+R1
+R2
+R3
+R4
+DEx4 work 19 wrapper_acfc_i2c_tb 0 22 dlCeoTmklcfgF3aTI;U0b0
+l40
+L12
+VPNi0_2:0;NA78@^=^[4H^2
+!s100 Eh6O5^`cc9ciGhE8dgWz02
+R8
+32
+R9
+!i10b 1
+R10
+R31
+R32
+!i113 0
+R13
+R14
