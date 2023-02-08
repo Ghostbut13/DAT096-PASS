@@ -2,12 +2,14 @@ clear;
 clc;
 close;
 
+
+%%% 
+
+
+
 %%% write vectors to FPGA bytes by bytes
 sp_list = serialportlist
 sp = serialport(sp_list(2),9600)
-
-
-
 
 
 %%% transmit 0-255 to FPGA per 2 seconds
