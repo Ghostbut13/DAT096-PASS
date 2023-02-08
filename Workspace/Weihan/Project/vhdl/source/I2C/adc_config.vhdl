@@ -63,9 +63,9 @@ end entity adc_config;
 architecture arch_adc_config of adc_config is
   -- constant
   constant CHANNEL_NUMBER : integer := 4;
-  constant WTIME_1ms_CNT  : integer := 1000000 / 10 / 2;
-  constant WTIME_10ms_CNT : integer := 280570 / 10;
-  constant WTIME_20ms_CNT : integer := 280570 / 10;
+  constant WTIME_1ms_CNT  : integer := 1010000 / 10;
+  constant WTIME_10ms_CNT : integer := 10100000 / 10;
+  constant WTIME_20ms_CNT : integer := 20100000 / 10;
   -- counter
   signal cnt_clk : integer;
   --signal cnt_i2c : integer;
