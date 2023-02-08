@@ -15,6 +15,19 @@ add wave inst/clk_scl
 
 add wave -radix decimal inst/cnt_clk
 add wave start_tb
-add wave inst/flag_sent inst/flag_stop_scl
+add wave inst/flag_sent 
+add wave inst/flag_TURN_OFF_I2C
+add wave inst/flag_TURN_ON_I2C_T
 
-run 1200000 ns
+
+add wave inst/flag_TURN_OFF_I2C_after5us
+add wave -radix decimal inst/cnt_delay5us
+add wave inst/flag_delayT_busbuf_5us
+
+add wave inst/edge_on
+add wave inst/edge_off
+
+add wave inst/addr_config
+add wave inst/data_config
+
+run 2400000 ns
