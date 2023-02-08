@@ -1,0 +1,128 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/I2C_control
+T_opt
+!s110 1675813331
+VfV3?IjF:b^d3@HiFD<2l12
+04 14 34 work config_flow_tb arch_i2c_master_for_temperature_tb 1
+=22-244bfebc3e76-63e2e1d2-3d4-aacc
+o-quiet -auto_acc_if_foreign -work work +acc
+tCvgOpt 0
+n@_opt
+OL;O;10.5;63
+R0
+Eadc_config
+Z1 w1675861497
+Z2 DPx4 work 20 config_state_package 0 22 2En=<PO;@8m:R:ALe84^^3
+Z3 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z6 dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/adc_config
+Z7 8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_config.vhdl
+Z8 FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_config.vhdl
+l0
+L30
+VgWQbkiZ?Y]fP_TejS71TQ3
+!s100 YMM4Ih7@0gQZgYbLRRXdi2
+Z9 OL;C;10.5;63
+32
+Z10 !s110 1675861641
+!i10b 1
+Z11 !s108 1675861641.000000
+Z12 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_config.vhdl|
+Z13 !s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_config.vhdl|
+!i113 0
+Z14 o-work work -2002 -explicit
+Z15 tExplicit 1 CvgOpt 0
+Aarch_adc_config
+R2
+R3
+R4
+R5
+DEx4 work 10 adc_config 0 22 gWQbkiZ?Y]fP_TejS71TQ3
+l119
+L63
+Vi_5n3^P`GQ9`[i[je92AL2
+!s100 NKe9ei7IAI3mkj6dfK``J0
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 0
+R14
+R15
+Econfig_flow_tb
+Z16 w1675813323
+R2
+R3
+R4
+R5
+R6
+Z17 8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/config_controller/config_flow_tb.vhdl
+Z18 FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/config_controller/config_flow_tb.vhdl
+l0
+L7
+V1=idIGQ@e2`?Ca=f6hWMR1
+!s100 1caA`POVPlKMZ2Xd^9Fno3
+R9
+32
+R10
+!i10b 1
+R11
+Z19 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/config_controller/config_flow_tb.vhdl|
+Z20 !s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/config_controller/config_flow_tb.vhdl|
+!i113 0
+R14
+R15
+Aarch_i2c_master_for_temperature_tb
+R2
+R3
+R4
+R5
+Z21 DEx4 work 14 config_flow_tb 0 22 1=idIGQ@e2`?Ca=f6hWMR1
+l57
+L11
+Z22 V:l2hFEX842_Kk;H<Gln?e1
+Z23 !s100 OdQk8hn<Dg[TV6<BNh>?P3
+R9
+32
+R10
+!i10b 1
+R11
+R19
+R20
+!i113 0
+R14
+R15
+Pconfig_state_package
+R3
+R4
+R5
+w1675790106
+R6
+8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl
+FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl
+l0
+L13
+V2En=<PO;@8m:R:ALe84^^3
+!s100 ]4;GWoe6;o^M=;JA5Gnf?2
+R9
+32
+R10
+!i10b 1
+!s108 1675861640.000000
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl|
+!s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/config_state_package.vhdl|
+!i113 0
+R14
+R15

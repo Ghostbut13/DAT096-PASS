@@ -1,0 +1,128 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dE:/CTH-EESD/Q2/EDA234-Project/Workspace/weihanga/project/vhdl/modelsim/AES_UART
+T_opt
+!s110 1675873182
+VjK0G@T6Ui;]1:jL]Ef9dY3
+04 29 34 work i2c_master_for_temperature_tb arch_i2c_master_for_temperature_tb 1
+=5-244bfebc3e76-63e3cb9e-12c-120
+o-quiet -auto_acc_if_foreign -work work +acc
+tCvgOpt 0
+n@_opt
+OL;O;10.5;63
+R0
+Eadc_i2c_controller
+Z1 w1675869678
+Z2 DPx4 work 16 i2c_type_package 0 22 Z@Da;LPhB?3b9P2J?Sc>B2
+Z3 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z6 dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/I2C_control
+Z7 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl
+Z8 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl
+l0
+L30
+V5_;Y_M5D5FK7;NVEcKYfU2
+!s100 74g=PRGhb4=^7P[GMFUF;2
+Z9 OL;C;10.5;63
+32
+Z10 !s110 1675874149
+!i10b 1
+Z11 !s108 1675874149.000000
+Z12 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl|
+Z13 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl|
+!i113 0
+Z14 o-work work -2002 -explicit
+Z15 tExplicit 1 CvgOpt 0
+Aarch_adc_i2c_fsm_controller
+R2
+R3
+R4
+R5
+DEx4 work 18 adc_i2c_controller 0 22 5_;Y_M5D5FK7;NVEcKYfU2
+l124
+L45
+VXdGJz2WfjmzdH8Q@9KcZE3
+!s100 XlgKg_?IV_F3DfEQB@:Tj1
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 0
+R14
+R15
+Ei2c_master_for_temperature_tb
+Z16 w1675873162
+R2
+R3
+R4
+R5
+R6
+Z17 8D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\i2c_controller\I2C_master_temperature_tb.vhdl
+Z18 FD:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\i2c_controller\I2C_master_temperature_tb.vhdl
+l0
+L7
+VIDEM[j39PbcmJjMZXFRRG3
+!s100 No8^6L01f5<23edGg4i@=1
+R9
+32
+R10
+!i10b 1
+R11
+Z19 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\i2c_controller\I2C_master_temperature_tb.vhdl|
+Z20 !s107 D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\i2c_controller\I2C_master_temperature_tb.vhdl|
+!i113 0
+R14
+R15
+Aarch_i2c_master_for_temperature_tb
+R2
+R3
+R4
+R5
+Z21 DEx4 work 29 i2c_master_for_temperature_tb 0 22 IDEM[j39PbcmJjMZXFRRG3
+l39
+L11
+Z22 VHBo8;zkD8k0f<<3KH=RIY1
+Z23 !s100 i]61cCIbdRVPG]^`LjZG]2
+R9
+32
+R10
+!i10b 1
+R11
+R19
+R20
+!i113 0
+R14
+R15
+Pi2c_type_package
+R3
+R4
+R5
+w1675533204
+R6
+8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+l0
+L13
+VZ@Da;LPhB?3b9P2J?Sc>B2
+!s100 WC<mZLn7=lh6c?NXn9SF_1
+R9
+32
+R10
+!i10b 1
+R11
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!i113 0
+R14
+R15
