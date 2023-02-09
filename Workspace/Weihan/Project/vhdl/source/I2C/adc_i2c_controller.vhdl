@@ -6,7 +6,7 @@
 -- Author     : Weihan Gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-08
+-- Last update: 2023-02-09
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -225,6 +225,7 @@ begin  -- architecture arch_adc_i2c_fsm_controller
 
   state_flow_proc: process (state,flag_TURN_ON_I2C_T,clk_scl,cnt_clk,flag_TURN_OFF_I2C) is
   begin  -- process state_flow_proc
+   next_state <= idle_state;
     case state is
       when  idle_state =>
         if flag_TURN_ON_I2C_T = '1' and flag_TURN_OFF_I2C='0' then
@@ -421,8 +422,13 @@ begin  -- architecture arch_adc_i2c_fsm_controller
   end process state_flow_proc;
 
   
-  assignment_proc: process (state) is
+  assignment_proc: process (state,data_config,addr_config) is
   begin  -- process assignment_proc
+    
+   flag_TURN_OFF_I2C <= '0';
+   OUT_BIT   <= '1';
+   flag_sent <= '1';
+    
     case state is
       when  idle_state =>
         flag_TURN_OFF_I2C <= '0';
@@ -457,6 +463,7 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         OUT_BIT   <= addr_i2c_slave(0);               --SDA = addr_i2c_slave[0]
       when RECEIVE_ACK_state_0 =>
         flag_sent <= '0';
+        OUT_BIT   <= '0';
         
       when write_reg_addr_state_0 =>
         flag_sent <= '1';
@@ -484,6 +491,7 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         OUT_BIT   <= addr_config(0);               --SDA = addr_config_register[0]
       when RECEIVE_ACK_state_1 =>
         flag_sent <= '0';
+        OUT_BIT   <= '0';
         
       when write_reg_data_state_0 =>
         flag_sent <= '1';
@@ -508,10 +516,12 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         OUT_BIT   <= data_config(1);               --SDA = data_config[1]
       when write_reg_data_state_7 =>
         flag_sent <= '1';
-        OUT_BIT   <= data_config(0);               --SDA = data_config[0]
+        --OUT_BIT   <= data_config(0);               --SDA = data_config[0]
+        OUT_BIT   <= '0'; --for test only
       when RECEIVE_ACK_state_2 =>
         flag_sent <= '0';
-
+        OUT_BIT   <= '0';
+        
       when stop_state =>
         flag_TURN_OFF_I2C <= '1';           -- SCL = '1'
         flag_sent <= '1';
