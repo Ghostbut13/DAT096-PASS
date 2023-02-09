@@ -8,23 +8,9 @@ entity config_flow_tb is
   
 end entity config_flow_tb;
 
-architecture arch_I2C_master_for_temperature_tb of config_flow_tb is
+architecture arch_ACFC_tb of config_flow_tb is
 
-  component adc_config is
-    generic(
-      -- addr reg
-      constant const_addr_sleep_reg         : std_logic_vector(7 downto 0) := x"02";
-      constant const_addr_interrupt_reg     : std_logic_vector(7 downto 0) := x"28";
-      constant const_addr_c1_reg            : std_logic_vector(7 downto 0) := x"3c";
-      constant const_addr_c2_reg            : std_logic_vector(7 downto 0) := x"41";
-      constant const_addr_c3_reg            : std_logic_vector(7 downto 0) := x"46";
-      constant const_addr_c4_reg            : std_logic_vector(7 downto 0) := x"4b";
-      constant const_addr_input_channel_reg : std_logic_vector(7 downto 0) := x"73";
-      constant const_addr_8_reg             : std_logic_vector(7 downto 0) := x"74";
-      constant const_addr_powerup_reg       : std_logic_vector(7 downto 0) := x"75";
-      constant const_addr_10_reg            : std_logic_vector(7 downto 0) := x"64"
-      );
-    
+  component ADC_Configuration_Flow_Controller is    
     port (
       rstn         : in  std_logic;
       clk          : in  std_logic;
@@ -32,11 +18,12 @@ architecture arch_I2C_master_for_temperature_tb of config_flow_tb is
       start        : out std_logic;
       config_value : out std_logic_vector(7 downto 0);
       config_addr  : out std_logic_vector(7 downto 0);
-      SHDNZ        : in  std_logic;
+      SHDNZ_ready  : in  std_logic;
+      SHDNZ        : out std_logic;
       SW_vdd_ok    : in  std_logic
       );
 
-  end component adc_config;
+  end component ADC_Configuration_Flow_Controller;
 
 
   constant when_can_done : time := 600000 ns;
@@ -50,13 +37,14 @@ architecture arch_I2C_master_for_temperature_tb of config_flow_tb is
   signal done_tb : std_logic := '0';
   signal start_tb : std_logic;
   signal SHDNZ_pin_tb : std_logic := '0';
+  signal SHDNZ_tb : std_logic := '0';
   signal SW_vdd_ok_tb    :  std_logic := '0';
 
 
   
 begin  -- architecture arch_I2C_master_for_temperature
 
-  inst: adc_config
+  inst: ADC_Configuration_Flow_Controller
     port map (
       clk  => clk_tb,
       rstn => rstn_tb,
@@ -64,7 +52,8 @@ begin  -- architecture arch_I2C_master_for_temperature
       --SDA  => SDA_tb,
       done => done_tb,
       start => start_tb,
-      SHDNZ => SHDNZ_pin_tb,
+      SHDNZ_ready => SHDNZ_pin_tb,
+      SHDNZ   => SHDNZ_tb,
       SW_vdd_ok => SW_vdd_ok_tb
       );
 
@@ -146,4 +135,4 @@ begin  -- architecture arch_I2C_master_for_temperature
               
 
 
-end architecture arch_I2C_master_for_temperature_tb;
+end architecture arch_ACFC_tb;

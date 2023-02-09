@@ -1,3 +1,4 @@
+vsim -voptargs="+acc" work.i2c_master_tb(arch_i2c_master_tb) 
 restart -f -nowave
 view signals wave
 config wave -signalnamewidth 1
