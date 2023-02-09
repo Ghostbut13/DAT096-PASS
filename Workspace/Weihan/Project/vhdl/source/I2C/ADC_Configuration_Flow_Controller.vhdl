@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Title      : adc_config_flow
+-- Title      : ADC_Configuration_Flow_Controller(ACFC)
 -- Project    : 
 -------------------------------------------------------------------------------
 -- File       : adc_config.vhdl
@@ -11,8 +11,8 @@
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description:
---
--- Configration by FPGA as master using the i2c protocol.
+-- Decide which registers and what value should be writen to ADC from FPGA,
+-- to Configurate the mode of ADC ,through i2c protocol.
 -- 
 -------------------------------------------------------------------------------
 -- Copyright (c) 2023 
@@ -27,7 +27,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.config_state_package.all;
 
-entity adc_config is
+entity ADC_Configuration_Flow_Controller is
   
   port (
     rstn         : in  std_logic;
@@ -41,9 +41,9 @@ entity adc_config is
     SW_vdd_ok    : in  std_logic
     );
 
-end entity adc_config;
+end entity ADC_Configuration_Flow_Controller;
 
-architecture arch_adc_config of adc_config is
+architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Controller is
   -- constant
 
 
@@ -460,4 +460,4 @@ begin  -- architecture arch_adc_config
 
   ----------------------------------------
   
-end architecture arch_adc_config;
+end architecture arch_ADC_Configuration_Flow_Controller;

@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Title      : adc_i2c_fsm_controller
+-- Title      : I2C_Interface
 -- Project    : DAT096
 -------------------------------------------------------------------------------
 -- File       : adc_i2c_controller.vhdl
@@ -11,8 +11,9 @@
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
 -- Description:
--- Get the config-value from adc_config.vhdl,
--- and push them into adc board through the I2C
+-- Get the config-value and addr-register from ACFC.vhdl,
+-- and push them into ADC board based on I2C protocol in this code\
+-- FPGA IS THE MASTER OF I2C
 -------------------------------------------------------------------------------
 -- Copyright (c) 2023 
 -------------------------------------------------------------------------------
@@ -27,7 +28,7 @@ use ieee.numeric_std.all;
 use work.i2c_type_package.all;
 
 
-entity adc_i2c_controller is
+entity I2C_Interface is
   port (
     clk  : in std_logic;
     rstn : in std_logic;
@@ -40,9 +41,9 @@ entity adc_i2c_controller is
     SDA : inout std_logic;
     SCL : out std_logic
     );
-end entity adc_i2c_controller;
+end entity I2C_Interface;
 
-architecture arch_adc_i2c_fsm_controller of adc_i2c_controller is
+architecture arch_I2C_Interface of I2C_Interface is
   -- constant
   constant const_SCL_period : integer := 2000/2;        --STANDARD-MODE:
                                                         --smaller than 100kHZ
@@ -590,4 +591,4 @@ begin  -- architecture arch_adc_i2c_fsm_controller
   end process OFF_true_proc;
 
   
-end architecture arch_adc_i2c_fsm_controller;
+end architecture arch_I2C_Interface;
