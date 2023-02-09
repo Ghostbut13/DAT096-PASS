@@ -1,3 +1,4 @@
+vsim -voptargs="+acc" work.config_flow_tb(arch_acfc_tb) 
 restart -f -nowave
 view signals wave
 config wave -signalnamewidth 1

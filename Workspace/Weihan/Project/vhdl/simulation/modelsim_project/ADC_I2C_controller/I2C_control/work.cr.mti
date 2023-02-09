@@ -1,4 +1,24 @@
-{{D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl}} {1 {vcom -work work -2002 -explicit -vopt {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl}
+{D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl} {1 {vcom -work work -2002 -explicit -vopt -stats=none {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl}
+Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package i2c_type_package
+-- Compiling entity I2C_master_tb
+-- Compiling architecture arch_I2C_master_tb of I2C_master_tb
+
+} {} {}} {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl} {1 {vcom -work work -2002 -explicit -vopt -stats=none {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl}
+Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package i2c_type_package
+-- Compiling entity I2C_Interface
+-- Compiling architecture arch_I2C_Interface of I2C_Interface
+
+} {} {}} {{D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl}} {1 {vcom -work work -2002 -explicit -vopt {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl}
 Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
 Start time: 19:00:20 on Feb 04,2023
 vcom -reportprogress 300 -work work -2002 -explicit -vopt D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl 
@@ -32,16 +52,6 @@ vcom -reportprogress 300 -work work -2002 -explicit -vopt D:/Work Files/EESDQ/DA
 End time: 19:00:20 on Feb 04,2023, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 
-} {} {}} {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_temperature_tb.vhdl} {1 {vcom -work work -2002 -explicit -vopt -stats=none {D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\simulation\sim\adc_i2c\i2c_controller\I2C_master_temperature_tb.vhdl}
-Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package i2c_type_package
--- Compiling entity I2C_master_for_temperature_tb
--- Compiling architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb
-
 } {} {}} {{D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl}} {1 {vcom -work work -2002 -explicit -vopt {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl}
 Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
 Start time: 19:00:20 on Feb 04,2023
@@ -55,15 +65,5 @@ vcom -reportprogress 300 -work work -2002 -explicit -vopt D:/Work Files/EESDQ/DA
 -- Compiling architecture arch_adc_i2c_fsm_controller of adc_i2c_controller
 End time: 19:00:20 on Feb 04,2023, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
-
-} {} {}} {D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl} {1 {vcom -work work -2002 -explicit -vopt -stats=none {D:\Work Files\EESDQ\DAT096-PASS\Workspace\Weihan\Project\vhdl\source\I2C\adc_i2c_controller.vhdl}
-Model Technology ModelSim SE-64 vcom 10.5 Compiler 2016.02 Feb 13 2016
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package i2c_type_package
--- Compiling entity adc_i2c_controller
--- Compiling architecture arch_adc_i2c_fsm_controller of adc_i2c_controller
 
 } {} {}}

@@ -17,6 +17,8 @@ add wave SW_vdd_ok_tb
 # config state
 add wave inst_W/inst_ACFC/state
 add wave inst_W/inst_ACFC/next_state
+# cnt
+add wave -radix decimal inst_W/inst_ACFC/cnt_clk
 
 
 run 24000000 ns

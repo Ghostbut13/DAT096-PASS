@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
--- Title      : Wrapper ---- ACFC-I2C 
+-- Title      : Wrapper ---- Config-i2c (ACFC-I2C)
 -- Project    : 
 -------------------------------------------------------------------------------
 -- File       : Wrapper-ACFC_i2c.vhdl
--- Author     : weihanga@chalmers.se
+-- Author     : Weihan Gao -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-08
 -- Last update: 2023-02-09
@@ -50,7 +50,7 @@ end entity Wrapper_ACFC_i2c;
 
 architecture arch_Wrapper_ACFC_i2c of Wrapper_ACFC_i2c is
   -- component
-  component adc_config is
+  component ADC_Configuration_Flow_Controller is
     -- generic(
     --   -- MODE reg addr
     --   constant const_addr_sleep_reg         : std_logic_vector(7 downto 0) := x"02";
@@ -76,9 +76,9 @@ architecture arch_Wrapper_ACFC_i2c of Wrapper_ACFC_i2c is
       SHDNZ_ready  : in  std_logic;
       SW_vdd_ok    : in  std_logic
       );
-  end component adc_config;
+  end component ADC_Configuration_Flow_Controller;
   
-  component adc_i2c_controller is
+  component I2C_Interface is
     port (
       clk  : in std_logic;
       rstn : in std_logic;
@@ -91,7 +91,7 @@ architecture arch_Wrapper_ACFC_i2c of Wrapper_ACFC_i2c is
       SDA : inout std_logic;
       SCL : out std_logic
       );
-  end component adc_i2c_controller;
+  end component I2C_Interface;
 
 --component design_1_PLL is
 --  port (
@@ -127,7 +127,7 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
   
   ------------------------------------------------------------
   -- INSTANCE
-  inst_ACFC: component adc_config
+  inst_ACFC: component ADC_Configuration_Flow_Controller
     port map (
       rstn         => rstn,
       clk          => clk,
@@ -138,7 +138,7 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
       SHDNZ        => SHDNZ,
       SHDNZ_ready  => SHDNZ_ready,
       SW_vdd_ok    => SW_vdd_ok);
-  inst_i2c: component adc_i2c_controller
+  inst_i2c: component I2C_Interface
     port map (
       clk   => clk,
       rstn  => rstn,

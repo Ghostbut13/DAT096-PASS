@@ -4,13 +4,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.i2c_type_package.all;
 
-entity I2C_master_for_temperature_tb is
+entity I2C_master_tb is
  
-end entity I2C_master_for_temperature_tb;
+end entity I2C_master_tb;
 
-architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb is
+architecture arch_I2C_master_tb of I2C_master_tb is
 
-  component adc_i2c_controller is
+  component I2C_Interface is
     port (
       clk  : in std_logic;
       rstn : in std_logic;
@@ -24,7 +24,7 @@ architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb
       SCL : out std_logic
 
       );
-  end component adc_i2c_controller;
+  end component I2C_Interface;
 
   signal clk_tb : std_logic := '1';
   signal rstn_tb : std_logic := '1';
@@ -38,7 +38,7 @@ architecture arch_I2C_master_for_temperature_tb of I2C_master_for_temperature_tb
   
 begin  -- architecture arch_I2C_master_for_temperature
 
-  inst: adc_i2c_controller
+  inst: I2C_Interface
     port map (
       clk  => clk_tb,
       rstn => rstn_tb,
@@ -66,4 +66,4 @@ begin  -- architecture arch_I2C_master_for_temperature
   --start_tb <= '1' after 1000 ns;
 
 
-end architecture arch_I2C_master_for_temperature_tb;
+end architecture arch_I2C_master_tb;
