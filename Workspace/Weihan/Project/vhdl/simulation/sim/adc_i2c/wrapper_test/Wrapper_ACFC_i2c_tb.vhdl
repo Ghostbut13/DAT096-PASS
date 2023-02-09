@@ -18,7 +18,9 @@ architecture arch of Wrapper_ACFC_i2c_tb is
       rstn      : in    std_logic;
       -- control ready
       SW_vdd_ok : in    std_logic;
-      SHDNZ     : in    std_logic;
+      SHDNZ_ready : in    std_logic;
+      -- PLL
+      SHDNZ     : out    std_logic;
       -- i2c communication
       SDA       : inout std_logic;
       SCL       : out   std_logic
@@ -45,7 +47,7 @@ begin  -- architecture arch_I2C_master_for_temperature
       rstn => rstn_tb,
 
       SW_vdd_ok => SW_vdd_ok_tb,
-      SHDNZ => SHDNZ_pin_tb,
+      SHDNZ_ready => SHDNZ_pin_tb,
 
       SDA => SDA_tb,
       SCL => SCL_tb
