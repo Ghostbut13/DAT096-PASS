@@ -6,7 +6,7 @@
 -- Author     : Weihan Gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-09
+-- Last update: 2023-02-11
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -52,7 +52,14 @@ architecture arch_I2C_Interface of I2C_Interface is
   constant const_freebus_period : integer := 5000/10; --STANDARD-MODE:
                                                         --over than 4.7us
                                                         --real: 5us 
+  
+  constant const_SCLfall_to_SDA_rise : integer :=  3000/10; --STANDARD-MODE:
+                                                            --Setup time for STOP condition
+                                                        --over than 4.7us
+                                                        --real: 7us
+                                                        --
   constant addr_i2c_slave : std_logic_vector(7 downto 0) := "10010000";
+  
   -- count
   signal cnt_clk : integer;
   signal cnt_delay5us : integer;
@@ -178,11 +185,9 @@ begin  -- architecture arch_adc_i2c_fsm_controller
             cnt_clk <= 0;
           end if;
         else    -- flag_TURN_OFF_I2C='1'
-          if (cnt_clk>300 and cnt_clk<const_SCL_period) then 
+          if (cnt_clk>const_SCLfall_to_SDA_rise and cnt_clk<const_SCL_period) then 
             cnt_clk <= cnt_clk+1;
           elsif (cnt_clk = const_SCL_period-1) then
-            cnt_clk <= 0;
-          else
             cnt_clk <= 0;
           end if;
         end if;
@@ -199,8 +204,13 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         clk_scl <= '1';
       else      -- flag_TURN_ON_I2C_T='1'
         if flag_TURN_OFF_I2C='0' then
+          
           if cnt_clk = const_SCL_period then
-            clk_scl <= not(clk_scl);
+            if state/= setup_stop_state then
+              clk_scl <= not(clk_scl);
+            else
+              clk_scl <= '1';
+            end if;
           end if;
         else    -- flag_TURN_OFF_I2C='1'
           if cnt_clk = const_SCL_period-1 then
@@ -235,7 +245,7 @@ begin  -- architecture arch_adc_i2c_fsm_controller
           next_state <= idle_state;
         end if;
       when start_state =>
-        if (clk_scl='1' or (clk_scl='0' and cnt_clk < 300 ))then
+        if (clk_scl='1' or (clk_scl='0' and cnt_clk < const_SCLfall_to_SDA_rise ))then
           next_state <= start_state;
         else
           next_state <= write_i2c_addr_state_0;
@@ -243,55 +253,55 @@ begin  -- architecture arch_adc_i2c_fsm_controller
       ----------------------------------------
       -- wirte i2c slave addr
       when write_i2c_addr_state_0 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_0;
         else
           next_state <= write_i2c_addr_state_1;
         end if;
       when write_i2c_addr_state_1 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_1;
         else
           next_state <= write_i2c_addr_state_2;
         end if;
       when write_i2c_addr_state_2 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_2;
         else
           next_state <= write_i2c_addr_state_3;
         end if;
       when write_i2c_addr_state_3 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_3;
         else
           next_state <= write_i2c_addr_state_4;
         end if;
       when write_i2c_addr_state_4 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_4;
         else
           next_state <= write_i2c_addr_state_5;
         end if;
       when write_i2c_addr_state_5 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_5;
         else
           next_state <= write_i2c_addr_state_6;
         end if;
       when write_i2c_addr_state_6 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_6;
         else
           next_state <= write_i2c_addr_state_7;
         end if;
       when write_i2c_addr_state_7 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_i2c_addr_state_7;
         else
           next_state <= RECEIVE_ACK_state_0;
         end if;
       when RECEIVE_ACK_state_0 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= RECEIVE_ACK_state_0;
         else
           next_state <= write_reg_addr_state_0;
@@ -299,55 +309,55 @@ begin  -- architecture arch_adc_i2c_fsm_controller
       ----------------------------------------
       -- wirte register addr
       when write_reg_addr_state_0 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_0;
         else
           next_state <= write_reg_addr_state_1;
         end if;
       when write_reg_addr_state_1 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_1;
         else
           next_state <= write_reg_addr_state_2;
         end if;
       when write_reg_addr_state_2 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_2;
         else
           next_state <= write_reg_addr_state_3;
         end if;
       when write_reg_addr_state_3 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_3;
         else
           next_state <= write_reg_addr_state_4;
         end if;
       when write_reg_addr_state_4 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_4;
         else
           next_state <= write_reg_addr_state_5;
         end if;
       when write_reg_addr_state_5 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_5;
         else
           next_state <= write_reg_addr_state_6;
         end if;
       when write_reg_addr_state_6 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_6;
         else
           next_state <= write_reg_addr_state_7;
         end if;
       when write_reg_addr_state_7 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_addr_state_7;
         else
           next_state <= RECEIVE_ACK_state_1;
         end if;
       when RECEIVE_ACK_state_1 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= RECEIVE_ACK_state_1;
         else
           next_state <= write_reg_data_state_0;
@@ -355,61 +365,67 @@ begin  -- architecture arch_adc_i2c_fsm_controller
       ----------------------------------------
       -- wirte configeration data in register 
       when write_reg_data_state_0 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_0;
         else
           next_state <= write_reg_data_state_1;
         end if;
       when write_reg_data_state_1 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_1;
         else
           next_state <= write_reg_data_state_2;
         end if;
       when write_reg_data_state_2 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_2;
         else
           next_state <= write_reg_data_state_3;
         end if;
       when write_reg_data_state_3 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_3;
         else
           next_state <= write_reg_data_state_4;
         end if;
       when write_reg_data_state_4 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_4;
         else
           next_state <= write_reg_data_state_5;
         end if;
       when write_reg_data_state_5 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_5;
         else
           next_state <= write_reg_data_state_6;
         end if;
       when write_reg_data_state_6 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_6;
         else
           next_state <= write_reg_data_state_7;
         end if;
       when write_reg_data_state_7 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= write_reg_data_state_7;
         else
           next_state <= RECEIVE_ACK_state_2;
         end if;
       when RECEIVE_ACK_state_2 =>
-        if (cnt_clk>300 and clk_scl='0') or clk_scl='1' or (cnt_clk<300 and clk_scl='0') then
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or clk_scl='1' or (cnt_clk<const_SCLfall_to_SDA_rise and clk_scl='0') then
           next_state <= RECEIVE_ACK_state_2;
         else
-          next_state <= stop_state;
+          next_state <= setup_stop_state;
         end if;
       -------------------------------------------------------------------------
       -- stop i2c
+      when setup_stop_state =>
+        if (cnt_clk>const_SCLfall_to_SDA_rise and clk_scl='0') or ( clk_scl='1' and cnt_clk<500 ) then
+          next_state <= setup_stop_state;
+        else
+          next_state <= stop_state;
+        end if;
       when stop_state =>
         if clk_scl='0'  then
           next_state <= stop_state;
@@ -517,10 +533,15 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         OUT_BIT   <= data_config(1);               --SDA = data_config[1]
       when write_reg_data_state_7 =>
         flag_sent <= '1';
-        --OUT_BIT   <= data_config(0);               --SDA = data_config[0]
-        OUT_BIT   <= '0'; --for test only
+        OUT_BIT   <= data_config(0);               --SDA = data_config[0]
+        -- OUT_BIT   <= '0'; --for test only
       when RECEIVE_ACK_state_2 =>
         flag_sent <= '0';
+        OUT_BIT   <= '0';
+
+      when setup_stop_state =>
+        
+        flag_sent <= '1';
         OUT_BIT   <= '0';
         
       when stop_state =>

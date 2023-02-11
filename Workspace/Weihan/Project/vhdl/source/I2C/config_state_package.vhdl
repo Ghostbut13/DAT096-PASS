@@ -17,8 +17,14 @@ PACKAGE config_state_package IS
     SHDNZ_state,                        --waiting 1ms
     wakeup_state,
     woke_state,                         --waiting 1ms
+
+    --start configurate the register
+    config_and_programm_state,
+
+    --when finish configuration
     powerdown_state,
-    config_channel_state,
+    config_channel_1_state,
+    config_channel_2_state,
     enable_input_state,
     enable_output_state,
     powerup_state,
@@ -27,7 +33,7 @@ PACKAGE config_state_package IS
     enable_diagnostics_state,
     disable_diagnostics_state,
     stop_state,
-    end_state
+    waiting_state
 );
 
 END PACKAGE config_state_package;

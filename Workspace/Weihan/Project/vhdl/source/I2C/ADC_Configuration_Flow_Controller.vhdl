@@ -6,7 +6,7 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-09
+-- Last update: 2023-02-11
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -30,15 +30,24 @@ use work.config_state_package.all;
 entity ADC_Configuration_Flow_Controller is
   
   port (
+    finish_config_input : in std_logic;
+    I2S_mode    : in  std_logic;
+    master_mode : in  std_logic;
+    GPIO_MCLK   : in  std_logic;
+    FS_48k_256_BCLK  : in  std_logic;
+    MCLK_root   : in std_logic;
+    
     rstn         : in  std_logic;
     clk          : in  std_logic;
     done         : in  std_logic;
     start        : out std_logic;
     config_value : out std_logic_vector(7 downto 0);
     config_addr  : out std_logic_vector(7 downto 0);
-    SHDNZ_ready  : in  std_logic;
     SHDNZ        : out std_logic;
+    SHDNZ_ready  : in  std_logic;
     SW_vdd_ok    : in  std_logic
+    
+    
     );
 
 end entity ADC_Configuration_Flow_Controller;
@@ -47,32 +56,30 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   -- constant
 
 
-    -- MODE reg addr
-    constant const_addr_sleep_reg         : std_logic_vector(7 downto 0) := x"02";
-    constant const_addr_interrupt_reg     : std_logic_vector(7 downto 0) := x"28";
-    constant const_addr_c1_reg            : std_logic_vector(7 downto 0) := x"3c";
-    constant const_addr_c2_reg            : std_logic_vector(7 downto 0) := x"41";
-    constant const_addr_c3_reg            : std_logic_vector(7 downto 0) := x"46";
-    constant const_addr_c4_reg            : std_logic_vector(7 downto 0) := x"4b";
-    constant const_addr_input_channel_reg : std_logic_vector(7 downto 0) := x"73";
-    constant const_addr_8_reg             : std_logic_vector(7 downto 0) := x"74";
-    constant const_addr_powerup_reg       : std_logic_vector(7 downto 0) := x"75";
-    constant const_addr_10_reg            : std_logic_vector(7 downto 0) := x"64";
+  -- MODE reg addr
+  constant const_addr_sleep_reg         : std_logic_vector(7 downto 0) := x"02";
+  constant const_addr_interrupt_reg     : std_logic_vector(7 downto 0) := x"28";
+  constant const_addr_c1_reg            : std_logic_vector(7 downto 0) := x"3c";
+  constant const_addr_c2_reg            : std_logic_vector(7 downto 0) := x"41";
+  constant const_addr_c3_reg            : std_logic_vector(7 downto 0) := x"46";
+  constant const_addr_c4_reg            : std_logic_vector(7 downto 0) := x"4b";
+  constant const_addr_input_channel_reg : std_logic_vector(7 downto 0) := x"73";
+  constant const_addr_8_reg             : std_logic_vector(7 downto 0) := x"74";
+  constant const_addr_powerup_reg       : std_logic_vector(7 downto 0) := x"75";
+  constant const_addr_10_reg            : std_logic_vector(7 downto 0) := x"64";
 
-    -- -- PLL MASTER-CONTROLLER-MODE addr (no need)
-    -- constant const_addr_21_reg            : std_logic_vector(7 downto 0) := x"21";
-    -- constant const_addr_13_reg            : std_logic_vector(7 downto 0) := x"13";
-    -- constant const_addr_14_reg            : std_logic_vector(7 downto 0) := x"14"
+  -- -- PLL MASTER-CONTROLLER-MODE addr (no need)
+  -- constant const_addr_21_reg            : std_logic_vector(7 downto 0) := x"21";
+  -- constant const_addr_13_reg            : std_logic_vector(7 downto 0) := x"13";
+  -- constant const_addr_14_reg            : std_logic_vector(7 downto 0) := x"14"
 
-    
-    
   constant CHANNEL_NUMBER : integer := 4;
   constant WTIME_1ms_CNT  : integer := 1010000 / 10;
   constant WTIME_10ms_CNT : integer := 10100000 / 10;
   constant WTIME_20ms_CNT : integer := 20100000 / 10;
   -- counter
   signal cnt_clk : integer;
-  --signal cnt_i2c : integer;
+  signal cnt_single_config_i2c : integer;
   signal cnt_channel : integer;  
   -- fsm
   -- type adc_config_state_type is (
@@ -101,25 +108,47 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   -- control/flag register
   signal flag_cnt_START : std_logic := '0';
   signal flag_cnt_STOP : std_logic;
+  signal flag_stop_single_config : std_logic;
+  signal flag_finish_config_progr : std_logic;
   -- value registers
   -- -- for adc config
-  signal value_wakeup           : std_logic_vector(7 downto 0) := "10000101";
+  signal value_wakeup           : std_logic_vector(7 downto 0) := "10000001";
   signal value_powerdown        : std_logic_vector(7 downto 0) := "00010000";
   signal value_c1_config        : std_logic_vector(7 downto 0) := "00011000";
   signal value_c2_config        : std_logic_vector(7 downto 0) := "00011000";
-  signal value_c3_config        : std_logic_vector(7 downto 0) := "00011000";
-  signal value_c4_config        : std_logic_vector(7 downto 0) := "00011000";
-  signal value_enable_input     : std_logic_vector(7 downto 0) := "11110000";
-  signal value_enable_output    : std_logic_vector(7 downto 0) := "11110000";
+  signal value_c3_config        : std_logic_vector(7 downto 0) := "00011000";--
+  signal value_c4_config        : std_logic_vector(7 downto 0) := "00011000";--
+                                                                             --unused
+  signal value_enable_input     : std_logic_vector(7 downto 0) := "11000000";-- 2channel
+  signal value_enable_output    : std_logic_vector(7 downto 0) := "11000000";-- 2channel
   signal value_powerup          : std_logic_vector(7 downto 0) := "11100000";
-  signal value_enable_diagno    : std_logic_vector(7 downto 0) := "11110000";
+  signal value_enable_diagno    : std_logic_vector(7 downto 0) := "00000000";
   -- -- for waiting_time between some config steps 
   signal waiting_time           : integer := 0;
   -- -- --for adc PLL-controller-MODE (no need)
   -- signal value_GPIO1_MCLK : std_logic_vector(7 downto 0) := x"a0";  -- config GPIO1 as MCLK input
   -- signal value_master_device : std_logic_vector(7 downto 0) := x"80";  -- config device as master with MCLK
   -- signal value_FS_BCLK_R : std_logic_vector(7 downto 0) := x"48";  -- FS = 44.1k or 48k  BCLK/ratio = 256
+
   
+  -- edge signal
+  signal d1_I2S_mode    : std_logic;
+  signal d1_master_mode : std_logic;
+  signal d1_GPIO_MCLK   : std_logic;
+  signal d1_FS_48k_256_BCLK  : std_logic;
+  signal d1_MCLK_root  : std_logic;
+  
+  signal d2_I2S_mode    : std_logic;
+  signal d2_master_mode : std_logic;
+  signal d2_GPIO_MCLK   : std_logic;
+  signal d2_FS_48k_256_BCLK  : std_logic;
+  signal d2_MCLK_root : std_logic;
+
+  signal edge_I2S_mode    : std_logic;
+  signal edge_master_mode : std_logic;
+  signal edge_GPIO_MCLK   : std_logic;
+  signal edge_FS_48k_256_BCLK  : std_logic;
+  signal edge_MCLK_root : std_logic;
   
 begin  -- architecture arch_adc_config
   start         <= OUT_start;
@@ -128,6 +157,7 @@ begin  -- architecture arch_adc_config
   SHDNZ         <= out_SHDNZ;
   out_SHDNZ     <= '1' when SHDNZ_ready='1' else
                    '0';
+  flag_finish_config_progr <= finish_config_input;
   ----------------------------------------
   -- purpose: waiting 
   waitingtime_proc: process (clk, rstn) is
@@ -155,6 +185,69 @@ begin  -- architecture arch_adc_config
       end if;
     end if;
   end process waitingtime_proc;
+ 
+  edge_FS_48k_256_BCLK  <=  (d1_FS_48k_256_BCLK) and not(d2_FS_48k_256_BCLK);
+  edge_GPIO_MCLK        <=  (d1_GPIO_MCLK)       and not(d2_GPIO_MCLK);
+  edge_master_mode      <=  (d1_master_mode)     and not(d2_master_mode);
+  edge_I2S_mode         <=  (d1_I2S_mode)        and not(d2_I2S_mode);
+  edge_MCLK_root         <=  (d1_MCLK_root)        and not(d2_MCLK_root);
+----------------------------------------
+  -- purpose: cnt_single_config
+  cnt_single_config_proc: process (clk, rstn) is
+  begin  -- process flagflag
+    if rstn = '0' then                 -- asynchronous reset (active low)
+      cnt_single_config_i2c <= 0;
+      d1_FS_48k_256_BCLK <= '0';
+      d1_GPIO_MCLK <= '0';
+      d1_master_mode <= '0';
+      d1_I2S_mode <= '0';
+      d1_MCLK_root <= '0';
+      
+      d2_FS_48k_256_BCLK <= '0';
+      d2_GPIO_MCLK <= '0';
+      d2_master_mode <= '0';
+      d2_I2S_mode <= '0';
+      d2_MCLK_root <= '0';
+
+      flag_stop_single_config <= '1';
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      d1_FS_48k_256_BCLK <= FS_48k_256_BCLK;
+      d1_GPIO_MCLK <= GPIO_MCLK;
+      d1_master_mode <= master_mode;
+      d1_I2S_mode <= I2S_mode;
+      d1_MCLK_root <= MCLK_root;
+
+      d2_FS_48k_256_BCLK <= d1_FS_48k_256_BCLK;
+      d2_GPIO_MCLK <= d1_GPIO_MCLK;
+      d2_master_mode <=  d1_master_mode;
+      d2_I2S_mode <= d1_I2S_mode;
+      d2_MCLK_root <= d1_MCLK_root;
+      if (edge_I2S_mode='1' or edge_master_mode ='1' or edge_GPIO_MCLK='1' or edge_FS_48k_256_BCLK ='1' or edge_MCLK_root='1') then
+        cnt_single_config_i2c <= 0;
+        flag_stop_single_config <= '1';
+      else
+        if (d2_I2S_mode='1' or d2_master_mode ='1' or d2_GPIO_MCLK='1' or d2_FS_48k_256_BCLK ='1' or edge_MCLK_root='1' ) and cnt_single_config_i2c<55580 then
+          cnt_single_config_i2c <= cnt_single_config_i2c+1;
+          flag_stop_single_config <= '0';
+        else
+          -- if d2_I2S_mode='1' and cnt_single_config_i2c=3000 then
+          --   d2_I2S_mode='0';
+          -- end if;
+          -- if d2_master_mode='1' and cnt_single_config_i2c=3000 then
+          --   d2_master_mode='0';
+          -- end if;
+          -- if d2_GPIO_MCLK='1' and cnt_single_config_i2c=3000 then
+          --   d2_GPIO_MCLK='0';
+          -- end if;
+          -- if d2_FS_48k_256_BCLK='1' and cnt_single_config_i2c=3000 then
+          --   d2_GPIO_MCLK='0';
+          -- end if;
+          -- cnt_single_config_i2c <= 0;
+          flag_stop_single_config <= '1';
+        end if;
+      end if;
+    end if;
+  end process cnt_single_config_proc;
   
   ----------------------------------------
   -- purpose: fsm
@@ -170,20 +263,20 @@ begin  -- architecture arch_adc_config
       
       if SW_vdd_ok = '0' then           -- every VDD is not ok
         state <= idle_state;
-        --next_state <= idle_state;
+      --next_state <= idle_state;
       else                              -- 
         if SHDNZ_READY='0' then               -- VDD is OK and Shutdown
           state <= hardware_shutdown_state;
-          --next_state <= hardware_shutdown_state;
+        --next_state <= hardware_shutdown_state;
         else
           state <= next_state; 
         end if;
-        --state <= next_state;
+      --state <= next_state;
       end if;
     end if;
   end process state_transition_proc;
   
-  state_flow_proc: process (state, cnt_channel, SW_vdd_ok, flag_cnt_STOP, SHDNZ_READY, done) is
+  state_flow_proc: process (state, cnt_channel, SW_vdd_ok, flag_cnt_STOP, SHDNZ_READY, done, flag_finish_config_progr) is
   begin  -- process state_flow_proc
 
 
@@ -209,7 +302,7 @@ begin  -- architecture arch_adc_config
         else
           next_state <=  SHDNZ_state;
         end if;
-      when wakeup_state  =>             --3a and 
+      when wakeup_state  =>             --3a and 3b start
         if done = '1' then
           next_state <= woke_state ;
         else
@@ -217,26 +310,37 @@ begin  -- architecture arch_adc_config
         end if;
       when woke_state =>                --3b stop
         if flag_cnt_STOP = '1' then
-          next_state <=  powerdown_state;
+          next_state <=  config_and_programm_state;
         else
           next_state <=  woke_state;
         end if;
+      -----------------------------------------------------------------------
+      -- Override the default configuration registers or
+      -- programmable coefficients value as required (optional)
+      when config_and_programm_state =>  
+        if flag_finish_config_progr = '1' then
+          next_state <= powerdown_state;
+        else
+          next_state <= config_and_programm_state;
+        end if;
+      -------------------------------------------------------------------------
       when powerdown_state  =>          --3c
         if done = '1' then
-          next_state <= config_channel_state;
+          next_state <= config_channel_1_state;
         else
           next_state <= powerdown_state;
         end if;
-      when  config_channel_state =>     --3c
-        -- if cnt_channel <= CHANNEL_NUMBER then
-        --   next_state <= config_channel_state;
-        -- else
-        --   next_state <= enable_input_state;
-        -- end if;
-        if done = '1' then              --only for 1 channel
+      when  config_channel_1_state =>     --3c
+        if done = '1' then                      --1st channel
+          next_state <= config_channel_2_state;
+        else
+          next_state <= config_channel_1_state;
+        end if;
+      when  config_channel_2_state =>     --3c
+        if done = '1' then                      --2nd  channel
           next_state <= enable_input_state;
         else
-          next_state <= config_channel_state;
+          next_state <= config_channel_2_state;
         end if;
       when  enable_input_state =>       --3d
         if done = '1' then
@@ -259,8 +363,8 @@ begin  -- architecture arch_adc_config
       --------------------------------------------------------------------------------
       when  APPLY_BCLK_FSYNC_state =>   --3g and 3h and 3i start
         next_state <=  I2S_working_state;
-        --
-        --
+      --
+      --
       --------------------------------------------------------------------------------
       when I2S_working_state =>         --3i stop
         if flag_cnt_STOP = '1' then
@@ -276,44 +380,54 @@ begin  -- architecture arch_adc_config
           next_state <= enable_diagnostics_state;
         end if;
       when  disable_diagnostics_state =>
-        --next_state <=  stop_state;
-        --
+      --next_state <=  stop_state;
+      --
       when stop_state =>
-        next_state <=  end_state;
-      when end_state =>
-        next_state <=  end_state;
+        next_state <=  waiting_state;
+      when waiting_state =>
+        next_state <=  waiting_state;
       when others => null;
     end case;
     
     if SW_vdd_ok = '0' then           -- every VDD is not ok
-        next_state <= idle_state;
-        --next_state <= idle_state;
-      else                              -- 
-        if SHDNZ_READY='0' then               -- VDD is OK and Shutdown
-          -- state <= hardware_shutdown_state;
-          next_state <= hardware_shutdown_state;
-        else
-          -- state <= next_state; 
-        end if;
-        --state <= next_state;
+      next_state <= idle_state;
+    --next_state <= idle_state;
+    else                              -- 
+      if SHDNZ_READY='0' then               -- VDD is OK and Shutdown
+        -- state <= hardware_shutdown_state;
+        next_state <= hardware_shutdown_state;
+      else
+      -- state <= next_state; 
       end if;
-        
+    --state <= next_state;
+    end if;
+    
   end process;
 
   assignment_proc: process (state,cnt_channel, SW_vdd_ok,SHDNZ_READY,done, 
                             value_wakeup,value_powerdown,value_c1_config, 
                             value_c2_config,value_c3_config,value_c4_config, 
                             value_enable_input,value_enable_output,value_powerup ,
-                            value_enable_diagno) is
+                            value_enable_diagno,
+                            flag_finish_config_progr,
+                            d2_I2S_mode ,d2_master_mode,d2_GPIO_MCLK ,d2_FS_48k_256_BCLK,d2_MCLK_root,
+                            flag_stop_single_config) is
   begin  -- process assignment_proc
 
-
+    if flag_stop_single_config='1' then
+      OUT_config_value <= x"00";
+      OUT_config_addr <= x"00";
+      flag_cnt_START <= '0';
+      waiting_time    <= 0;
+      OUT_start       <= '0';
+    else 
+--      OUT_config_value <= x"00";
+--      OUT_config_addr <= x"00";
+--      flag_cnt_START <= '0';
+--      waiting_time    <= 0;
+--      OUT_start       <= '0';
+    end if;
     
-    OUT_config_value <= x"00";
-    OUT_config_addr <= x"00";
-    flag_cnt_START <= '0';
-    waiting_time    <= 0;
-    OUT_start       <= '0';
     
 
     case state is
@@ -349,6 +463,84 @@ begin  -- architecture arch_adc_config
         flag_cnt_START <= '1';        
         waiting_time <= 101000;
         OUT_start <= '0';
+      -----------------------------------------------------------------------
+      -- Override the default configuration registers
+      -- or programmable coefficients value as required (optional)
+      -----------------------------------------------------------------------
+      when config_and_programm_state =>
+        -- I2S
+        if d2_I2S_mode = '1' and flag_stop_single_config ='0' then
+          flag_cnt_START <= '0';
+          waiting_time <= 0;
+          OUT_config_value <= x"40";
+          OUT_config_addr  <= x"07";
+          if done='1' then
+            OUT_start <= '0';
+          else
+            OUT_start <= '1';
+          end if;
+        else
+          
+        end if;
+        --  master mode
+        if d2_master_mode = '1'  and flag_stop_single_config ='0' then
+          flag_cnt_START <= '0';
+          waiting_time <= 0;
+          OUT_config_value <= x"83";
+          OUT_config_addr  <= x"13";
+          if done='1' then
+            OUT_start <= '0';
+          else
+            OUT_start <= '1';
+          end if;
+        else
+          
+        end if;
+        -- configure GPIO1 as MCLK input
+        if d2_GPIO_MCLK = '1' and flag_stop_single_config ='0'  then
+          flag_cnt_START <= '0';
+          waiting_time <= 0;
+          OUT_config_value <= x"a0";
+          OUT_config_addr  <= x"21";
+          if done='1' then
+            OUT_start <= '0';
+          else
+            OUT_start <= '1';
+          end if;
+        else
+          
+        end if;
+        -- FS = 44.1/48k BCLK/ratio = 256
+        if d2_FS_48k_256_BCLK = '1'  and flag_stop_single_config  ='0' then
+          flag_cnt_START <= '0';
+          waiting_time <= 0;
+          OUT_config_value <= x"48";
+          OUT_config_addr  <= x"14";
+          if done='1' then
+            OUT_start <= '0';
+          else
+            OUT_start <= '1';
+          end if;
+        else
+          
+        end if;
+         -- MCLK_root = 256
+        if d2_MCLK_root= '1'  and flag_stop_single_config  ='0' then
+          flag_cnt_START <= '0';
+          waiting_time <= 0;
+          OUT_config_value <= x"d8";
+          OUT_config_addr  <= x"16";
+          if done='1' then
+            OUT_start <= '0';
+          else
+            OUT_start <= '1';
+          end if;
+        else
+          
+        end if;
+      -------------------------------------------------------------------------
+      -------------------------------------------------------------------------
+      -------------------------------------------------------------------------
       when powerdown_state  =>          --3c
         flag_cnt_START <= '0';
         waiting_time <= 0;
@@ -359,30 +551,21 @@ begin  -- architecture arch_adc_config
         else
           OUT_start <= '1';
         end if;
-      when config_channel_state =>      --3c
-        -- if cnt_channel = 1 then
-        --   OUT_config_value <= value_c1_config;
-        --   OUT_config_addr <= x"00";
-        -- elsif cnt_channel = 2 then
-        --   OUT_config_value <= value_c2_config;
-        --   OUT_config_addr <= x"00";
-        -- elsif cnt_channel = 3 then
-        --   OUT_config_value <= value_c3_config;
-        --   OUT_config_addr <= x"00";
-        -- elsif cnt_channel = 4 then
-        --   OUT_config_value <= value_c4_config;
-        --   OUT_config_addr <= x"00";
-        -- else
-        --   OUT_config_value <= "00000000";
-        --   OUT_config_addr <= x"00";
-        -- end if;
-        -- OUT_config_value <= value_c1_config;
-        --   OUT_config_addr <= x"00";
-        -- OUT_start <= '1';
+      when config_channel_1_state =>      --3c
         flag_cnt_START <= '0';
         waiting_time <= 0;
-        OUT_config_value <= value_c1_config;  -- we just do only one channel
+        OUT_config_value <= value_c1_config;  -- 1st channel
         OUT_config_addr <= const_addr_c1_reg;
+        if done='1' then
+          OUT_start <= '0';
+        else
+          OUT_start <= '1';
+        end if;
+      when config_channel_2_state =>      --3c
+        flag_cnt_START <= '0';
+        waiting_time <= 0;
+        OUT_config_value <= value_c2_config;  -- 2nd channel
+        OUT_config_addr <= const_addr_c2_reg;
         if done='1' then
           OUT_start <= '0';
         else
@@ -417,7 +600,7 @@ begin  -- architecture arch_adc_config
 
         
         flag_cnt_START <= '1';        
-        waiting_time <= 101000;
+        waiting_time <= 1010000;      -- 10 ms
         OUT_start <= '0';
         
 
@@ -426,7 +609,7 @@ begin  -- architecture arch_adc_config
       when I2S_working_state =>         --3i stop
         flag_cnt_START <= '1';   
         OUT_start <= '0';
-        waiting_time <= 101000;
+        waiting_time <= 1010000;        -- 10 ms
       when  enable_diagnostics_state => --3j
         flag_cnt_START <= '0';
         waiting_time <= 0;
@@ -450,10 +633,9 @@ begin  -- architecture arch_adc_config
         end if;
       when stop_state =>
         OUT_start <= '0';
-
-        
-      when end_state =>                 --in this state, i ll do read-i2c
-        OUT_start <= '0';
+      when waiting_state =>                 --in this state, forever circle
+                                            --waiting for test
+      OUT_start <= '0';
       when others => null;
     end case;
   end process assignment_proc;

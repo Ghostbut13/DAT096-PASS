@@ -44,6 +44,7 @@ PACKAGE i2c_type_package IS
     write_reg_data_state_7,
     RECEIVE_ACK_state_2,
 
+    setup_stop_state,
     stop_state,
     end_state   
 
