@@ -6,7 +6,7 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-11
+-- Last update: 2023-02-12
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -19,7 +19,11 @@
 -------------------------------------------------------------------------------
 -- Revisions  :
 -- Date        Version  Author  Description
--- 2023-02-04  1.0      ASUS	Created
+-- 2023-02-04  1.0      weihan	Created
+-- 2023-02-06  1.1      weihan  structure done
+-- 2023-02-10  1.3      weihan  adding master-mode state
+-- 2023-02-11  1.5      weihan  re-order the fsm
+-- 2023-02-12  2.0      weihan  done
 -------------------------------------------------------------------------------
 
 library ieee;
@@ -54,8 +58,6 @@ end entity ADC_Configuration_Flow_Controller;
 
 architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Controller is
   -- constant
-
-
   -- MODE reg addr
   constant const_addr_sleep_reg         : std_logic_vector(7 downto 0) := x"02";
   constant const_addr_interrupt_reg     : std_logic_vector(7 downto 0) := x"28";
@@ -82,24 +84,9 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   signal cnt_single_config_i2c : integer;
   signal cnt_channel : integer;  
   -- fsm
-  -- type adc_config_state_type is (
-  --   idle_state,
-  --   hardware_shutdown_state,
-  --   SHDNZ_state,
-  --   wakeup_state,
-  --   powerdown_state,
-  --   config_channel_state,
-  --   enable_input_state,
-  --   enable_output_state,
-  --   powerup_state,
-  --   APPLY_BCLK_FSYNC_state,
-  --   enable_diagnostics_state,
-  --   disable_diagnostics_state,
-  --   stop_state,
-  --   end_state
-  --   );
   signal state : adc_config_state_type;
   signal next_state : adc_config_state_type;
+  
   -- output signals
   signal OUT_start : std_logic;
   signal OUT_config_value : std_logic_vector(7 downto 0);
@@ -190,7 +177,7 @@ begin  -- architecture arch_adc_config
   edge_GPIO_MCLK        <=  (d1_GPIO_MCLK)       and not(d2_GPIO_MCLK);
   edge_master_mode      <=  (d1_master_mode)     and not(d2_master_mode);
   edge_I2S_mode         <=  (d1_I2S_mode)        and not(d2_I2S_mode);
-  edge_MCLK_root         <=  (d1_MCLK_root)        and not(d2_MCLK_root);
+  edge_MCLK_root        <=  (d1_MCLK_root)       and not(d2_MCLK_root);
 ----------------------------------------
   -- purpose: cnt_single_config
   cnt_single_config_proc: process (clk, rstn) is
@@ -226,23 +213,10 @@ begin  -- architecture arch_adc_config
         cnt_single_config_i2c <= 0;
         flag_stop_single_config <= '1';
       else
-        if (d2_I2S_mode='1' or d2_master_mode ='1' or d2_GPIO_MCLK='1' or d2_FS_48k_256_BCLK ='1' or edge_MCLK_root='1' ) and cnt_single_config_i2c<55580 then
+        if (d2_I2S_mode='1' or d2_master_mode ='1' or d2_GPIO_MCLK='1' or d2_FS_48k_256_BCLK ='1' or d2_MCLK_root='1' ) and cnt_single_config_i2c<55580 then
           cnt_single_config_i2c <= cnt_single_config_i2c+1;
           flag_stop_single_config <= '0';
         else
-          -- if d2_I2S_mode='1' and cnt_single_config_i2c=3000 then
-          --   d2_I2S_mode='0';
-          -- end if;
-          -- if d2_master_mode='1' and cnt_single_config_i2c=3000 then
-          --   d2_master_mode='0';
-          -- end if;
-          -- if d2_GPIO_MCLK='1' and cnt_single_config_i2c=3000 then
-          --   d2_GPIO_MCLK='0';
-          -- end if;
-          -- if d2_FS_48k_256_BCLK='1' and cnt_single_config_i2c=3000 then
-          --   d2_GPIO_MCLK='0';
-          -- end if;
-          -- cnt_single_config_i2c <= 0;
           flag_stop_single_config <= '1';
         end if;
       end if;
@@ -256,11 +230,7 @@ begin  -- architecture arch_adc_config
     if rstn = '0' then                  -- asynchronous reset (active low)
       state <= idle_state;
     elsif clk'event and clk = '1' then  -- rising clock edge
-
-      
       state <= next_state;
-
-      
       if SW_vdd_ok = '0' then           -- every VDD is not ok
         state <= idle_state;
       --next_state <= idle_state;
@@ -278,11 +248,7 @@ begin  -- architecture arch_adc_config
   
   state_flow_proc: process (state, cnt_channel, SW_vdd_ok, flag_cnt_STOP, SHDNZ_READY, done, flag_finish_config_progr) is
   begin  -- process state_flow_proc
-
-
-    
     next_state <= idle_state;
-    
     case state is --
       when  idle_state =>
         if SW_vdd_ok ='1' then
@@ -304,9 +270,9 @@ begin  -- architecture arch_adc_config
         end if;
       when wakeup_state  =>             --3a and 3b start
         if done = '1' then
-          next_state <= woke_state ;
+          next_state <=  woke_state ;
         else
-          next_state <= wakeup_state;
+          next_state <=  wakeup_state;
         end if;
       when woke_state =>                --3b stop
         if flag_cnt_STOP = '1' then
@@ -323,7 +289,8 @@ begin  -- architecture arch_adc_config
         else
           next_state <= config_and_programm_state;
         end if;
-      -------------------------------------------------------------------------
+      -----------------------------------------------------------------------
+      -----------------------------------------------------------------------
       when powerdown_state  =>          --3c
         if done = '1' then
           next_state <= config_channel_1_state;
@@ -360,12 +327,9 @@ begin  -- architecture arch_adc_config
         else
           next_state <= powerup_state;
         end if;
-      --------------------------------------------------------------------------------
-      when  APPLY_BCLK_FSYNC_state =>   --3g and 3h and 3i start
+      when  APPLY_BCLK_FSYNC_state =>   --3g and 3h and 3i start -- not used in
+                                        --master mode
         next_state <=  I2S_working_state;
-      --
-      --
-      --------------------------------------------------------------------------------
       when I2S_working_state =>         --3i stop
         if flag_cnt_STOP = '1' then
           next_state <=  enable_diagnostics_state;
@@ -427,9 +391,6 @@ begin  -- architecture arch_adc_config
 --      waiting_time    <= 0;
 --      OUT_start       <= '0';
     end if;
-    
-    
-
     case state is
       when idle_state =>
         flag_cnt_START  <= '0';
@@ -486,7 +447,7 @@ begin  -- architecture arch_adc_config
         if d2_master_mode = '1'  and flag_stop_single_config ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"83";
+          OUT_config_value <= x"81";
           OUT_config_addr  <= x"13";
           if done='1' then
             OUT_start <= '0';
@@ -528,7 +489,7 @@ begin  -- architecture arch_adc_config
         if d2_MCLK_root= '1'  and flag_stop_single_config  ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"d8";
+          OUT_config_value <= x"88";
           OUT_config_addr  <= x"16";
           if done='1' then
             OUT_start <= '0';
@@ -538,8 +499,6 @@ begin  -- architecture arch_adc_config
         else
           
         end if;
-      -------------------------------------------------------------------------
-      -------------------------------------------------------------------------
       -------------------------------------------------------------------------
       when powerdown_state  =>          --3c
         flag_cnt_START <= '0';
@@ -639,7 +598,4 @@ begin  -- architecture arch_adc_config
       when others => null;
     end case;
   end process assignment_proc;
-
-  ----------------------------------------
-  
 end architecture arch_ADC_Configuration_Flow_Controller;

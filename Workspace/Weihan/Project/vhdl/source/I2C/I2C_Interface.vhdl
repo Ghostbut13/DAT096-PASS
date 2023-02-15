@@ -6,7 +6,7 @@
 -- Author     : Weihan Gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-11
+-- Last update: 2023-02-12
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -19,7 +19,9 @@
 -------------------------------------------------------------------------------
 -- Revisions  :
 -- Date        Version  Author  Description
--- 2023-02-04  1.0      ASUS	Created
+-- 2023-02-04  1.0      weihan	Created
+-- 2023-02-06  1.2      weihan  connect with ACFC
+-- 2023-02-11  2.0      weihan  correct timing
 -------------------------------------------------------------------------------
 
 library ieee;
