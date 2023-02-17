@@ -24,7 +24,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Wrapper_ACFC_i2c is
-  
+
+  GENERIC(WORD_LENGHT: NATURAL RANGE 1 TO 128 := 24) ;
   port (
     -- finish config
     finish_config_input : in std_logic;
@@ -47,14 +48,20 @@ entity Wrapper_ACFC_i2c is
     SHDNZ_ready : in    std_logic;
     
     -- FSYNC and BCLK 
-    FSYNC     : out   std_logic;
-    BCLK      : out   std_logic;
+    FSYNC     : in   std_logic;
+    BCLK      : in   std_logic;
     
     -- i2c communication
     SDA       : inout std_logic;
-    SCL       : out   std_logic
+    SCL       : out   std_logic;
     
-    
+	--i2s communication
+	DIN : in std_logic;
+	start_I2S : in std_logic; 
+	L1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+	L2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+	R1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+	R2_out : out std_logic_vector (WORD_LENGHT-1 downto 0)
     );
 
 end entity Wrapper_ACFC_i2c;
@@ -132,6 +139,30 @@ architecture arch_Wrapper_ACFC_i2c of Wrapper_ACFC_i2c is
 
   signal out_n_clk : std_logic;
   signal out_p_clk : std_logic;
+  
+	signal L1_signal :  std_logic_vector (WORD_LENGHT-1 downto 0);
+	signal	L2_signal :  std_logic_vector (WORD_LENGHT-1 downto 0);
+	signal	R1_signal :  std_logic_vector (WORD_LENGHT-1 downto 0);
+	signal	R2_signal :  std_logic_vector (WORD_LENGHT-1 downto 0);
+
+  
+
+component I2S IS
+ GENERIC(WORD_LENGHT: NATURAL RANGE 1 TO 128) ;
+ PORT  (
+		bclk:IN STD_LOGIC ;
+		start:IN STD_LOGIC ;
+		reset:IN STD_LOGIC ;
+		fsync:IN STD_LOGIC ;
+		DIN : IN STD_LOGIC;
+		LC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+		LC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+		RC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+		RC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+		SDOUT : OUT std_logic);
+END component I2S;
+
+
 
   
     
@@ -173,6 +204,20 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
       done  => done,
       SDA   => SDA,
       SCL   => SCL );
+  inst_i2S: component I2S
+  
+    generic map (WORD_LENGHT=>WORD_LENGHT)
+    port map (
+    bclk =>BCLK,
+	start =>start_I2S,
+	reset =>rstn,
+	fsync =>FSYNC,
+	DIN =>DIN,
+	LC_1_out => L1_signal ,
+		
+	LC_2_out =>L2_signal,
+	RC_1_out =>R1_signal,
+	RC_2_out =>  R2_signal);
       
   ------------------------------------------------------------
   ----GENERATE the FSYNC and BCLK by PLL
