@@ -21,4 +21,31 @@ add wave inst_W/inst_ACFC/next_state
 add wave -radix decimal inst_W/inst_ACFC/cnt_clk
 
 
-run 24000000 ns
+# mode choose
+add wave I2S_mode_tb 
+add wave GPIO_MCLK_tb 
+add wave master_mode_tb 
+add wave FS_48k_256_BCLK_tb 
+
+# mode check
+add wave -radix decimal inst_W/inst_ACFC/cnt_single_config_i2c
+add wave inst_W/inst_ACFC/d2_I2S_mode
+add wave inst_W/inst_ACFC/d1_I2S_mode
+
+add wave inst_W/inst_ACFC/edge_I2S_mode
+add wave inst_W/inst_ACFC/edge_master_mode
+add wave inst_W/inst_ACFC/edge_GPIO_MCLK
+add wave inst_W/inst_ACFC/edge_FS_48k_256_BCLK
+
+add wave inst_W/inst_ACFC/d2_GPIO_MCLK
+add wave inst_W/inst_ACFC/d2_master_mode
+add wave inst_W/inst_ACFC/d2_FS_48k_256_BCLK
+add wave inst_W/inst_ACFC/flag_stop_single_config
+add wave inst_W/inst_ACFC/OUT_config_value
+add wave inst_W/inst_ACFC/OUT_config_addr 
+add wave inst_W/inst_ACFC/done
+add wave inst_W/inst_ACFC/OUT_start
+
+add wave finish_config_input_tb
+
+run 45000000 ns
