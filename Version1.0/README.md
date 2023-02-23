@@ -1,3 +1,17 @@
+ADC wrapper without i2s
+
+-------
+
+-test
+-design
+-vivado
+|--bits
+|--constraints
+
+---------------
+
+
+
 2023/02/01
 
 create for storing finished compiled design and bitstream. not for isolated design.
