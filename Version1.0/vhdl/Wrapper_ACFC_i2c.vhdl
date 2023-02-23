@@ -25,7 +25,7 @@ use ieee.numeric_std.all;
 
 entity Wrapper_ACFC_i2c is
 
-  GENERIC(WORD_LENGHT: NATURAL RANGE 1 TO 128 := 24) ;
+  GENERIC(WORD_LENGHT: NATURAL RANGE 1 TO 128 := 16) ;
   port (
     -- finish config
     finish_config_input : in std_logic;
@@ -58,10 +58,10 @@ entity Wrapper_ACFC_i2c is
 	--i2s communication
 	DIN : in std_logic;
 	start_I2S : in std_logic; 
-	L1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-	L2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-	R1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-	R2_out : out std_logic_vector (WORD_LENGHT-1 downto 0)
+	L1_out : out std_logic_vector (WORD_LENGHT-1 downto 0)
+--	L2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+--	R1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+--	R2_out : out std_logic_vector (WORD_LENGHT-1 downto 0)
     );
 
 end entity Wrapper_ACFC_i2c;
@@ -155,11 +155,12 @@ component I2S IS
 		reset:IN STD_LOGIC ;
 		fsync:IN STD_LOGIC ;
 		DIN : IN STD_LOGIC;
-		LC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-		LC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-		RC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-		RC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
-		SDOUT : OUT std_logic);
+		LC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0)
+--		LC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+--		RC_1_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+--		RC_2_out : out std_logic_vector (WORD_LENGHT-1 downto 0);
+--		SDOUT : OUT std_logic
+		);
 END component I2S;
 
 
@@ -213,11 +214,11 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
 	reset =>rstn,
 	fsync =>FSYNC,
 	DIN =>DIN,
-	LC_1_out => L1_signal ,
+	LC_1_out => L1_signal);
 		
-	LC_2_out =>L2_signal,
-	RC_1_out =>R1_signal,
-	RC_2_out =>  R2_signal);
+--	LC_2_out =>L2_signal,
+--	RC_1_out =>R1_signal,
+--	RC_2_out =>  R2_signal);
       
   ------------------------------------------------------------
   ----GENERATE the FSYNC and BCLK by PLL

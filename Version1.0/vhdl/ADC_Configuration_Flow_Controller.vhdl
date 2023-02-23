@@ -6,7 +6,7 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-11
+-- Last update: 2023-02-19
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ begin  -- architecture arch_adc_config
         cnt_single_config_i2c <= 0;
         flag_stop_single_config <= '1';
       else
-        if (d2_I2S_mode='1' or d2_master_mode ='1' or d2_GPIO_MCLK='1' or d2_FS_48k_256_BCLK ='1' or edge_MCLK_root='1' ) and cnt_single_config_i2c<55580 then
+        if (d2_I2S_mode='1' or d2_master_mode ='1' or d2_GPIO_MCLK='1' or d2_FS_48k_256_BCLK ='1' or d2_MCLK_root='1' ) and cnt_single_config_i2c<55580 then
           cnt_single_config_i2c <= cnt_single_config_i2c+1;
           flag_stop_single_config <= '0';
         else

@@ -4,6 +4,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.config_state_package.all;
 use work.i2c_type_package.all;
+use ieee.math_real.all;
+
 
 entity Wrapper_ACFC_i2c_tb is
   
@@ -34,13 +36,17 @@ architecture arch of Wrapper_ACFC_i2c_tb is
       SHDNZ_ready       : in    std_logic;
       
       -- FSYNC and BCLK 
-      FSYNC             : out   std_logic;
-      BCLK              : out   std_logic;
+      FSYNC             : in   std_logic;
+      BCLK              : in   std_logic;
       
       -- i2c communication
       SDA               : inout std_logic;
-      SCL               : out   std_logic
+      SCL               : out   std_logic;
       
+      
+      DIN               : in std_logic;
+	  start_I2S         : in std_logic; 
+	  L1_out            : out std_logic_vector (15 downto 0)
       );
   end component Wrapper_ACFC_i2c;
 
@@ -55,14 +61,23 @@ architecture arch of Wrapper_ACFC_i2c_tb is
 
 
   ----------------------------------------
-  signal FSYNC_tb :  std_logic ;
-
+  signal FSYNC_tb :  std_logic :='0';
+  signal BCLK_tb :  std_logic := '0';
   signal I2S_mode_tb    :   std_logic := '0';
   signal master_mode_tb :   std_logic := '0';
   signal GPIO_MCLK_tb   :   std_logic := '0';
   signal FS_48k_256_BCLK_tb :std_logic := '0';
   signal MCLK_root_tb   :   std_logic := '0';
   ----------------------------------------
+  signal DIN_tb :  std_logic := '0';
+  signal start_I2S_tb : std_logic; 
+  signal L1_out_tb : std_logic_vector (15 downto 0);
+  -----------------------------------------
+  
+  constant fsync_delay : time :=  2560 ns; -- 20.83 us; -- one period 48kHz 
+  constant bclk_delay : time :=   10 ns;-- 81.380 ns; -- one period 12.288MHz
+  constant data_rate : time := 10 ns;
+
   
 begin  -- architecture arch_I2C_master_for_temperature
 
@@ -84,7 +99,13 @@ begin  -- architecture arch_I2C_master_for_temperature
       SDA => SDA_tb,
       SCL => SCL_tb,
       
-      FSYNC             => FSYNC_tb
+      FSYNC             => FSYNC_tb,
+      BCLK              => BCLK_tb,
+      DIN               => DIN_tb,
+      start_I2S         => start_I2S_tb,
+	  L1_out            => L1_out_tb
+      
+      
       );
 
 
@@ -135,21 +156,54 @@ begin  -- architecture arch_I2C_master_for_temperature
   
 
 
-  GPIO_MCLK_tb          <= '1' after 6000000 ns;
-                           --'0' after 6000100 ns;
+  GPIO_MCLK_tb          <= '1' after 6000000 ns,
+                           '0' after 6000100 ns;
 
-  master_mode_tb        <= '1' after 7300000 ns;
-                           --'0' after 7300100 ns;
+  master_mode_tb        <= '1' after 7300000 ns,
+                           '0' after 7300100 ns;
   
-  FS_48k_256_BCLK_tb    <= '1' after 8300000 ns;
-                           --'0' after 8300100 ns;
+  FS_48k_256_BCLK_tb    <= '1' after 8300000 ns,
+                           '0' after 8300100 ns;
   
-  I2S_mode_tb           <= '1' after 9300000 ns;
-                           --'0' after 9300100 ns;
+  I2S_mode_tb           <= '1' after 9300000 ns,
+                           '0' after 9300100 ns;
   
-  MCLK_root_tb          <= '1' after 10300000 ns;
-                           --'0' after 10301000 ns;
+  MCLK_root_tb          <= '1' after 10300000 ns,
+                           '0' after 10301000 ns;
   
   
 ----------------------------------------
+
+ bclk_process:
+  process
+  begin
+	wait for bclk_delay/2;
+	bclk_tb <= not(bclk_tb);
+  end process bclk_process;
+  
+  generate_DIN_process:
+   process
+   begin
+     wait for 1.5*data_rate;
+	 DIN_tb <= not(DIN_tb);
+	end process generate_DIN_process;
+	
+  
+ fsync_process:
+  process
+  begin
+	wait for fsync_delay/2;
+	fsync_tb <= not(fsync_tb);
+  end process fsync_process;
+
+  start_I2S_tb <= '0' ,
+			  '1' after 16001000 ns;
+			  
+
+
+
+
+
+
+
 end architecture arch;
