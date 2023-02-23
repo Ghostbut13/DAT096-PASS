@@ -6,7 +6,11 @@
 -- Author     : Weihan Gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
+<<<<<<< HEAD
 -- Last update: 2023-02-18
+=======
+-- Last update: 2023-02-12
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -455,7 +459,11 @@ begin  -- architecture arch_adc_i2c_fsm_controller
         OUT_BIT   <= '1';
       when start_state =>
         flag_sent <= '1';
+<<<<<<< HEAD
         OUT_BIT   <= '0';                             --SDA = '1' -> '0', SCL = '1'
+=======
+        OUT_BIT   <= '0';               --SDA = '1' -> '0', SCL = '1'
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
       when write_i2c_addr_state_0 =>
         flag_sent <= '1';
         OUT_BIT   <= addr_i2c_slave(7);               --SDA = addr_i2c_slave[7]

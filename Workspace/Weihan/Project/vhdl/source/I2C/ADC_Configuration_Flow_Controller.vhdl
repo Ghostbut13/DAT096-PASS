@@ -6,7 +6,11 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
+<<<<<<< HEAD
 -- Last update: 2023-02-20
+=======
+-- Last update: 2023-02-12
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -31,7 +35,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.config_state_package.all;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
 entity ADC_Configuration_Flow_Controller is
   
   port (
@@ -102,13 +109,21 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   -- -- for adc config
   signal value_wakeup           : std_logic_vector(7 downto 0) := "10000001";
   signal value_powerdown        : std_logic_vector(7 downto 0) := "00010000";
+<<<<<<< HEAD
   signal value_c1_config        : std_logic_vector(7 downto 0) := "00010000";
+=======
+  signal value_c1_config        : std_logic_vector(7 downto 0) := "00011000";
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
   signal value_c2_config        : std_logic_vector(7 downto 0) := "00011000";
   signal value_c3_config        : std_logic_vector(7 downto 0) := "00011000";--
   signal value_c4_config        : std_logic_vector(7 downto 0) := "00011000";--
                                                                              --unused
   signal value_enable_input     : std_logic_vector(7 downto 0) := "11000000";-- 2channel
+<<<<<<< HEAD
   signal value_enable_output    : std_logic_vector(7 downto 0) := "10000000";-- 2channel
+=======
+  signal value_enable_output    : std_logic_vector(7 downto 0) := "11000000";-- 2channel
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
   signal value_powerup          : std_logic_vector(7 downto 0) := "11100000";
   signal value_enable_diagno    : std_logic_vector(7 downto 0) := "00000000";
   -- -- for waiting_time between some config steps 
@@ -476,7 +491,11 @@ begin  -- architecture arch_adc_config
         if d2_FS_48k_256_BCLK = '1'  and flag_stop_single_config  ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
+<<<<<<< HEAD
           OUT_config_value <= x"46";   --48
+=======
+          OUT_config_value <= x"48";
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
           OUT_config_addr  <= x"14";
           if done='1' then
             OUT_start <= '0';

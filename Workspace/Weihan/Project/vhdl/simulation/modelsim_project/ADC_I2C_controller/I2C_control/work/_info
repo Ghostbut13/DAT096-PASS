@@ -1,0 +1,180 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dE:/CTH-EESD/Q2/EDA234-Project/Workspace/weihanga/project/vhdl/modelsim/AES_UART
+T_opt
+!s110 1675966540
+VVTFh_8hT6Hm<Wk2^W6E?f0
+04 29 34 work i2c_master_for_temperature_tb arch_i2c_master_for_temperature_tb 1
+=4-244bfebc3e76-63e5384c-62-5048
+Z1 o-quiet -auto_acc_if_foreign -work work +acc
+Z2 tCvgOpt 0
+n@_opt
+Z3 OL;O;10.5;63
+R0
+T_opt1
+!s110 1675982974
+VIA;W9ZdLnfe3;8B=^?]R@3
+04 13 18 work i2c_master_tb arch_i2c_master_tb 1
+=1-244bfebc3e76-63e5787e-12d-7058
+R1
+R2
+n@_opt1
+R3
+Eadc_i2c_controller
+Z4 w1675966452
+Z5 DPx4 work 16 i2c_type_package 0 22 Z@Da;LPhB?3b9P2J?Sc>B2
+Z6 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z7 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z8 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z9 dD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/modelsim_project/ADC_I2C_controller/I2C_control
+Z10 8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl
+Z11 FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl
+l0
+L30
+V5_;Y_M5D5FK7;NVEcKYfU2
+!s100 74g=PRGhb4=^7P[GMFUF;2
+Z12 OL;C;10.5;63
+32
+Z13 !s110 1675966460
+!i10b 1
+Z14 !s108 1675966460.000000
+Z15 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl|
+Z16 !s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/adc_i2c_controller.vhdl|
+!i113 0
+Z17 o-work work -2002 -explicit
+Z18 tExplicit 1 CvgOpt 0
+Aarch_adc_i2c_fsm_controller
+R5
+R6
+R7
+R8
+DEx4 work 18 adc_i2c_controller 0 22 5_;Y_M5D5FK7;NVEcKYfU2
+l124
+L45
+VC?Ak0Z[<eWS4`M_bZMzR23
+!s100 NCKEJH8cU4E4<D`]n[eCJ0
+R12
+32
+R13
+!i10b 1
+R14
+R15
+R16
+!i113 0
+R17
+R18
+Ei2c_interface
+Z19 w1675982764
+R5
+R6
+R7
+R8
+R9
+Z20 8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl
+Z21 FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl
+l0
+L31
+V0?ZNUhB;0e:OmYaMb6`Ng3
+!s100 [n:O4fOhjik]nVZg2jTco0
+R12
+32
+Z22 !s110 1675982947
+!i10b 1
+Z23 !s108 1675982947.000000
+Z24 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl|
+Z25 !s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/I2C_Interface.vhdl|
+!i113 0
+R17
+R18
+Aarch_i2c_interface
+R5
+R6
+R7
+R8
+DEx4 work 13 i2c_interface 0 22 0?ZNUhB;0e:OmYaMb6`Ng3
+l125
+L46
+V;F<W[eGX[C2S_8X?6@f==0
+!s100 giF86U@F4Cm^D;c:TD@bQ2
+R12
+32
+R22
+!i10b 1
+R23
+R24
+R25
+!i113 0
+R17
+R18
+Ei2c_master_tb
+Z26 w1675982945
+R5
+R6
+R7
+R8
+R9
+Z27 8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl
+Z28 FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl
+l0
+L7
+VeUYZY3:II95IeY7V?=ARb2
+!s100 dR1WGQ]2zYM2c?7AjRNkG3
+R12
+32
+R22
+!i10b 1
+R23
+Z29 !s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl|
+Z30 !s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/simulation/sim/adc_i2c/i2c_controller/I2C_master_tb.vhdl|
+!i113 0
+R17
+R18
+Aarch_i2c_master_tb
+R5
+R6
+R7
+R8
+DEx4 work 13 i2c_master_tb 0 22 eUYZY3:II95IeY7V?=ARb2
+l39
+L11
+Vb59D[Zm3Ub[a0eTVC128Z3
+!s100 1JXW]Ze5]F5^E]W9`c1DH3
+R12
+32
+R22
+!i10b 1
+R23
+R29
+R30
+!i113 0
+R17
+R18
+Pi2c_type_package
+R6
+R7
+R8
+w1675533204
+R9
+8D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+FD:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl
+l0
+L13
+VZ@Da;LPhB?3b9P2J?Sc>B2
+!s100 WC<mZLn7=lh6c?NXn9SF_1
+R12
+32
+R22
+!i10b 1
+R23
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-vopt|-stats=none|D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!s107 D:/Work Files/EESDQ/DAT096-PASS/Workspace/Weihan/Project/vhdl/source/I2C/i2c_type_package.vhdl|
+!i113 0
+R17
+R18

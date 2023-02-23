@@ -48,6 +48,7 @@ add wave inst_W/inst_ACFC/OUT_start
 
 add wave finish_config_input_tb
 
+<<<<<<< HEAD
 
 
 
@@ -61,3 +62,6 @@ add wave start_I2S_tb
 add wave L1_out_tb  
 
 run 120000000 ns
+=======
+run 45000000 ns
+>>>>>>> 345b79df065594bae422114d7dbb8daaf9043cda
