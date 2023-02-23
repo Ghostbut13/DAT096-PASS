@@ -10,7 +10,7 @@ create_clock -add -name system_clk -period 10 -waveform {0 5}  [get_ports { clk 
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets BCLK_IBUF] 
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets FSYNC_IBUF]
 
-create_generated_clock -name BCLK_pin -divide_by 2 -source [get_ports { clk }] [get_pins { BCLK }]
+#create_generated_clock -name BCLK_pin -divide_by 2 -source [get_ports { clk }] [get_pins { BCLK }]
 #create_generated_clock -name FSYNC -divide_by 83 -source [get_ports { clk }] [get_pins { clk_wiz_0/clk_out1_0 }]
 
 
@@ -51,7 +51,7 @@ set_property -dict { PACKAGE_PIN T16   IOSTANDARD LVCMOS33 } [get_ports { L1_out
 set_property -dict { PACKAGE_PIN V15   IOSTANDARD LVCMOS33 } [get_ports { L1_out[12] }]; ##IO_L16P_T2_CSI_B_14 Sch=led[12]
 set_property -dict { PACKAGE_PIN V14   IOSTANDARD LVCMOS33 } [get_ports { L1_out[13] }]; ##IO_L22N_T3_A04_D20_14 Sch=led[13]
 set_property -dict { PACKAGE_PIN V12   IOSTANDARD LVCMOS33 } [get_ports { L1_out[14] }]; ##IO_L20N_T3_A07_D23_14 Sch=led[14]
-set_property -dict { PACKAGE_PIN V11   IOSTANDARD LVCMOS33 } [get_ports { led_start }]; ##IO_L21N_T3_DQS_A06_D22_14 Sch=led[15]
+#set_property -dict { PACKAGE_PIN V11   IOSTANDARD LVCMOS33 } [get_ports { led_start }]; ##IO_L21N_T3_DQS_A06_D22_14 Sch=led[15]
 
 ## RGB LEDs
 #set_property -dict { PACKAGE_PIN R12   IOSTANDARD LVCMOS33 } [get_ports { LED16_B }]; ##IO_L5P_T0_D06_14 Sch=led16_b

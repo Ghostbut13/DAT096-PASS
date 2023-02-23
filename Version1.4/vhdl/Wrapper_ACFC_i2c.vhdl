@@ -44,16 +44,14 @@ entity Wrapper_ACFC_i2c is
     -- --control ready
     SW_vdd_ok : in    std_logic;
     SHDNZ_ready : in    std_logic;
-    
     -- --FSYNC and BCLK 
     FSYNC     : in   std_logic;
     BCLK      : in   std_logic;
-    
     -- --i2c communication
     SDA       : inout std_logic;
     SCL       : out   std_logic;
-    
 	-- --i2s communication
+	B_state : out std_logic_vector (2 downto 0);
 	DIN : in std_logic;
 	start_I2S : in std_logic; 
 	L1_out : out std_logic_vector (15 downto 0)
@@ -150,8 +148,8 @@ component I2S IS
  --GENERIC(WORD_LENGHT: NATURAL RANGE 1 TO 128) ;
  PORT  (
 		bclk:IN STD_LOGIC ;
+		B_state : out std_logic_vector (2 downto 0);
 		start:IN STD_LOGIC ;
-                clk : in STD_LOGIC;
 		reset:IN STD_LOGIC ;
 		fsync:IN STD_LOGIC ;
 		DIN : IN STD_LOGIC;
@@ -209,7 +207,7 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
     -- generic map (WORD_LENGHT=>WORD_LENGHT)
     port map (
       bclk =>BCLK,
-      clk => clk,
+      B_state=>B_state,
       start =>start_I2S,
       reset =>rstn,
       fsync =>FSYNC,
