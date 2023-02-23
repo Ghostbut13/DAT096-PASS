@@ -1,0 +1,1 @@
+source "C:/Users/ASUS/Desktop/test/tcl/run_vivado.tcl"

@@ -6,7 +6,7 @@
 -- Author     : weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2022-11-12
--- Last update: 2022-11-14
+-- Last update: 2023-02-13
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -23,61 +23,69 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+USE work.mlhdlc_aesd_fixpt_pkg.ALL;
 
 entity uart_receiver is
-  -- generic(
-  --   mode:boolean:=true;
-  --   -- ...
-  --   );
   port(
-    clk : in std_logic;
-    rstn : in std_logic;
-    uart_rxd : in std_logic;
-    uart_done : out std_logic;
-    uart_txd : out std_logic;
-    data : out std_logic_vector(7 downto 0)  -- just show the result in simulation
+    clk         : in std_logic;
+    rstn        : in std_logic;
+    uart_rxd    : in std_logic;
+    uart_done   : out std_logic;
+    uart_txd    : out std_logic;
+    clk_enable  : in std_logic
     );
 end entity uart_receiver;
 
 
 
 architecture arch_uart_receiver of uart_receiver is
-
-  constant uart_bps : integer := 9600;
-  constant clk_frq : integer := 100000000;
-  constant CNT_BPS : integer := clk_frq / uart_bps;
-  signal uart_rxd_d1 : std_logic;  -- rxd
-  signal uart_rxd_d2 : std_logic;
+  signal plaintext_v : vector_of_std_logic_vector8(0 to 15) := ((x"1F"), (x"9D"), (x"05"), (x"17"), (x"7B"), (x"B0"), (x"5F"), (x"87"), (x"99"), (x"7A"), (x"AE"), (x"F3"), (x"9E"), (x"82"), (x"51"), (x"CC"));
+  constant uart_bps     : integer := 9600;
+  -- constant uart_bps     : integer := 960000;
+  constant clk_frq      : integer := 100000000;
+  constant CNT_BPS      : integer := clk_frq / uart_bps;
+  signal uart_rxd_d1    : std_logic;  -- rxd
+  signal uart_rxd_d2    : std_logic;
   signal uart_done_signal : std_logic;  -- done
-  signal cnt_rx : integer;
-  signal cnt_clk : integer;
-  signal buffer_data8 : std_logic_vector(7 downto 0);
-  signal rx_data_flag : std_logic;
-  signal start_flag : std_logic;
+  signal cnt_rx         : integer;
+  signal cnt_tx         : integer;
+  signal cnt_clk_rx        : integer;
+  signal cnt_clk_tx     : integer;
+  signal cnt_read_cip : integer;
+  signal buffer_data8   : std_logic_vector(7 downto 0);
+  signal rx_data_flag   : std_logic;
+  signal start_flag     : std_logic;
 
-
+  signal enb : std_logic;
+  signal  uart_enable: std_logic;
   signal uart_txd_signal : std_logic;
-  signal data_t: std_logic_vector(7 downto 0):= x"A5";
-  signal tx_flag : std_logic;
+  signal data_t         : std_logic_vector(7 downto 0):= x"A5";
+  signal tx_flag        : std_logic;
+  signal cnt_start : integer;
 
   
 begin  -- architecture arch_uart_receiver
+  
+  uart_txd <= uart_txd_signal;
+  uart_done <= uart_done_signal;
+  ---------------------------------------------
+  
   proc_cnt: process (clk, rstn) is
   begin  -- process proc_cnt
     if rstn = '0' then
-      cnt_clk <= 0;
+      cnt_clk_rx <= 0;
       cnt_rx <= 0;
     elsif rising_edge(clk) then 
       if rx_data_flag='1' then
-        if(cnt_clk < CNT_BPS) then
-          cnt_clk <= cnt_clk +1;
+        if(cnt_clk_rx < CNT_BPS) then
+          cnt_clk_rx <= cnt_clk_rx +1;
           cnt_rx <= cnt_rx;
         else
-          cnt_clk <= 0;
+          cnt_clk_rx <= 0;
           cnt_rx <= cnt_rx +1;
         end if;
       else
-        cnt_clk <= 0;
+        cnt_clk_rx <= 0;
         cnt_rx <= 0;
       end if;
     end if;
@@ -118,44 +126,150 @@ begin  -- architecture arch_uart_receiver
   begin  -- process proc_rx
     if rstn = '0' then               
       buffer_data8 <= "00000000";
-    elsif rising_edge(clk) then  
-      if (rx_data_flag='1' and cnt_clk= CNT_BPS / 2 and cnt_rx > 0) then
+    elsif rising_edge(clk) then
+      --cnt_clk_rx= CNT_BPS / 2 is waiting for data stable
+      if (rx_data_flag='1' and cnt_clk_rx= CNT_BPS / 2 and cnt_rx > 0) then
         buffer_data8(cnt_rx-1) <= uart_rxd_d1;
       end if;
     end if;
   end process proc_data_catch;
 
-  act_proc: process(clk,rstn)is
-  begin
-    if uart_active ='1' then
-      tx_flag <= '0';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  proc_txcnt: process (clk, rstn) is
+  begin  -- process proc_cnt
+    if rstn = '0' then
+      cnt_clk_tx <= 0;
+
+      cnt_tx <= 0;
+    elsif rising_edge(clk) then 
+      if tx_flag ='0' then
+        if(cnt_clk_tx < CNT_BPS) then
+          cnt_clk_tx <= cnt_clk_tx +1;
+
+          cnt_tx <= cnt_tx;
+        else
+          cnt_clk_tx <= 0;
+          
+          cnt_tx <= cnt_tx +1;
+        end if;
+      else
+        cnt_clk_tx <= 0;
+
+        cnt_tx <= 0;
+      end if;
     end if;
-    if cnt_tx=9  then
+  end process proc_txcnt;
+
+
+
+  -- enb <= '1';
+  
+  done_and_begin_uart: process(clk,rstn) is
+  begin
+    if rstn='0' then
+      enb <= '0';
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      if (clk_enable='1' and enb = '0') then
+        if (cnt_read_cip = 3) then
+          enb<='1';
+        end if;
+      elsif (clk_enable='0' and enb='1') then
+        enb<='0';
+      elsif (clk_enable='1' and enb='1' and cnt_start > 7) then
+        enb<='0';
+      end if;
+    end if;
+  end process done_and_begin_uart;
+  
+  uart_enable_control: process (clk, rstn) is
+  begin  -- process buffer_out
+    if rstn = '0' then                 -- asynchronous reset (active low)
+      uart_enable <= '0';
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      if(enb='1' and cnt_read_cip=10000) then
+        uart_enable <= '1';
+      else
+        uart_enable <= '0';
+      end if;
+    end if;
+  end process uart_enable_control;
+  
+  push_data_out_cnt: process (clk, rstn) is
+  begin  -- process push_data_out
+    if rstn = '0' then                 -- asynchronous reset (active low)
+      cnt_read_cip <= 0;
+    elsif clk'event and clk = '1' then  -- rising clock edge
+      if (clk_enable = '1' and tx_flag='1' and cnt_start < 127)then
+        if (cnt_read_cip < 20000) then
+          cnt_read_cip <= cnt_read_cip+1;
+        else
+          cnt_read_cip <= 0;
+        end if;
+      elsif ((clk_enable='0' and enb='1')) then
+        cnt_read_cip <= 0;
+      elsif ((clk_enable='1' and cnt_start >= 127)) then
+        cnt_read_cip <= 0;
+      end if;
+    end if;
+  end process push_data_out_cnt;
+  
+  act_proc: process (clk,rstn) is
+  begin
+    if rstn = '0' then
       tx_flag <= '1';
+    elsif rising_edge(clk) then
+      if uart_enable ='1' then
+        tx_flag <= '0';                 --start
+      end if;
+      if cnt_tx=9  then
+        tx_flag <= '1';
+      end if;
     end if;
   end process act_proc;
-
 
   proc_tx: 
   process (clk, rstn) is
   begin  -- process proc_tx_falledge_detect
     if rstn = '0' then                 
       uart_txd_signal <= '1';
+      cnt_start <= 0;
     elsif clk'event and clk = '1' then
       if (tx_flag='0') then
         if cnt_tx=0 then
-           uart_txd_signal <= '0';
+          uart_txd_signal <= '0';
         elsif cnt_tx<9 then
-          uart_txd_signal <= data_t(cnt_tx-1);
+          uart_txd_signal <= plaintext_v(cnt_start)(cnt_tx-1);
         else
           uart_txd_signal <= '1';
         end if;
+      elsif (tx_flag ='1' and cnt_tx = 9) then --tx last
+        uart_txd_signal <= '1';
+        if cnt_start<7 then
+          cnt_start <= cnt_start+1;     --array's addr
+        else
+          cnt_start <= 0;
+        end if;
+      else
+        uart_txd_signal <= '1';
       end  if;
+    end  if;
   end process proc_tx;
 
   
-  uart_txd <= uart_txd_signal;
-  uart_done <= uart_done_signal;
-  data <= buffer_data8;
+
   
 end architecture arch_uart_receiver;
