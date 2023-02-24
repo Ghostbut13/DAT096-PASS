@@ -48,6 +48,12 @@ add wave inst_W/inst_ACFC/OUT_start
 
 add wave finish_config_input_tb
 
+
+
+
+
+
+
 add wave  FSYNC_tb          
 add wave BCLK_tb             
 add wave DIN_tb    
