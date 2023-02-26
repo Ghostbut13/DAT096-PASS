@@ -54,21 +54,10 @@ add wave finish_config_input_tb
 
 
 
-add wave FSYNC_tb          
+add wave  FSYNC_tb          
 add wave BCLK_tb             
 add wave DIN_tb    
 add wave start_I2S_tb 
 add wave L1_out_tb  
-
-
-
-add wave inst_W/inst_i2S/L1_out_signal
-add wave inst_W/inst_i2S/convert_type/L1_out_signal_not
-add wave inst_W/inst_i2S/convert_type/L1_UNSIGNED_1
-add wave inst_W/inst_i2S/convert_type/L1_UNSIGNED_2
-add wave inst_W/inst_i2S/convert_type/L1_SIGNED_1
-add wave inst_W/inst_i2S/convert_type/L1_SIGNED_2
-add wave inst_W/inst_i2S/L1_out_signal_converter 
-
 
 run 120000000 ns
