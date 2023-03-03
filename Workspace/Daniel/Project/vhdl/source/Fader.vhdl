@@ -21,7 +21,8 @@ entity F is
 	SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
 	sampleOut:		out STD_LOGIC_VECTOR(16 DOWNTO 1);
 	Indexer:		in STD_LOGIC_VECTOR(15 DOWNTO 1);
-	RefIndex:		in STD_LOGIC_VECTOR(2 DOWNTO 1)
+	RefIndex:		in STD_LOGIC_VECTOR(2 DOWNTO 1);
+	Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
 end F;
 
@@ -29,7 +30,7 @@ architecture Behavioral of F is
 	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
 	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
 	SIGNAL SampleOutSig: Signed(32 DOWNTO 1);
-	
+	SIGNAL delta:		signed(16 DOWNTO 1);
 
 begin
 
@@ -42,14 +43,19 @@ begin
 	
 	
 	IF rising_edge(CLK) then
-		IF Indexer(15 DOWNTO 13) < RefIndex +1 AND Indexer(15 DOWNTO 13) > RefIndex -1 then
-			Multiplicant <= "0100000000000000" - abs(signed((RefIndex & "0000000000000") - Indexer));
+		delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
+		IF delta < "0001000000000000"  then
+			Multiplicant <= "0001000000000000" - delta;
+			
+			--Multiplicant <= "0100000000000000";
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
 		SampleOutSig <= SampleInSig * Multiplicant;
 		
 	END IF;
+	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
+	--Multiout <= STD_LOGIC_VECTOR(delta);
 	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(32 DOWNTO 17));
 	
 	END PROCESS F_process;
