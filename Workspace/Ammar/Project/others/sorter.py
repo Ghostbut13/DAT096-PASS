@@ -16,7 +16,7 @@ def bubbleSort(arr):
   
 # Driver code to test above
 if __name__ == "__main__":
-  arr = [5, 1, 1, 222, 8]
+  arr = [5, 122, 77, 1 ]
   
   bubbleSort(arr)
   print(arr)
