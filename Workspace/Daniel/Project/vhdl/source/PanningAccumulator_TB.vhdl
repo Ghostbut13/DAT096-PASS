@@ -22,15 +22,15 @@ architecture arch of PA_TB is
 	component PA is
 		port(
 			CLK:			in STD_LOGIC; --48kHz clock
-			TargetIndex:	IN STD_LOGIC_VECTOR(2 DOWNTO 1);
-			Indexer:		OUT STD_LOGIC_VECTOR(15 DOWNTO 1)
+			TargetIndex:	IN STD_LOGIC_VECTOR(3 DOWNTO 1);
+			Indexer:		OUT STD_LOGIC_VECTOR(16 DOWNTO 1)
 		);
 	end component PA;
 	
 
 	SIGNAL CLK_TB: 			STD_LOGIC := '0';
-	SIGNAL TargetIndex_TB: 	STD_LOGIC_VECTOR(2 DOWNTO 1) := "10";
-	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(15 DOWNTO 1) := "000000000000000";
+	SIGNAL TargetIndex_TB: 	STD_LOGIC_VECTOR(3 DOWNTO 1) := "001";
+	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0000000000000000";
 	
 	
 	
@@ -51,12 +51,12 @@ begin
 		CLK_TB <= not(CLK_TB);
 	end process Sample_clk_gen;
 	
-	TargetIndex_TB <= 	"00" after 200000 us,
-						"01" after 300000 us,
-						"10" after 400000 us,
-						"11" after 500000 us,
-						"00" after 600000 us,
-						"11" after 1000000 us;
+	TargetIndex_TB <= 	"010" after 200000 us,
+						"001" after 300000 us,
+						"011" after 400000 us,
+						"011" after 500000 us,
+						"100" after 600000 us,
+						"001" after 1000000 us;
 	
 	
 	

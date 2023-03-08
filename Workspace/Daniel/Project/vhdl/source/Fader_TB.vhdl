@@ -24,8 +24,8 @@ architecture arch of F_TB is
 			CLK:			in STD_LOGIC; --48kHz clock
 			SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
 			sampleOut:		out STD_LOGIC_VECTOR(16 DOWNTO 1);
-			Indexer:		in STD_LOGIC_VECTOR(15 DOWNTO 1);
-			RefIndex:		in STD_LOGIC_VECTOR(2 DOWNTO 1);
+			Indexer:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
+			RefIndex:		in STD_LOGIC_VECTOR(3 DOWNTO 1);
 			Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
 	end component F;
@@ -34,8 +34,8 @@ architecture arch of F_TB is
 	SIGNAL CLK_TB: 			STD_LOGIC := '0';
 	SIGNAL SampleIn_TB:		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0111111111111111";
 	SIGNAL SampleOUt_TB:	STD_LOGIC_VECTOR(16 DOWNTO 1);	
-	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(15 DOWNTO 1) := "000000000000000";
-	SIGNAL RefIndex_TB:		STD_LOGIC_VECTOR(2 DOWNTO 1) := "01";
+	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0000000000000000";
+	SIGNAL RefIndex_TB:		STD_LOGIC_VECTOR(3 DOWNTO 1) := "011";
 	
 	SIGNAL Multi_TB:			STD_LOGIC_VECTOR(16 downto 1);
 	

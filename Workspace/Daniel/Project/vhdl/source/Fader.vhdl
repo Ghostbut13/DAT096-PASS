@@ -20,8 +20,8 @@ entity F is
 	CLK:			in STD_LOGIC; --48kHz clock
 	SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
 	sampleOut:		out STD_LOGIC_VECTOR(16 DOWNTO 1);
-	Indexer:		in STD_LOGIC_VECTOR(15 DOWNTO 1);
-	RefIndex:		in STD_LOGIC_VECTOR(2 DOWNTO 1);
+	Indexer:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
+	RefIndex:		in STD_LOGIC_VECTOR(3 DOWNTO 1);
 	Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
 end F;
@@ -44,10 +44,9 @@ begin
 	
 	IF rising_edge(CLK) then
 		delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
-		IF delta < "0001000000000000"  then
-			Multiplicant <= "0001000000000000" - delta;
+		IF delta < "0001" & "000000000000"  then
+			Multiplicant <= "0001" & "000000000000" - delta;
 			
-			--Multiplicant <= "0100000000000000";
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
@@ -56,7 +55,7 @@ begin
 	END IF;
 	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
 	--Multiout <= STD_LOGIC_VECTOR(delta);
-	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(32 DOWNTO 17));
+	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
 	
 	END PROCESS F_process;
 
