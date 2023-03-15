@@ -1,6 +1,7 @@
 library ieee;
 USE ieee.std_logic_1164.all;
-use work.power_estimation_package.all;
+--use work.power_estimation_package.all;
+use work.parameter.all;
 use ieee.numeric_std.all;
 
 -- PACKAGE parameter IS
