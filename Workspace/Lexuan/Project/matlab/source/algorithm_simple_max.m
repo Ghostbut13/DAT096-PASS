@@ -15,7 +15,7 @@ subplot(4,1,4);
 plot(iY(:,4));
 
 sY = iY;
-n=100;
+n=1000;
 iY=[zeros(n, length(iY(1,:))); iY];
 
 for i=n:len
@@ -57,8 +57,25 @@ for i=1:len
     end
     phaseA(i) = phase;
 end
-figure(3);
+
+figgy = figure(3);
 plot(phaseA);
+tstart= 625000;
+tstop = 645000;
+margint=10000;
+marginY = 0.1;
+xlabel("time [Samples]")
+ylabel("Indexer");
+B = annotation('rectangle', 'LineStyle','--');
+B.Parent = figgy.CurrentAxes;
+B.Position = [tstart-margint, phaseA(tstart)-marginY, tstop-tstart+2*margint, phaseA(tstop) - phaseA(tstart)+2*marginY];
+a2 = axes();
+a2.Position = [0.2 0.65 0.2 0.2]; % xlocation, ylocation, xsize, ysize
+plot(a2,tstart:tstop,phaseA(tstart:tstop)); axis tight
+
+
+
+
 
 figure(4)
 plot(out);
