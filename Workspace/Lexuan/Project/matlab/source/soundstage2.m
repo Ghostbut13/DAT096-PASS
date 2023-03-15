@@ -90,15 +90,19 @@ end
 subplot(3,1,1);
 title("Loudest microphone");
 ylabel("# Mic");
+xlabel("time [samples]")
 subplot(3,1,2);
 title("Second loudest microphone");
 ylabel("# Mic");
+xlabel("time [samples]")
 subplot(3,1,3);
 title("Third loudest microphone");
 ylabel("# Mic");
+xlabel("time [samples]")
+
 
 % mY=mY./minAttenuation; % auto gain
-figure(4)
+figure(5)
 hold on
 for i=1:length(mY(1,:))
     subplot(4,1,i);
