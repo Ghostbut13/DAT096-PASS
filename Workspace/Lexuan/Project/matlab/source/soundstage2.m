@@ -15,6 +15,10 @@ micCordX = micDist.*[-1.5, -0.5, 0.5, 1.5];
 micCordY = [ 0,    0,   0,   0];
 plot(micCordX, micCordY, 'X', 'linewidth', 2);
 hold on
+for i=1:4
+    text(micCordX(i)-0.3, micCordY(i)-0.2, 'Index: ' + string(i))
+end
+
 
 % Animate actor
 actorX = ones(length(Y(:,1)), 2);
@@ -28,9 +32,11 @@ for i=1:len
     %Y(i,1) = 0.1*sin(440*i/Fs);
 end
 for i=1:length(actorX(1,:))
-    plot(actorX(:,i), actorY(:,i), 'X', 'linewidth', 2);
+    plot(actorX(:,1), actorY(:,1), 'xred', 'linewidth', 2);
 end
-axis(micDist.*[-2.5, 2.5, -0.5, 1.5])
+quiver(actorX(round(len/3),1),0.2+actorY(round(len/3),1), actorX(round(2*len/3),1)-actorX(round(len/3),1), actorY(round(2*len/3),1)-actorY(round(len/3),1), 'black')
+
+axis(micDist.*[-2.5, 2.5, -0.5, 2.5])
 title("Stage")
 xlabel("Position [m]");
 ylabel("Position [m]");
@@ -69,17 +75,17 @@ for b=1:10000:len
     subplot(3,1,1)
     hold on;
     [A,I] = max(att(b,:));
-    plot(b,I, 'ro');
+    plot(b,I, 'xblack');
     att(b,I) = 0;
     subplot(3,1,2)
     hold on;
     [A,I] = max(att(b,:));
-    plot(b,I, 'ro');
+    plot(b,I, 'xblack');
     att(b,I) = 0;
     subplot(3,1,3);
     hold on;
     [A,I] = max(att(b,:));
-    plot(b,I, 'ro');
+    plot(b,I, 'xblack');
 end
 subplot(3,1,1);
 title("Loudest microphone");
