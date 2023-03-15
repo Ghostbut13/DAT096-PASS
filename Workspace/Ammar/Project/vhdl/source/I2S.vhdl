@@ -11,10 +11,10 @@ ENTITY I2S IS
     fsync:IN STD_LOGIC ;
     DIN : IN STD_LOGIC;
     B_state : out std_logic_vector (2 downto 0);
-    L1_out : out std_logic_vector (15 downto 0);
+    L1_out : out std_logic_vector (15 downto 0); --mic 1
     L2_out : out std_logic_vector (15 downto 0);
     R1_out : out std_logic_vector (15 downto 0);
-    R2_out : out std_logic_vector (15 downto 0)
+    R2_out : out std_logic_vector (15 downto 0)  --mic 4
 --		SDOUT : OUT std_logic
     );
 END ENTITY I2S;
