@@ -3,9 +3,9 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 ENTITY MAX IS
-  GENERIC ( WORD_LENGHT : integer);
+  GENERIC ( WORD_LENGHT : integer := 2);
   PORT  (
-    reset 	: IN std_logic;
+    rstn 	: IN std_logic;
     clk		: IN std_logic;
     DIN1 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
     DIN2 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
@@ -36,9 +36,9 @@ ARCHITECTURE ARCH_MAX OF MAX IS
 BEGIN
 
 give_max_proc:
- process(clk, reset, counter, DIN1_signal, DIN2_signal, DIN3_signal, DIN4_signal)
+ process(clk, rstn, counter, DIN1_signal, DIN2_signal, DIN3_signal, DIN4_signal)
 	begin
-	if reset = '1' then
+	if rstn = '0' then
 		max_finish <= "000";
 		counter <= 0;
 		done_signal <= '0';
@@ -47,19 +47,19 @@ give_max_proc:
 		if counter < countermax then
 			if DIN1_signal > max_signal then
 				max_signal <= DIN1_signal;
-				current_max <= "000";
+				current_max <= "001";
 				counter <= counter + 1; 
 			elsif DIN2_signal > max_signal then
 				max_signal <= DIN2_signal;
-				current_max <= "001";
+				current_max <= "010";
 				counter <= counter + 1; 
 			elsif DIN3_signal > max_signal then
 				max_signal <= DIN3_signal;
-				current_max <= "010";
+				current_max <= "011";
 				counter <= counter + 1; 
 			elsif DIN4_signal > max_signal then
 				max_signal <= DIN4_signal;
-				current_max <= "011";
+				current_max <= "100";
 				counter <= counter + 1; 
 			end if;
 		else 

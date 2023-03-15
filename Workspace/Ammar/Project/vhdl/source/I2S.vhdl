@@ -184,7 +184,7 @@ BEGIN
       L2_out_signal <= (OTHERS => '0');
       R1_out_signal <= (OTHERS => '0');
       R2_out_signal <= (OTHERS => '0');
-    elsif falling_edge(fsync) then
+    elsif falling_edge(fsync) then -- write out new dta
       L1_out_signal <= stored_data_1;
       L2_out_signal <= stored_data_2;
       R1_out_signal <= stored_data_3;

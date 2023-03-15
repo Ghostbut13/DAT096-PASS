@@ -41,9 +41,9 @@ begin
 	PROCESS(CLK)
 	BEGIN
 	IF rising_edge(CLK) then
-		IF IndexerSig > TargetIndex & "000000000000" then
+		IF IndexerSig > TargetIndex & "0000000000000" then
 			IndexerSig <= IndexerSig - PanningDelta;
-		ELSIF IndexerSig < TargetIndex  & "000000000000" then
+		ELSIF IndexerSig < TargetIndex  & "0000000000000" then
 			IndexerSig <= IndexerSig + PanningDelta;
 		ELSE
 			IndexerSig <= IndexerSig;
