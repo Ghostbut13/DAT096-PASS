@@ -59,19 +59,22 @@ for i=1:len
 end
 
 figgy = figure(3);
-plot(phaseA);
+plot(phaseA, 'blue');
+grid on;
 tstart= 625000;
 tstop = 645000;
 margint=10000;
 marginY = 0.1;
-xlabel("time [Samples]")
+xlabel("time [Sample]")
 ylabel("Indexer");
 B = annotation('rectangle', 'LineStyle','--');
 B.Parent = figgy.CurrentAxes;
 B.Position = [tstart-margint, phaseA(tstart)-marginY, tstop-tstart+2*margint, phaseA(tstop) - phaseA(tstart)+2*marginY];
 a2 = axes();
 a2.Position = [0.2 0.65 0.2 0.2]; % xlocation, ylocation, xsize, ysize
-plot(a2,tstart:tstop,phaseA(tstart:tstop)); axis tight
+plot(a2,tstart:tstop,phaseA(tstart:tstop), 'blue');
+axis([tstart,tstop,phaseA(tstart)-marginY,phaseA(tstop)+marginY])
+grid on;
 
 
 
