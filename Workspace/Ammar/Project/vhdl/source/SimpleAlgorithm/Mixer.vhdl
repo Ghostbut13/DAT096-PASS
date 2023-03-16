@@ -15,7 +15,7 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity M is
+entity mixer is
   port(
 	CLK:		in STD_LOGIC; --48kHz clock
 	Input1:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
@@ -24,9 +24,9 @@ entity M is
 	Input4:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
 	Output:		OUT STD_LOGIC_VECTOR(16 DOWNTO 1)
     );
-end M;
+end mixer;
 
-architecture Behavioral of M is
+architecture Behavioral of mixer is
 	SIGNAL sum: STD_LOGIC_VECTOR(16 DOWNTO 1);
 
 begin

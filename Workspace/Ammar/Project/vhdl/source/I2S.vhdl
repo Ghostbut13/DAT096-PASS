@@ -194,6 +194,7 @@ BEGIN
 
 
   -- --L1_out <= std_logic_vector(resize(-signed(resize(unsigned(L1_out_signal)), 17)),16);
+  -- TBD: FOR THE SIMPLE ALGORITHM WE STILL WANT TO GET 2'S COMP, SO COMMENT OUT BELOW LINE
   L1_out <= std_logic_vector(unsigned(L1_out_signal)+to_unsigned(16#8000#,16));
 
   --L1_out <= L1_out_signal;

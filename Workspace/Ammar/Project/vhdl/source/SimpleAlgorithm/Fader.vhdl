@@ -13,7 +13,7 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity F is
+entity fader is
   port(
 	CLK:			in STD_LOGIC; --48kHz clock
 	SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
@@ -22,9 +22,9 @@ entity F is
 	RefIndex:		in STD_LOGIC_VECTOR(3 DOWNTO 1);
 	Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
-end F;
+end fader;
 
-architecture Behavioral of F is
+architecture Behavioral of fader is
 	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
 	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
 	SIGNAL SampleOutSig: Signed(32 DOWNTO 1);

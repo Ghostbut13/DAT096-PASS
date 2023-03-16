@@ -23,21 +23,21 @@ architecture ArchSimpleAlgorithm of SimpleAlgorithm is
 
 --------component decleration--------
 -- shif register component
-component SR is 
+component shiftregister is 
   PORT(clk: IN STD_LOGIC;
        din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
        dout: OUT outputdata);
-END component SR;
+END component shiftregister;
 
 
 -- power estimation
-component PE is
+component power_estimation is
 	port(clk:in std_logic;
 		reset_n: in std_logic;
 		data_in: in outputdata;
 		power_data: out std_logic_vector(SIGNAL_WIDTH-1 downto 0)
 	);
-end component PE;
+end component power_estimation;
 
 
 -- get max vector
@@ -135,7 +135,7 @@ end component mixer;
  -- Save big samples of data in shift registers.
  SR_G: for i in 0 to 3 generate
 	SR_inst:
-		component SR
+		component shiftregister
 		port map(clk => clk48_sa_signal,
 				 din => input_sa_signal(i),
 				 dout => dout_sa_signal(i)
@@ -146,7 +146,7 @@ end component mixer;
  -- Calculate the average power of the 4 channel signals.
  PE_G: for i in 0 to 3 generate
     PE_inst:
-	    component PE
+	    component power_estimation
 		port map(clk => clk48_sa_signal,
 		     reset_n => rstn_sa_signal,
 			 data_in => dout_sa_signal(i),
