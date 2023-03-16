@@ -15,7 +15,7 @@ subplot(4,1,4);
 plot(iY(:,4));
 
 sY = iY;
-n=1000;
+n=100;
 iY=[zeros(n, length(iY(1,:))); iY];
 
 for i=n:len
@@ -62,7 +62,7 @@ figgy = figure(3);
 plot(phaseA, 'blue');
 grid on;
 tstart= 625000;
-tstop = 645000;
+tstop = 650000;
 margint=10000;
 marginY = 0.1;
 xlabel("time [Sample]")
