@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 ENTITY MAX IS
-  GENERIC ( WORD_LENGHT : integer := 2);
+  GENERIC ( WORD_LENGHT : natural in range 0 to 16);
   PORT  (
     rstn 	: IN std_logic;
     clk		: IN std_logic;

@@ -8,12 +8,12 @@ entity MAX_tb is
 end MAX_tb;
 
 architecture ARCH_MAX_tb of MAX_tb is
-  constant WORD_LENGTH_TB : integer := 4;
+  constant WORD_LENGTH_TB : integer := 3;
   
   component MAX is
-  GENERIC ( WORD_LENGHT : integer);
+  GENERIC ( WORD_LENGHT : natural range 0 to 16 := 3);
   PORT  (
-	reset   : IN std_logic;
+	rstn   : IN std_logic;
 	clk		: IN std_logic;
 	DIN1 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
 	DIN2 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
@@ -51,7 +51,7 @@ architecture ARCH_MAX_tb of MAX_tb is
   component MAX
   generic map(WORD_LENGHT => WORD_LENGTH_TB)
   port map(
-		reset => reset_tb,
+		rstn => reset_tb,
 		clk => clk_tb,
 		DIN1 => DIN1_tb,
 		DIN2=>DIN2_tb,
@@ -61,8 +61,8 @@ architecture ARCH_MAX_tb of MAX_tb is
 		done => done_tb
 		);
 				
-	reset_tb <= '0' after 0 ms,
-				'1' after 70 ms,
-				'0' after 85 ms;
+	reset_tb <= '1' after 0 ms,
+				'0' after 70 ms,
+				'1' after 85 ms;
 				
 end ARCH_MAX_tb;

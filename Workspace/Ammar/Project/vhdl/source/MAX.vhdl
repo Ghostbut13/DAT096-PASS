@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 ENTITY MAX IS
-  GENERIC ( WORD_LENGHT : integer := 2);
+  GENERIC ( WORD_LENGHT : natural range 0 to 16 := 3);
   PORT  (
     rstn 	: IN std_logic;
     clk		: IN std_logic;
@@ -43,7 +43,7 @@ give_max_proc:
 		counter <= 0;
 		done_signal <= '0';
 	end if;
-	if rising_edge(clk) then
+	if FALLING_EDGE(clk) then
 		if counter < countermax then
 			if DIN1_signal > max_signal then
 				max_signal <= DIN1_signal;
