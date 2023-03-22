@@ -50,8 +50,7 @@ component MAX is
     DIN2 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
     DIN3 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
     DIN4 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
-    max 	: OUT std_logic_vector (2 downto 0);
-	done 	: OUT std_logic
+    max 	: OUT std_logic_vector (2 downto 0)
     );
 END component MAX;
 
@@ -113,7 +112,6 @@ end component mixer;
  
  -- max funtion
  signal MaxIndexer_sa_signal : std_logic_vector(2 downto 0);
- signal MaxDone_sa_signal : std_logic;
  
  -- Panning accumulator
  signal PAIndexer_sa_signal : std_logic_vector (SIGNAL_WIDTH-1 DOWNTO 0);
@@ -165,8 +163,7 @@ end component mixer;
   DIN2 => power_out_sa_signal(1),
   DIN3 => power_out_sa_signal(2),
   DIN4 => power_out_sa_signal(3),
-  max => MaxIndexer_sa_signal,
-  done => MaxDone_sa_signal
+  max => MaxIndexer_sa_signal
   );
   
   

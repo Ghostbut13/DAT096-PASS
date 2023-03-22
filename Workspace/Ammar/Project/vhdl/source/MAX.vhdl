@@ -11,8 +11,7 @@ ENTITY MAX IS
     DIN2 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
     DIN3 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
     DIN4 	: IN std_logic_vector (WORD_LENGHT-1 downto 0);
-    max 	: OUT std_logic_vector (2 downto 0);
-	done 	: OUT std_logic
+    max 	: OUT std_logic_vector (2 downto 0)
     );
 END ENTITY MAX;
 
@@ -23,7 +22,6 @@ ARCHITECTURE ARCH_MAX OF MAX IS
   SIGNAL DIN2_signal: STD_LOGIC_VECTOR (WORD_LENGHT-1 DOWNTO 0);
   SIGNAL DIN3_signal: STD_LOGIC_VECTOR (WORD_LENGHT-1 DOWNTO 0);
   SIGNAL DIN4_signal: STD_LOGIC_VECTOR (WORD_LENGHT-1 DOWNTO 0);
-  SIGNAL done_signal: STD_LOGIC := '0';
   
   SIGNAL max_signal : STD_LOGIC_VECTOR (WORD_LENGHT-1 DOWNTO 0) := (OTHERS => '0');
   SIGNAL current_max  : STD_LOGIC_VECTOR (2 DOWNTO 0) := "000"; 
@@ -41,7 +39,6 @@ give_max_proc:
 	if rstn = '0' then
 		max_finish <= "000";
 		counter <= 0;
-		done_signal <= '0';
 	end if;
 	if FALLING_EDGE(clk) then
 		if counter < countermax then
@@ -65,7 +62,6 @@ give_max_proc:
 		else 
 			counter <= 0;
 			max_finish <= current_max;
-			done_signal <= '1';
 		end if;
 	end if;
 end process give_max_proc;
@@ -76,6 +72,5 @@ end process give_max_proc;
  DIN3_signal <= DIN3;
  DIN4_signal <= DIN4;
  max <= max_finish;
- done <= done_signal;
 
 END ARCH_MAX;
