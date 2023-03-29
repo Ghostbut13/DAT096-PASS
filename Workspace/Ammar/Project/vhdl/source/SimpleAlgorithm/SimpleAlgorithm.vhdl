@@ -12,7 +12,9 @@ entity SimpleAlgorithm is
 	   RC2 : in std_logic_vector(16 downto 1);
 	   clk : in std_logic;
 	   rstn : in std_logic;
-	   OUTPUT : out std_logic_vector(16 downto 1)
+	   OUTPUT : out std_logic_vector(16 downto 1);
+	   INDEX_OUT : out std_logic_vector(2 downto 0 );
+	   PA_INDEXER_OUT : out std_logic_vector(16 downto 1) 
       );
 
 end SimpleAlgorithm;
@@ -25,6 +27,7 @@ architecture ArchSimpleAlgorithm of SimpleAlgorithm is
 -- shif register component
 component shiftregister is 
   PORT(clk: IN STD_LOGIC;
+	   rst_n : IN std_logic;
        din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
        dout: OUT outputdata);
 END component shiftregister;
@@ -32,6 +35,7 @@ END component shiftregister;
 
 -- power estimation
 component power_estimation is
+    generic(len_data : positive := LEN_DATA);
 	port(clk:in std_logic;
 		reset_n: in std_logic;
 		data_in: in outputdata;
@@ -104,11 +108,11 @@ end component mixer;
  signal clk48_sa_signal : std_logic;
  
  -- shift register signals
- signal dout_sa_signal : ARRAY3D;
+ signal dout_sa_signal : ARRAY3D := (others => (others => (others =>'0')));
 
  
  -- power estimation
- signal power_out_sa_signal : ARRAY16bits;
+ signal power_out_sa_signal : ARRAY16bits := (others => (others=>'0'));
  
  -- max funtion
  signal MaxIndexer_sa_signal : std_logic_vector(2 downto 0);
@@ -135,6 +139,7 @@ end component mixer;
 	SR_inst:
 		component shiftregister
 		port map(clk => clk48_sa_signal,
+				 rst_n => rstn_sa_signal, 
 				 din => input_sa_signal(i),
 				 dout => dout_sa_signal(i)
 				 );
@@ -215,5 +220,8 @@ end component mixer;
  input_sa_signal(3) <= RC2;
  
  OUTPUT <= OUTPUT_sa_Signal;
-
+ INDEX_OUT <=  MaxIndexer_sa_signal;
+ PA_INDEXER_OUT <= PAIndexer_sa_signal;
+ 
+ 
 end architecture ArchSimpleAlgorithm;

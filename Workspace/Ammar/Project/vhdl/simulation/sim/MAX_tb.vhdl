@@ -26,8 +26,8 @@ architecture ARCH_MAX_tb of MAX_tb is
 
   signal DIN1_tb : std_logic_vector (WORD_LENGTH_TB-1 downto 0):= "001";
   signal DIN2_tb: std_logic_vector (WORD_LENGTH_TB-1 downto 0) := "011";
-  signal DIN3_tb : std_logic_vector (WORD_LENGTH_TB-1 downto 0) := "101";
-  signal DIN4_tb: std_logic_vector (WORD_LENGTH_TB-1 downto 0) := "111";
+  signal DIN3_tb : std_logic_vector (WORD_LENGTH_TB-1 downto 0) := "111";
+  signal DIN4_tb: std_logic_vector (WORD_LENGTH_TB-1 downto 0) := "101";
   
   signal clk_tb   : std_logic := '0';
   signal reset_tb : std_logic := '0';
