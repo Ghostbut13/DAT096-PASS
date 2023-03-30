@@ -1,7 +1,7 @@
 clc, clear all, close all
 
-InputFile = "simMic_1.txt";
-
+InputFile = "outputLOG.log";
+%%InputFile = "simMic_1.txt";
 fileId = fopen(InputFile, 'r');
 
 txt = fread(fileId, 'char*1');
@@ -9,7 +9,7 @@ fclose(fileId);
 
 
 q=16;
-len = length(txt)/(q+1);
+len = floor(length(txt)/(q+1));
 dY = zeros(len,1);
 
 
@@ -25,6 +25,29 @@ for i=1:len
     dY(i) = val;
 end
 
+%%dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
 
 plot(dY);
+dY = dY - mean(dY);
+%%
+figure(5);
+Fs = 48000;
+SampleLength=5000;
+Overlap = 0.2*SampleLength;
+g = bartlett(SampleLength);
+F = logspace(0, log10(5000), 256);
+[s,f,t] = spectrogram(dY,g,Overlap,F,Fs);
+waterplot(s,f,t, 'green');
+
+
+
+function waterplot(s,f,t, color)
+% Waterfall plot of spectrogram
+    P = waterfall(f,t,abs(s)'.^2);
+    P.EdgeColor = color;
+    set(gca,XDir="reverse",View=[30 50])
+    xlabel("Frequency (Hz)")
+    ylabel("Time (s)")
+end
+%sound(out, Fs);
 

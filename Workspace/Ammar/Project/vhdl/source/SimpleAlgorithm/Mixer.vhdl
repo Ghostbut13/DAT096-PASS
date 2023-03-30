@@ -33,7 +33,7 @@ begin
 
 
 	M_process:
-	PROCESS(CLK)
+	PROCESS(CLK, Input1, Input2, Input3, Input4)
 	BEGIN
 	
 	
@@ -41,9 +41,10 @@ begin
 		sum <= Input1 + Input2 + Input3 + Input4;
 		
 	END IF;
-	Output <= sum(16 DOWNTO 1);
-	END PROCESS M_process;
+    END PROCESS M_process;
 
+	Output <= sum(16 DOWNTO 1);
+	--Output <= std_logic_vector(unsigned(sum(16 DOWNTO 1))+to_unsigned(16#8000#,16));
 
 	
 end Behavioral;

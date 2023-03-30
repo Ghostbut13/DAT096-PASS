@@ -36,7 +36,7 @@ begin
   
 
 	PA_process:
-	PROCESS(CLK)
+	PROCESS(CLK, IndexerSig, TargetIndex)
 	BEGIN
 	IF FALLING_EDGE(CLK) then
 		IF IndexerSig > TargetIndex & "0000000000000" then

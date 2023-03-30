@@ -1,6 +1,7 @@
 clc, clear all, close all
 
-run("soundstage2.m"); 
+%run("soundstage2.m"); 
+run("soundExporter.m");
 iY=mY;
 close all
 
@@ -57,7 +58,7 @@ for i=1:len
     end
     phaseA(i) = phase;
 end
-
+%%
 figgy = figure(3);
 plot(phaseA, 'blue');
 grid on;

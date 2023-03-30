@@ -11,11 +11,14 @@
 
 
 LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
 LIBRARY work;
+USE ieee.std_logic_1164.ALL;
 USE work.parameter.ALL;
 
 ENTITY shiftregister IS
+  GENERIC(SIGNAL_WIDTH : INTEGER := 16;
+		  REGISTER_LENGTH : integer := 100
+          );
   PORT(clk: IN STD_LOGIC;
        rst_n: IN STD_LOGIC;
        din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);

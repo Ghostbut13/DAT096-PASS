@@ -27,14 +27,14 @@ end fader;
 architecture Behavioral of fader is
 	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
 	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
-	SIGNAL SampleOutSig: Signed(32 DOWNTO 1);
-	SIGNAL delta:		signed(16 DOWNTO 1);
+	SIGNAL SampleOutSig: Signed(32 DOWNTO 1) := (others => '0');
+	SIGNAL delta       : signed(16 DOWNTO 1);
 
 begin
 
 
 	F_process:
-	PROCESS(CLK)
+	PROCESS(CLK, RefIndex, Indexer, SampleIn, Multiplicant, SampleOutSig)
 	BEGIN
 	
 	SampleInSig <= signed(SampleIn);
@@ -48,7 +48,7 @@ begin
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
-		SampleOutSig <= SampleInSig * Multiplicant;
+		SampleOutSig <= SampleInSig & "0000000000000000"; --* Multiplicant;
 		
 	END IF;
 	Multiout <= STD_LOGIC_VECTOR(Multiplicant);

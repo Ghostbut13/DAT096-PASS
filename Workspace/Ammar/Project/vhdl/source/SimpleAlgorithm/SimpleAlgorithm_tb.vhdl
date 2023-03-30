@@ -1,4 +1,5 @@
 library IEEE;
+library work;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use IEEE.std_logic_textio.all;
@@ -33,7 +34,7 @@ architecture arch_sa_tb of sa_tb is
   constant WL : positive := 16;
 
   -- adder wordlength
-  constant CYCLES : positive := 1000; --1255334
+  constant CYCLES : positive := 100000; --1255334 --100000
   -- number of test vectors to load word_array
   type word_array is array (0 to CYCLES) of std_logic_vector(WL-1 downto 0);
   -- type used to store WL-bit test vectors for CYCLES cycles. array[0-999] every element is 16-bit
@@ -86,6 +87,7 @@ architecture arch_sa_tb of sa_tb is
   signal OUTPUT_tb 		: std_logic_vector(16 downto 1);
   signal INDEX_OUT_tb 	: std_logic_vector(3 downto 1);
   signal PA_INDEXER_tb  : std_logic_vector(16 downto 1); 
+  signal OUTPUT_tb_temp : std_logic_vector(1 to 16);
   
   
   signal LC1_array        : word_array;
@@ -94,7 +96,7 @@ architecture arch_sa_tb of sa_tb is
   signal RC2_array        : word_array;
  
   signal Expected_array : word_array;
-  constant clock_period : time := 10 ns;
+  constant clock_period : time := 10 us;
 
  begin -- start architecture
 
@@ -104,7 +106,7 @@ architecture arch_sa_tb of sa_tb is
     clk_tb_signal <= not(clk_tb_signal);
 
   end process;
-  
+    
   SA_inst:
     component SimpleAlgorithm
       port map(
@@ -125,9 +127,9 @@ architecture arch_sa_tb of sa_tb is
   RC1_array		   <= load_words(string'("C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\simMic_3.txt"));
   RC2_array 	   <= load_words(string'("C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\simMic_4.txt"));
 
-  rstn_tb <= 	'1' after 0 ns,
-				'0' after 3 ns,
-				'1' after 13 ns;
+  rstn_tb <= 	'1' after 0 us,
+				'0' after 3 us,
+				'1' after 13 us;
 
   verification_process : process        -- maybe add the loops inside here!
     variable index : natural := 0;
@@ -141,22 +143,24 @@ architecture arch_sa_tb of sa_tb is
 	  LC2_tb <= LC2_array(0);
 	  RC1_tb <= RC1_array(0);
 	  RC2_tb <= RC2_array(0);
+	  OUTPUT_tb_temp (1 to 16) <= OUTPUT_tb (16 downto 1);
     wait for clock_period;
     write_output : while n < CYCLES loop
 	  LC1_tb <= LC1_array(n);
 	  LC2_tb <= LC2_array(n);
 	  RC1_tb <= RC1_array(n);
 	  RC2_tb <= RC2_array(n);
+	  OUTPUT_tb_temp (1 to 16) <= OUTPUT_tb (16 downto 1);
 
 	  wait for clock_period/2;
 	  write(L, INDEX_OUT_tb);
 	  writeline(MAXINDEXLOg, L);
 	  write(L, PA_INDEXER_tb);
 	  writeline(PALOG, L);
-	  --write(L, string'("PA INDEXER for index: "));
-	  --write(L, n);
-	  --write(L, string'(" = "));
-	  write(L, OUTPUT_tb);    
+	  write(L, string'("index: "));
+	  write(L, n);
+	  write(L, string'(" = "));
+	  write(L, OUTPUT_tb_temp);    
 	  writeline(outputLOG, L);
 			  
 	  assert(INDEX_OUT_tb = "001") report("correct") severity note;

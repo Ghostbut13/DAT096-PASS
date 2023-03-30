@@ -1,11 +1,14 @@
 library ieee;
+library work;
 USE ieee.std_logic_1164.all;
 use work.parameter.all;
 use ieee.numeric_std.all;
 
 
 entity power_estimation is
-	generic(len_data: positive);
+	generic(len_data: integer := 23;
+			REGISTER_LENGTH : integer := 100;
+			SIGNAL_WIDTH : integer := 16);
 	port(clk:in std_logic;
 		reset_n: in std_logic;
 		data_in: in outputdata;
