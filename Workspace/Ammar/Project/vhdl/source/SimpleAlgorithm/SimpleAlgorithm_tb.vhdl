@@ -37,7 +37,8 @@ architecture arch_sa_tb of sa_tb is
   -- number of test vectors to load word_array
   type word_array is array (0 to CYCLES) of std_logic_vector(WL-1 downto 0);
   -- type used to store WL-bit test vectors for CYCLES cycles. array[0-999] every element is 16-bit
-  file indexLOG        : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\indexLOG.log";
+  file MAXindexLOG     : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\MAXindexLOG.log";
+  file PALOG     	   : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\PALOG.log";
   file outputLOG       : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\outputLOG.log";
 
   -- file to which you can write information
@@ -103,7 +104,6 @@ architecture arch_sa_tb of sa_tb is
     clk_tb_signal <= not(clk_tb_signal);
 
   end process;
-
   
   SA_inst:
     component SimpleAlgorithm
@@ -148,21 +148,20 @@ architecture arch_sa_tb of sa_tb is
 	  RC1_tb <= RC1_array(n);
 	  RC2_tb <= RC2_array(n);
 
-        wait for clock_period/2;
-          --write(L, string'("INDEXER for index: "));
-          --write(L, n);
-          --write(L, string'(" = "));
-          write(L, INDEX_OUT_tb);
-          writeline(indexLOG, L);
-		  --write(L, string'("PA INDEXER for index: "));
-          --write(L, n);
-          --write(L, string'(" = "));
-          write(L, OUTPUT_tb);    
-          writeline(outputLOG, L);
-		  		  
-		  assert(INDEX_OUT_tb = "001") report("correct") severity note;
-          wait for clock_period/2;
-          n := n+1;
+	  wait for clock_period/2;
+	  write(L, INDEX_OUT_tb);
+	  writeline(MAXINDEXLOg, L);
+	  write(L, PA_INDEXER_tb);
+	  writeline(PALOG, L);
+	  --write(L, string'("PA INDEXER for index: "));
+	  --write(L, n);
+	  --write(L, string'(" = "));
+	  write(L, OUTPUT_tb);    
+	  writeline(outputLOG, L);
+			  
+	  assert(INDEX_OUT_tb = "001") report("correct") severity note;
+	  wait for clock_period/2;
+	  n := n+1;
   end loop write_output;
 
   assert(false) report "Done" severity failure;
