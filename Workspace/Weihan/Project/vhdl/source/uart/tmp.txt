@@ -1,0 +1,2 @@
+TYPE vector_of_std_logic_vector8 IS ARRAY (NATURAL RANGE <>) OF std_logic_vector(7 DOWNTO 0);
+signal audio_4_channel : vector_of_std_logic_vector8(6000000 downto 0);

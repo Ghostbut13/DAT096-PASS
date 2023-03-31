@@ -6,7 +6,7 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-20
+-- Last update: 2023-02-27
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -35,11 +35,11 @@ entity ADC_Configuration_Flow_Controller is
   
   port (
     finish_config_input : in std_logic;
-    I2S_mode    : in  std_logic;
-    master_mode : in  std_logic;
-    GPIO_MCLK   : in  std_logic;
-    FS_48k_256_BCLK  : in  std_logic;
-    MCLK_root   : in std_logic;
+    I2S_mode            : in std_logic;
+    master_mode         : in std_logic;
+    GPIO_MCLK           : in std_logic;
+    FS_48k_256_BCLK     : in std_logic;
+    MCLK_root           : in std_logic;
     
     rstn         : in  std_logic;
     clk          : in  std_logic;
@@ -66,14 +66,16 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   constant const_addr_c3_reg            : std_logic_vector(7 downto 0) := x"46";
   constant const_addr_c4_reg            : std_logic_vector(7 downto 0) := x"4b";
   constant const_addr_input_channel_reg : std_logic_vector(7 downto 0) := x"73";
-  constant const_addr_8_reg             : std_logic_vector(7 downto 0) := x"74";
+  constant const_addr_enOUT_reg         : std_logic_vector(7 downto 0) := x"74";
   constant const_addr_powerup_reg       : std_logic_vector(7 downto 0) := x"75";
   constant const_addr_10_reg            : std_logic_vector(7 downto 0) := x"64";
 
-  -- -- PLL MASTER-CONTROLLER-MODE addr (no need)
-  -- constant const_addr_21_reg            : std_logic_vector(7 downto 0) := x"21";
-  -- constant const_addr_13_reg            : std_logic_vector(7 downto 0) := x"13";
-  -- constant const_addr_14_reg            : std_logic_vector(7 downto 0) := x"14"
+  -- PLL MASTER-CONTROLLER-MODE addr (need)
+  constant const_addr_GPIO1_reg         : std_logic_vector(7 downto 0) := x"21";
+  constant const_addr_MATSER_reg        : std_logic_vector(7 downto 0) := x"13";
+  constant const_addr_FS_BCLK_R_reg     : std_logic_vector(7 downto 0) := x"14";
+  constant const_addr_MCLK_root_reg     : std_logic_vector(7 downto 0) := x"16";
+  constant const_addr_i2s_reg           : std_logic_vector(7 downto 0) := x"07";
 
   constant CHANNEL_NUMBER : integer := 4;
   constant WTIME_1ms_CNT  : integer := 1010000 / 10;
@@ -104,13 +106,11 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
 
   signal value_c1_config        : std_logic_vector(7 downto 0) := "00010000";   --128 ratio
   --signal value_c1_config        : std_logic_vector(7 downto 0) := "00011000";
-
   signal value_c2_config        : std_logic_vector(7 downto 0) := "00011000";
   signal value_c3_config        : std_logic_vector(7 downto 0) := "00011000";--
   signal value_c4_config        : std_logic_vector(7 downto 0) := "00011000";--
                                                                              --unused
   signal value_enable_input     : std_logic_vector(7 downto 0) := "11000000";-- 2channel
-
   signal value_enable_output    : std_logic_vector(7 downto 0) := "10000000";-- 1channel
   --signal value_enable_output    : std_logic_vector(7 downto 0) := "11000000";-- 2channel
 
@@ -118,11 +118,12 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   signal value_enable_diagno    : std_logic_vector(7 downto 0) := "00000000";
   -- -- for waiting_time between some config steps 
   signal waiting_time           : integer := 0;
-  -- -- --for adc PLL-controller-MODE (no need)
-  -- signal value_GPIO1_MCLK : std_logic_vector(7 downto 0) := x"a0";  -- config GPIO1 as MCLK input
-  -- signal value_master_device : std_logic_vector(7 downto 0) := x"80";  -- config device as master with MCLK
-  -- signal value_FS_BCLK_R : std_logic_vector(7 downto 0) := x"48";  -- FS = 44.1k or 48k  BCLK/ratio = 256
-
+  -- --for adc PLL-controller-MODE (no need)
+  signal value_GPIO1_MCLK       : std_logic_vector(7 downto 0) := x"a0";  -- config GPIO1 as MCLK input
+  signal value_master_device    : std_logic_vector(7 downto 0) := x"81";  -- config device as master with MCLK
+  signal value_FS_BCLK_R        : std_logic_vector(7 downto 0) := x"46";  -- FS = 44.1k or 48k  BCLK/ratio = 256
+  signal value_MCLK_root        : std_logic_vector(7 downto 0) := x"88";
+  signal value_i2s              : std_logic_vector(7 downto 0) := x"40";
   
   -- edge signal
   signal d1_I2S_mode    : std_logic;
@@ -439,8 +440,8 @@ begin  -- architecture arch_adc_config
         if d2_I2S_mode = '1' and flag_stop_single_config ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"40";
-          OUT_config_addr  <= x"07";
+          OUT_config_value <= value_i2s;
+          OUT_config_addr  <= const_addr_i2s_reg;
           if done='1' then
             OUT_start <= '0';
           else
@@ -453,8 +454,8 @@ begin  -- architecture arch_adc_config
         if d2_master_mode = '1'  and flag_stop_single_config ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"81";
-          OUT_config_addr  <= x"13";
+          OUT_config_value <= value_master_device ;
+          OUT_config_addr  <= const_addr_MATSER_reg  ;
           if done='1' then
             OUT_start <= '0';
           else
@@ -467,8 +468,8 @@ begin  -- architecture arch_adc_config
         if d2_GPIO_MCLK = '1' and flag_stop_single_config ='0'  then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"a0";
-          OUT_config_addr  <= x"21";
+          OUT_config_value <= value_GPIO1_MCLK;
+          OUT_config_addr  <= const_addr_GPIO1_reg;
           if done='1' then
             OUT_start <= '0';
           else
@@ -481,11 +482,8 @@ begin  -- architecture arch_adc_config
         if d2_FS_48k_256_BCLK = '1'  and flag_stop_single_config  ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-
-          OUT_config_value <= x"46";   --48
-          --OUT_config_value <= x"48";
-
-          OUT_config_addr  <= x"14";
+          OUT_config_value <= value_FS_BCLK_R;   --48--46
+          OUT_config_addr  <= const_addr_FS_BCLK_R_reg;
           if done='1' then
             OUT_start <= '0';
           else
@@ -498,8 +496,8 @@ begin  -- architecture arch_adc_config
         if d2_MCLK_root= '1'  and flag_stop_single_config  ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
-          OUT_config_value <= x"88";
-          OUT_config_addr  <= x"16";
+          OUT_config_value <= value_MCLK_root ;
+          OUT_config_addr  <= const_addr_MCLK_root_reg;
           if done='1' then
             OUT_start <= '0';
           else
@@ -549,7 +547,7 @@ begin  -- architecture arch_adc_config
         end if;
       when enable_output_state =>       --3e
         OUT_config_value <= value_enable_output;
-        OUT_config_addr  <= const_addr_8_reg;
+        OUT_config_addr  <= const_addr_enOUT_reg;
         if done='1' then
           OUT_start <= '0';
         else
