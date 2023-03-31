@@ -49,8 +49,6 @@ ARCHITECTURE ARCH_I2S OF I2S IS
   signal L1_out_signal_converter: std_logic_vector (15 downto 0);
   
 BEGIN
-
-
 -- state changing is determined by bclk 
   state_transition_proc:
   PROCESS(bclk, reset) --rstn
@@ -126,8 +124,6 @@ BEGIN
         stored_data_4<= (others => '0');
         B_state_signal <= "111";
         
-        
-        
       elsif present_state_signal = left_channel_1_state then
         B_state_signal <= "001";
         if counter1 <= WORD_LENGHT-1 then 
@@ -192,14 +188,9 @@ BEGIN
     end if;
   end process;
 
-
-  -- --L1_out <= std_logic_vector(resize(-signed(resize(unsigned(L1_out_signal)), 17)),16);
   L1_out <= std_logic_vector(unsigned(L1_out_signal)+to_unsigned(16#8000#,16));
-
-  --L1_out <= L1_out_signal;
-  L2_out <= L2_out_signal;
-  R1_out <= R1_out_signal;
-  R2_out <= R2_out_signal;
-  B_state <= B_state_signal;
+  L2_out <= std_logic_vector(unsigned(L2_out_signal)+to_unsigned(16#8000#,16));
+  R1_out <= std_logic_vector(unsigned(R1_out_signal)+to_unsigned(16#8000#,16));
+  R2_out <= std_logic_vector(unsigned(R1_out_signal)+to_unsigned(16#8000#,16));
 
 END ARCH_I2S;
