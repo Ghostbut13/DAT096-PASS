@@ -1,7 +1,7 @@
-clc, clear all, close all
+%clc, clear all, close all
 
 InputFile = "outputLOG.log";
-%%InputFile = "simMic_1.txt";
+%InputFile = "simMic_2.txt";
 fileId = fopen(InputFile, 'r');
 
 txt = fread(fileId, 'char*1');
@@ -9,8 +9,8 @@ fclose(fileId);
 
 
 q=16;
-len = floor(length(txt)/(q+1));
-dY = zeros(len,1);
+len = length(txt)/(q+2);
+dY = zeros(len,1); % create an array with len times indexes with zeroes.
 
 
 oune = char(49);
@@ -18,15 +18,16 @@ zerou = char(48);
 for i=1:len
     val = 0;
     for b=1:q
-        if txt((i-1)*(q+1) +b) == oune
+        if txt((i-1)*(q+2) +b) == oune
             val = val + 2^(q-b);
         end
     end
     dY(i) = val;
 end
 
-%%dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
-
+% 2's complement conversion
+%dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
+figure(2)
 plot(dY);
 dY = dY - mean(dY);
 %%

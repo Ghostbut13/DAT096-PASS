@@ -43,8 +43,8 @@ begin
 	END IF;
     END PROCESS M_process;
 
-	Output <= sum(16 DOWNTO 1);
-	--Output <= std_logic_vector(unsigned(sum(16 DOWNTO 1))+to_unsigned(16#8000#,16));
+	--Output <= sum(16 DOWNTO 1);
+	Output <= std_logic_vector(unsigned(sum(16 DOWNTO 1))+to_unsigned(16#8000#,16));
 
 	
 end Behavioral;

@@ -25,10 +25,10 @@ entity fader is
 end fader;
 
 architecture Behavioral of fader is
-	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
-	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
+	SIGNAL SampleInSig: Signed(16 DOWNTO 1)  := (others => '0');
+	SIGNAL Multiplicant: Signed(16 DOWNTO 1) := (others => '0');
 	SIGNAL SampleOutSig: Signed(32 DOWNTO 1) := (others => '0');
-	SIGNAL delta       : signed(16 DOWNTO 1);
+	SIGNAL delta       : signed(16 DOWNTO 1) := (others => '0');
 
 begin
 
@@ -48,7 +48,7 @@ begin
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
-		SampleOutSig <= SampleInSig & "0000000000000000"; --* Multiplicant;
+		SampleOutSig <= SampleInSig * Multiplicant;
 		
 	END IF;
 	Multiout <= STD_LOGIC_VECTOR(Multiplicant);

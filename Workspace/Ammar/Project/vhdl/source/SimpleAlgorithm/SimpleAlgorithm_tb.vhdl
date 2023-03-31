@@ -9,7 +9,7 @@ USE work.parameter.ALL;
 
 -- entity declaration
 entity sa_tb is
---CONSTANT THE_WL : NATURAL := 16
+ --CONSTANT yourmoma : NATURAL := 22;
 end entity sa_tb;
 
 -- architecture start
@@ -41,6 +41,8 @@ architecture arch_sa_tb of sa_tb is
   file MAXindexLOG     : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\MAXindexLOG.log";
   file PALOG     	   : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\PALOG.log";
   file outputLOG       : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\outputLOG.log";
+  file errorLOG        : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\errorLOG.log";
+
 
   -- file to which you can write information
 
@@ -86,9 +88,7 @@ architecture arch_sa_tb of sa_tb is
   signal RC2_tb			: std_logic_vector(16 downto 1);  
   signal OUTPUT_tb 		: std_logic_vector(16 downto 1);
   signal INDEX_OUT_tb 	: std_logic_vector(3 downto 1);
-  signal PA_INDEXER_tb  : std_logic_vector(16 downto 1); 
-  signal OUTPUT_tb_temp : std_logic_vector(1 to 16);
-  
+  signal PA_INDEXER_tb  : std_logic_vector(16 downto 1);   
   
   signal LC1_array        : word_array;
   signal LC2_array        : word_array;
@@ -143,27 +143,22 @@ architecture arch_sa_tb of sa_tb is
 	  LC2_tb <= LC2_array(0);
 	  RC1_tb <= RC1_array(0);
 	  RC2_tb <= RC2_array(0);
-	  OUTPUT_tb_temp (1 to 16) <= OUTPUT_tb (16 downto 1);
     wait for clock_period;
+	
     write_output : while n < CYCLES loop
 	  LC1_tb <= LC1_array(n);
 	  LC2_tb <= LC2_array(n);
 	  RC1_tb <= RC1_array(n);
 	  RC2_tb <= RC2_array(n);
-	  OUTPUT_tb_temp (1 to 16) <= OUTPUT_tb (16 downto 1);
 
 	  wait for clock_period/2;
 	  write(L, INDEX_OUT_tb);
 	  writeline(MAXINDEXLOg, L);
 	  write(L, PA_INDEXER_tb);
 	  writeline(PALOG, L);
-	  write(L, string'("index: "));
-	  write(L, n);
-	  write(L, string'(" = "));
-	  write(L, OUTPUT_tb_temp);    
+	  write(L, OUTPUT_tb);    
 	  writeline(outputLOG, L);
-			  
-	  assert(INDEX_OUT_tb = "001") report("correct") severity note;
+	 -- assert(INDEX_OUT_tb = "010") report("Error target index") severity note;
 	  wait for clock_period/2;
 	  n := n+1;
   end loop write_output;

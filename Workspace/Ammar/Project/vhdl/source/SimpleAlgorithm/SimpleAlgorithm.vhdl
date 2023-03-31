@@ -24,10 +24,6 @@ end SimpleAlgorithm;
 
 architecture ArchSimpleAlgorithm of SimpleAlgorithm is
 
-  CONSTANT SIGNAL_WIDTH :INTEGER := 16;
-  CONSTANT REGISTER_LENGTH : INTEGER := 100;
-  constant LEN_DATA: integer:=23;
-
 --------component decleration--------
 -- shif register component
 component shiftregister is 
@@ -40,7 +36,6 @@ END component shiftregister;
 
 -- power estimation
 component power_estimation is
-    --generic(len_data : integer := LEN_DATA);
 	port(clk:in std_logic;
 		reset_n: in std_logic;
 		data_in: in outputdata;
