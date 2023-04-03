@@ -26,7 +26,11 @@ architecture arch_sa_tb of sa_tb is
 	   rstn : in std_logic;
 	   OUTPUT : out std_logic_vector(16 downto 1);
 	   INDEX_OUT : out std_logic_vector(2 downto 0 );
-	   PA_INDEXER_OUT : out std_logic_vector(16 downto 1) 
+	   PA_INDEXER_OUT : out std_logic_vector(16 downto 1) ;
+	   FADER_OUT1 : out std_logic_vector(16 downto 1);
+	   FADER_OUT2 : out std_logic_vector(16 downto 1);
+	   FADER_OUT3 : out std_logic_vector(16 downto 1);
+	   FADER_OUT4 : out std_logic_vector(16 downto 1)
       );
   end component;
 
@@ -34,14 +38,16 @@ architecture arch_sa_tb of sa_tb is
   constant WL : positive := 16;
 
   -- adder wordlength
-  constant CYCLES : positive := 100000; --1255334 --100000
+  constant CYCLES : positive := 1255334; --1255334 --100000
   -- number of test vectors to load word_array
   type word_array is array (0 to CYCLES) of std_logic_vector(WL-1 downto 0);
   -- type used to store WL-bit test vectors for CYCLES cycles. array[0-999] every element is 16-bit
   file MAXindexLOG     : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\MAXindexLOG.log";
   file PALOG     	   : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\PALOG.log";
   file outputLOG       : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\outputLOG.log";
-  file errorLOG        : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\errorLOG.log";
+  --file errorLOG        : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\errorLOG.log";
+  file faderLOG        : text open write_mode is "C:\Users\ammar\Documents\GitHub\DAT096-PASS\Workspace\Ammar\Project\vhdl\source\SimpleAlgorithm\faderLOG.log";
+
 
 
   -- file to which you can write information
@@ -89,6 +95,10 @@ architecture arch_sa_tb of sa_tb is
   signal OUTPUT_tb 		: std_logic_vector(16 downto 1);
   signal INDEX_OUT_tb 	: std_logic_vector(3 downto 1);
   signal PA_INDEXER_tb  : std_logic_vector(16 downto 1);   
+  signal FADER_OUT1_tb	: std_logic_vector(16 downto 1);
+  signal FADER_OUT2_tb	: std_logic_vector(16 downto 1);
+  signal FADER_OUT3_tb	: std_logic_vector(16 downto 1);
+  signal FADER_OUT4_tb	: std_logic_vector(16 downto 1);
   
   signal LC1_array        : word_array;
   signal LC2_array        : word_array;
@@ -118,7 +128,11 @@ architecture arch_sa_tb of sa_tb is
 	   rstn => rstn_tb,
 	   OUTPUT => OUTPUT_tb,
 	   INDEX_OUT => INDEX_OUT_tb,
-	   PA_INDEXER_OUT => PA_INDEXER_tb
+	   PA_INDEXER_OUT => PA_INDEXER_tb,
+	   FADER_OUT1 => FADER_OUT1_tb,
+	   FADER_OUT2 => FADER_OUT2_tb,
+	   FADER_OUT3 => FADER_OUT3_tb,
+	   FADER_OUT4 => FADER_OUT4_tb
       );
 
   -- read input values
@@ -154,11 +168,26 @@ architecture arch_sa_tb of sa_tb is
 	  wait for clock_period/2;
 	  write(L, INDEX_OUT_tb);
 	  writeline(MAXINDEXLOg, L);
+	  
 	  write(L, PA_INDEXER_tb);
 	  writeline(PALOG, L);
+	  
+	  write(L, FADER_OUT1_tb);
+	  writeline(faderLOG, L);
+	  write(L, FADER_OUT2_tb);
+	  writeline(faderLOG, L);
+	  write(L, FADER_OUT3_tb);
+	  writeline(faderLOG, L);
+	  write(L, FADER_OUT4_tb);
+	  writeline(faderLOG, L);
+	  write(L, string'("-------------------------"));
+	  writeline(faderLOG, L);
+	  
 	  write(L, OUTPUT_tb);    
 	  writeline(outputLOG, L);
-	 -- assert(INDEX_OUT_tb = "010") report("Error target index") severity note;
+	  --assert(INDEX_OUT_tb = "010")
+		--report("note") 
+			--severity note;
 	  wait for clock_period/2;
 	  n := n+1;
   end loop write_output;

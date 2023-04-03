@@ -29,6 +29,7 @@ end
 %dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
 figure(2)
 plot(dY);
+
 dY = dY - mean(dY);
 %%
 figure(5);
@@ -40,7 +41,7 @@ F = logspace(0, log10(5000), 256);
 [s,f,t] = spectrogram(dY,g,Overlap,F,Fs);
 waterplot(s,f,t, 'green');
 
-
+sound(dY, Fs)
 
 function waterplot(s,f,t, color)
 % Waterfall plot of spectrogram

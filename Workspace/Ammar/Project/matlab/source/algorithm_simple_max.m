@@ -1,7 +1,7 @@
 clc, clear all, close all
 
-%run("soundstage2.m"); 
-run("soundExporter.m");
+run("soundstage2.m"); 
+%run("soundExporter.m");
 iY=mY;
 close all
 
@@ -97,6 +97,8 @@ hold on
 waterplot(s,f,t+((t(2)-t(1))/2), 'r');
 axis([0,5000,0,26,0,2000]);
 
+sound(out, Fs);
+
 
 function waterplot(s,f,t, color)
 % Waterfall plot of spectrogram
@@ -106,5 +108,4 @@ function waterplot(s,f,t, color)
     xlabel("Frequency (Hz)")
     ylabel("Time (s)")
 end
-%sound(out, Fs);
 

@@ -15,7 +15,11 @@ entity SimpleAlgorithm is
 	   rstn : in std_logic;
 	   OUTPUT : out std_logic_vector(16 downto 1);
 	   INDEX_OUT : out std_logic_vector(2 downto 0 );
-	   PA_INDEXER_OUT : out std_logic_vector(16 downto 1) 
+	   PA_INDEXER_OUT : out std_logic_vector(16 downto 1);
+	   FADER_OUT1 : out std_logic_vector(16 downto 1);
+	   FADER_OUT2 : out std_logic_vector(16 downto 1);
+	   FADER_OUT3 : out std_logic_vector(16 downto 1);
+	   FADER_OUT4 : out std_logic_vector(16 downto 1)
       );
 
 end SimpleAlgorithm;
@@ -222,6 +226,9 @@ end component mixer;
  OUTPUT <= OUTPUT_sa_Signal;
  INDEX_OUT <=  MaxIndexer_sa_signal;
  PA_INDEXER_OUT <= PAIndexer_sa_signal;
- 
+ FADER_OUT1 <= FaderMultiOut_sa_signal(0);
+ FADER_OUT2 <= FaderMultiOut_sa_signal(1);
+ FADER_OUT3 <= FaderMultiOut_sa_signal(2);
+ FADER_OUT4 <= FaderMultiOut_sa_signal(3);
  
 end architecture ArchSimpleAlgorithm;
