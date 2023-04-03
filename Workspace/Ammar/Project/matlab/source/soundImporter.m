@@ -1,8 +1,13 @@
 clc, clear all, close all
+%hold on
 
+%InputFile = "PALOG.log";
+InputFile = "outputLOG.log";
 %InputFile = "simMic_1.txt";
-InputFile = "Correct_DAC.txt";
-vhdlFile = 0;
+%InputFile = "Correct_DAC.txt";
+%InputFile = "Correct_PA.txt";
+% change to 1 for vhdl, 0 for matlab files
+vhdlFile = 1;
 fileId = fopen(InputFile, 'r');
 
 txt = fread(fileId, 'char*1');
@@ -25,8 +30,12 @@ for i=1:len
     end
     dY(i) = val;
 end
-%dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
 
-plot(dY);
+%dY = mod(dY, 2^(q-1)) -(2^(q-1))*floor(dY./(2^(q-1)));
+dY = dY./(2^(q-1)) -1;
+
+sound(dY, 48000)
+
+plot(dY, 'red');
 grid on;
 

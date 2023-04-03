@@ -1,6 +1,6 @@
 %clc, clear all, close all
 
-%run("soundstage2.m"); 
+run("soundstage2.m"); 
 iY=mY;
 close all
 
@@ -105,5 +105,5 @@ end
 %    xlabel("Frequency (Hz)")
 %    ylabel("Time (s)")
 %end
-%sound(out, Fs);
+sound(out, Fs);
 

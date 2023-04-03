@@ -25,38 +25,39 @@ entity fader is
 end fader;
 
 architecture Behavioral of fader is
-	SIGNAL SampleInSig: Signed(16 DOWNTO 1)  := (others => '0');
-	SIGNAL Multiplicant: Signed(16 DOWNTO 1) := (others => '0');
-	SIGNAL SampleOutSig: Signed(32 DOWNTO 1) := (others => '0');
-	SIGNAL delta       : signed(16 DOWNTO 1) := (others => '0');
+	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
+	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
+	SIGNAL SampleOutSig: Signed(32 DOWNTO 1);
+	SIGNAL delta:		signed(16 DOWNTO 1);
 
 begin
 
+	SampleInSig <= signed(SampleIn);
 
 	F_process:
-	PROCESS(CLK, RefIndex, Indexer, SampleIn, Multiplicant, SampleOutSig)
+	PROCESS(CLK, SampleInSig, Indexer, RefIndex)
 	BEGIN
 	
-	SampleInSig <= signed(SampleIn);
-	
-	
+	--delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
+	delta <= abs(signed(RefIndex & "0000000000000" - Indexer(16 downto 1)));
 	IF FALLING_EDGE(CLK) then
-		delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
-		IF delta < "0001" & "000000000000"  then
-			Multiplicant <= "0001" & "000000000000" - delta;
+		-- delta between target index and current indexer value
+		IF delta < "001" & "0000000000000"  then
+			Multiplicant <= "001" & "0000000000000" - delta;
 			
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
-		SampleOutSig <= SampleInSig * Multiplicant;
 		
+		SampleOutSig <= SampleInSig * Multiplicant;
 	END IF;
-	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
+	
 	--Multiout <= STD_LOGIC_VECTOR(delta);
-	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
 	
 	END PROCESS F_process;
 
+	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
+	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
 
 	
 end Behavioral;
