@@ -19,7 +19,7 @@ entity F_TB is
 end F_TB;
 
 architecture arch of F_TB is
-	component F is
+	component Fader is
 		port(
 			CLK:			in STD_LOGIC; --48kHz clock
 			SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
@@ -28,19 +28,19 @@ architecture arch of F_TB is
 			RefIndex:		in STD_LOGIC_VECTOR(3 DOWNTO 1);
 			Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
-	end component F;
+	end component Fader;
 	
 
 	SIGNAL CLK_TB: 			STD_LOGIC := '0';
-	SIGNAL SampleIn_TB:		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0111111111111111";
+	SIGNAL SampleIn_TB:		STD_LOGIC_VECTOR(16 DOWNTO 1) := "1111111111100000";
 	SIGNAL SampleOUt_TB:	STD_LOGIC_VECTOR(16 DOWNTO 1);	
-	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0000000000000000";
-	SIGNAL RefIndex_TB:		STD_LOGIC_VECTOR(3 DOWNTO 1) := "011";
+	SIGNAL Indexer_TB: 		STD_LOGIC_VECTOR(16 DOWNTO 1) := "0101000000000000";
+	SIGNAL RefIndex_TB:		STD_LOGIC_VECTOR(3 DOWNTO 1) := "100";
 	
 	SIGNAL Multi_TB:			STD_LOGIC_VECTOR(16 downto 1);
 	
 begin
-	INST_F: F
+	INST_F: Fader
 	port map(
 		CLK			=> CLK_TB, --48kHz clock
 		SampleIn	=> SampleIn_TB,
@@ -58,7 +58,10 @@ begin
 		wait for 10.4166 us;
 		CLK_TB <= not(CLK_TB);
 		IF CLK_TB = '1' then
-			Indexer_TB <= Indexer_TB + "000000000000001";
+			IF Indexer_TB(16 DOWNTO 14) < "101" then
+				--Indexer_TB <= Indexer_TB + "000000000000001";
+				Indexer_TB <= Indexer_TB + "000000001000000";
+			END IF;
 		END IF;
 	end process Sample_clk_gen;
 	

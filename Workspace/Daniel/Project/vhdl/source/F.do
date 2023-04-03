@@ -15,5 +15,5 @@ add wave Indexer_TB
 add wave RefIndex_TB
 add wave Multi_TB 
 
-run 400ms
+run 10ms
 

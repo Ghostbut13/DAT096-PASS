@@ -1,5 +1,3 @@
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.std_logic_unsigned.all;
@@ -15,7 +13,7 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity F is
+entity fader is
   port(
 	CLK:			in STD_LOGIC; --48kHz clock
 	SampleIn:		in STD_LOGIC_VECTOR(16 DOWNTO 1);
@@ -24,9 +22,9 @@ entity F is
 	RefIndex:		in STD_LOGIC_VECTOR(3 DOWNTO 1);
 	Multiout:		out STD_LOGIC_VECTOR(16 downto 1)
     );
-end F;
+end fader;
 
-architecture Behavioral of F is
+architecture Behavioral of fader is
 	SIGNAL SampleInSig: Signed(16 DOWNTO 1);
 	SIGNAL Multiplicant: Signed(16 DOWNTO 1);
 	SIGNAL SampleOutSig: Signed(32 DOWNTO 1);
@@ -36,23 +34,26 @@ begin
 
 
 	F_process:
-	PROCESS(CLK)
+	PROCESS(CLK, SampleIn, Indexer, RefIndex)
 	BEGIN
 	
 	SampleInSig <= signed(SampleIn);
 	
 	
-	IF rising_edge(CLK) then
-		delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
-		IF delta < "0001" & "000000000000"  then
-			Multiplicant <= "0001" & "000000000000" - delta;
+	--delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
+	delta <= abs(signed(RefIndex & "0000000000000" - Indexer(16 downto 1)));
+	IF FALLING_EDGE(CLK) then
+		-- delta between target index and current indexer value
+		IF delta < "001" & "0000000000000"  then
+			Multiplicant <= "001" & "0000000000000" - delta;
 			
 		ELSE 
 			Multiplicant <= "0000000000000000";
 		END IF;
-		SampleOutSig <= SampleInSig * Multiplicant;
 		
 	END IF;
+	
+	SampleOutSig <= SampleInSig * Multiplicant;
 	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
 	--Multiout <= STD_LOGIC_VECTOR(delta);
 	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
