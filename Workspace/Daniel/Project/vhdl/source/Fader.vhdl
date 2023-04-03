@@ -32,13 +32,11 @@ architecture Behavioral of fader is
 
 begin
 
+	SampleInSig <= signed(SampleIn);
 
 	F_process:
-	PROCESS(CLK, SampleIn, Indexer, RefIndex)
+	PROCESS(CLK, SampleInSig, Indexer, RefIndex)
 	BEGIN
-	
-	SampleInSig <= signed(SampleIn);
-	
 	
 	--delta <=abs(signed("0" & RefIndex & "000000000000") - signed("0" & Indexer(15 DOWNTO 1)));
 	delta <= abs(signed(RefIndex & "0000000000000" - Indexer(16 downto 1)));
@@ -51,15 +49,15 @@ begin
 			Multiplicant <= "0000000000000000";
 		END IF;
 		
+		SampleOutSig <= SampleInSig * Multiplicant;
 	END IF;
 	
-	SampleOutSig <= SampleInSig * Multiplicant;
-	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
 	--Multiout <= STD_LOGIC_VECTOR(delta);
-	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
 	
 	END PROCESS F_process;
 
+	Multiout <= STD_LOGIC_VECTOR(Multiplicant);
+	SampleOut <= STD_LOGIC_VECTOR(SampleOutSig(29 DOWNTO 14));
 
 	
 end Behavioral;
