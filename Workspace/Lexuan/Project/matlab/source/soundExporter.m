@@ -1,20 +1,19 @@
 clc, clear all, close all
-%run("soundstage2.m"); 
-%mY = linspace(0, 2^18, 100000);
-mY = 1:100000;
-mY = mod(mY,2^16);
-%mY= [0.8*mY.', mY.', 0.8*mY.', 0.6*mY.'];
-mY= [0*mY.', mY.', 0*mY.', 0*mY.'];
-plot(mY)
+run("soundstage2.m"); 
+%mY = linspace(0, 40, 2^16);
+%mY = sin(mY);
+%mY = 1:100000;
+%mY = mod(mY, 2^16-1);
+%mY = [mY.', mY.', mY.', mY.'];
+%plot(mY)
 len = length(mY(:,1));
-
-% close all
+close all
 
 %normalize signal
 m = max(abs(mY));
 m = max(m);
 mY = mY./(2*m);
-%plot(mY);
+plot(mY);
 
 
 %quantize signal
@@ -24,17 +23,33 @@ mY = round((2^q -1)*(mY) -0.5);
 %min(mY)
 %max(mY)
 
-% convert to 2s compliment
-%mY = mod(mY, 2^(q-1)) -(2^(q-1))*floor(mY./(2^(q-1)));
-plot(mY); hold on;
+run("algorithm_simple_max.m");
+mY = [mY, out.'];
 
-%%
+
+% convert to 2s compliment
+mY = mod(mY, 2^(q-1)) -(2^(q-1))*floor(mY./(2^(q-1)));
+%plot(mY); hold on;
+mY = [mY, out.' + 2^(q-1)];
+mY = [mY, (phaseA.*(2^(q-3))).'];
+
+
+
 %Bit converter
 Bits = zeros(len, 4, q);
 oune = char(49);
 zerou = char(48);
-for m = 1:4
-    fileId = fopen("simMic_" + string(m) + ".txt", 'w');
+for m = 1:7
+    if m==5
+        fileId = fopen("Correct_2s.txt", "w");
+    elseif m==6
+            fileId = fopen("Correct_DAC.txt", "w");
+    elseif m == 7
+        fileId = fopen("Correct_PA.txt", "w");
+    else
+        fileId = fopen("simMic_" + string(m) + ".txt", 'w');
+    end
+
     megaStr = char(len*(q+2));
     for i=1:len
         for b = 1:q
