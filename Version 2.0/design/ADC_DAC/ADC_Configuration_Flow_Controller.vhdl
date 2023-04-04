@@ -6,7 +6,7 @@
 -- Author     : weihan gao -- -- weihanga@chalmers.se
 -- Company    : 
 -- Created    : 2023-02-04
--- Last update: 2023-02-20
+-- Last update: 2023-04-04
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -102,17 +102,19 @@ architecture arch_ADC_Configuration_Flow_Controller of ADC_Configuration_Flow_Co
   signal value_wakeup           : std_logic_vector(7 downto 0) := "10000001";
   signal value_powerdown        : std_logic_vector(7 downto 0) := "00010000";
 
-  signal value_c1_config        : std_logic_vector(7 downto 0) := "00010000";   --128 ratio
-  --signal value_c1_config        : std_logic_vector(7 downto 0) := "00011000";
+  signal value_c1_config        : std_logic_vector(7 downto 0) := "00010000";--"00010000" ->
+                                                                             --mic_input
+                                                                             --differential_input
+                                                                             --DC-coupled
+                                                                             --
 
-  signal value_c2_config        : std_logic_vector(7 downto 0) := "00011000";
-  signal value_c3_config        : std_logic_vector(7 downto 0) := "00011000";--
-  signal value_c4_config        : std_logic_vector(7 downto 0) := "00011000";--
-                                                                             --unused
-  signal value_enable_input     : std_logic_vector(7 downto 0) := "11000000";-- 2channel
+  signal value_c2_config        : std_logic_vector(7 downto 0) := "00010000";
+  signal value_c3_config        : std_logic_vector(7 downto 0) := "00010000";--
+  signal value_c4_config        : std_logic_vector(7 downto 0) := "00010000";--
 
-  signal value_enable_output    : std_logic_vector(7 downto 0) := "10000000";-- 1channel
-  --signal value_enable_output    : std_logic_vector(7 downto 0) := "11000000";-- 2channel
+  
+  signal value_enable_input     : std_logic_vector(7 downto 0) := "11110000";-- 4channel
+  signal value_enable_output    : std_logic_vector(7 downto 0) := "11110000";-- 4channel
 
   signal value_powerup          : std_logic_vector(7 downto 0) := "11100000";
   signal value_enable_diagno    : std_logic_vector(7 downto 0) := "00000000";
@@ -178,7 +180,7 @@ begin  -- architecture arch_adc_config
       end if;
     end if;
   end process waitingtime_proc;
- 
+  
   edge_FS_48k_256_BCLK  <=  (d1_FS_48k_256_BCLK) and not(d2_FS_48k_256_BCLK);
   edge_GPIO_MCLK        <=  (d1_GPIO_MCLK)       and not(d2_GPIO_MCLK);
   edge_master_mode      <=  (d1_master_mode)     and not(d2_master_mode);
@@ -311,9 +313,21 @@ begin  -- architecture arch_adc_config
         end if;
       when  config_channel_2_state =>     --3c
         if done = '1' then                      --2nd  channel
-          next_state <= enable_input_state;
+          next_state <= config_channel_3_state;
         else
           next_state <= config_channel_2_state;
+        end if;
+      when  config_channel_3_state =>     --3c
+        if done = '1' then                      --3rd channel
+          next_state <= config_channel_4_state;
+        else
+          next_state <= config_channel_3_state;
+        end if;
+      when  config_channel_4_state =>     --3c
+        if done = '1' then                      --4th  channel
+          next_state <= enable_input_state;
+        else
+          next_state <= config_channel_4_state;
         end if;
       when  enable_input_state =>       --3d
         if done = '1' then
@@ -494,7 +508,7 @@ begin  -- architecture arch_adc_config
         else
           
         end if;
-         -- MCLK_root = 256
+        -- MCLK_root = 256
         if d2_MCLK_root= '1'  and flag_stop_single_config  ='0' then
           flag_cnt_START <= '0';
           waiting_time <= 0;
@@ -534,6 +548,27 @@ begin  -- architecture arch_adc_config
         waiting_time <= 0;
         OUT_config_value <= value_c2_config;  -- 2nd channel
         OUT_config_addr <= const_addr_c2_reg;
+        if done='1' then
+          OUT_start <= '0';
+        else
+          OUT_start <= '1';
+        end if;
+
+      when config_channel_3_state =>      --3c
+        flag_cnt_START <= '0';
+        waiting_time <= 0;
+        OUT_config_value <= value_c3_config;  -- 3rd channel
+        OUT_config_addr <= const_addr_c3_reg;
+        if done='1' then
+          OUT_start <= '0';
+        else
+          OUT_start <= '1';
+        end if;
+      when config_channel_4_state =>      --3c
+        flag_cnt_START <= '0';
+        waiting_time <= 0;
+        OUT_config_value <= value_c4_config;  -- 4th channel
+        OUT_config_addr <= const_addr_c4_reg;
         if done='1' then
           OUT_start <= '0';
         else
@@ -603,7 +638,7 @@ begin  -- architecture arch_adc_config
         OUT_start <= '0';
       when waiting_state =>                 --in this state, forever circle
                                             --waiting for test
-      OUT_start <= '0';
+        OUT_start <= '0';
       when others => null;
     end case;
   end process assignment_proc;

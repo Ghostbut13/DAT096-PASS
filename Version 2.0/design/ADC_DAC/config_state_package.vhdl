@@ -25,6 +25,8 @@ PACKAGE config_state_package IS
     powerdown_state,
     config_channel_1_state,
     config_channel_2_state,
+    config_channel_3_state,
+    config_channel_4_state,
     enable_input_state,
     enable_output_state,
     powerup_state,
