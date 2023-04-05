@@ -35,7 +35,7 @@ entity TOP is
     start_I2S           : in    std_logic;
 	-------------SimpleAlgorithm communication------------
 	ENABLE_SIMPLE_ALGORITHM : IN STD_LOGIC; -- use switch on FPGA
-	Target_Index : out std_logic_vector(2 downto 0);
+	Target_Index : out std_logic_vector(3 downto 0);
 	
 	-----------------DAC communication------------    
     JD                  : OUT STD_LOGIC_VECTOR(8 DOWNTO 1);
@@ -158,9 +158,9 @@ end component SimpleAlgorithm;
   ------------------------------------
   component PLL_12M is
     port (
-      clk_out1  : out STD_LOGIC;
-      resetn    : in STD_LOGIC;
-      clk_in1   : in STD_LOGIC
+      clk_out1_0  : out STD_LOGIC;
+      resetn_0    : in STD_LOGIC;
+      clk_in1_0   : in STD_LOGIC
       );
   end component PLL_12M;
   -------------------------------------
@@ -169,9 +169,6 @@ end component SimpleAlgorithm;
   
   
 begin  -- architecture arch_Wrapper_ACFC_i2c
-
-
-   Target_Index <= target_index_signal;
    
   
   --L1_out <= L1_signal;
@@ -247,19 +244,40 @@ begin  -- architecture arch_Wrapper_ACFC_i2c
       FSYNC => FSYNC,
       rstn => rstn,
       din_dac => sa_output_signal
+      --din_dac => L1_signal
       );
   
   ------------------------------------------------------------
   ----GENERATE the FSYNC and BCLK by PLL
   clk_wiz_0: component PLL_12M
     port map (
-      clk_in1           => clk,
-      clk_out1          => MCLK,
-      resetn            => rstn
+      clk_in1_0           => clk,
+      clk_out1_0          => MCLK,
+      resetn_0            => rstn
       );
   ------------------------------------------------------------
 
 
+ set_target_index:
+  PROCESS(target_index_signal)
+  BEGIN 
+    case target_index_signal is
+        when "001" =>
+            Target_Index <= "0001";
+            
+        when "010" =>
+            Target_Index <= "0010";
+            
+        when "011" =>
+            Target_Index <= "0100";
+            
+        when "100" =>
+            Target_Index <= "1000";
+      
+        when others => 
+            Target_Index <= "0000";
+    end case;
+  end process;
 
   
 end architecture arch_TOP_i2s_i2c_acfc;

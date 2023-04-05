@@ -184,9 +184,9 @@ BEGIN
 
 
   -- --L1_out <= std_logic_vector(resize(-signed(resize(unsigned(L1_out_signal)), 17)),16);
-  L1_out <= std_logic_vector(unsigned(L1_out_signal)+to_unsigned(16#8000#,16));
+ -- L1_out <= std_logic_vector(unsigned(L1_out_signal)+to_unsigned(16#8000#,16));
 
-  --L1_out <= L1_out_signal;
+  L1_out <= L1_out_signal;
   L2_out <= L2_out_signal;
   R1_out <= R1_out_signal;
   R2_out <= R2_out_signal;
