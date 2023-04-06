@@ -6,7 +6,7 @@
 -- Author     : weihan gao
 -- Company    : 
 -- Created    : 2023-03-08
--- Last update: 2023-04-04
+-- Last update: 2023-04-06
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -269,7 +269,20 @@ begin  -- architecture arch_TCP_Ethernet
                       
                       & UDP_LEN              
                       & UDP_HEAD_CHECK
-                      & channel_1 & channel_2 & channel_3 & channel_4 & channel_test_000
+                      --------------------
+                      & channel_1(1 downto 0) & channel_1(3 downto 2)   & channel_1(5 downto 4)   & channel_1(7 downto 6) 
+                      & channel_1(9 downto 8) & channel_1(11 downto 10) & channel_1(13 downto 12) & channel_1(15 downto 14)
+                      
+                      & channel_2(1 downto 0) & channel_2(3 downto 2)   & channel_2(5 downto 4)   & channel_2(7 downto 6) 
+                      & channel_2(9 downto 8) & channel_2(11 downto 10) & channel_2(13 downto 12) & channel_2(15 downto 14)
+                      
+                      & channel_3(1 downto 0) & channel_3(3 downto 2)   & channel_3(5 downto 4)   & channel_3(7 downto 6) 
+                      & channel_3(9 downto 8) & channel_3(11 downto 10) & channel_3(13 downto 12) & channel_3(15 downto 14)
+                      
+                      & channel_4(1 downto 0) & channel_4(3 downto 2)   & channel_4(5 downto 4)   & channel_4(7 downto 6) 
+                      & channel_4(9 downto 8) & channel_4(11 downto 10) & channel_4(13 downto 12) & channel_4(15 downto 14)
+                      
+		      & channel_test_000
                       --& channel_test_144
                       & CRC_new;
   
@@ -401,23 +414,24 @@ begin  -- architecture arch_TCP_Ethernet
     end case;
   end process proc_state_flow;
 
-  proc_assingment: process (state,channel_feet_1,channel_feet_2) is
+  proc_assingment: process (state,channel_feet_1,channel_feet_2,cnt_write_round) is
   begin  -- process proc_state_flow
-    -- o_resetn <= '0';--
-    -- mode2 <= '1';
-    -- mode1 <= '1';
-    -- mode0 <= '1';
-    -- o_TXD_1 <= '0';
-    -- o_TXD_0 <= '0';
-    -- o_txen <= '0';
-    -- PHYAD0  <= '0';--
-    -- INTSEL   <= '1';--
-    -- OUT_en_mode0  <= '1';
-    -- OUT_en_mode1   <= '1';
-    -- OUT_en_mode2  <= '1';
-    -- OUT_en_phyad0   <= '1';
-    -- OUT_en_REFCLK0  <= '1';
-    
+    o_resetn <= '0';--
+    mode2 <= '1';
+    mode1 <= '1';
+    mode0 <= '1';
+    o_TXD_1 <= '0';
+    o_TXD_0 <= '0';
+    o_txen <= '0';
+    PHYAD0  <= '0';--
+    INTSEL   <= '1';--
+    OUT_en_mode0  <= '1';
+    OUT_en_mode1   <= '1';
+    OUT_en_mode2  <= '1';
+    OUT_en_phyad0   <= '1';
+    OUT_en_REFCLK0  <= '1';
+     cnt_write_round <= 0;
+     
     case state is
       when IDLE => 
         
@@ -468,11 +482,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_txen <= '0';
         cnt_write_round <= 0;
 
---        OUT_en_mode0  <= '0';
---        OUT_en_mode1   <= '0';
---        OUT_en_mode2  <= '0';
---        OUT_en_phyad0   <= '0';
---        OUT_en_REFCLK0  <= '0';
+
         PHYAD0  <= '1';--
         OUT_en_mode0  <= '1';
         OUT_en_mode1   <= '1';
@@ -530,8 +540,6 @@ begin  -- architecture arch_TCP_Ethernet
       channel_feet_2 <= '0';
     elsif clk'event and clk = '0' then  -- falling clock edge
       if clk_50MHz='0' and state = write_state then
-        -- channel_feet_1 <= channel_all(CONST_send-1-cnt_32*2);
-        -- channel_feet_2 <= channel_all(CONST_send-1-(cnt_32*2+1));
         channel_feet_1 <= channel_all_wire(CONST_send-1-(cnt_32*2+1));
         channel_feet_2 <= channel_all_wire(CONST_send-1-(cnt_32*2));
       end if;
@@ -544,7 +552,7 @@ begin  -- architecture arch_TCP_Ethernet
       I_OPR_CLK  => clk,
       I_OPR_RSTN => rstn,
       I_CRC_INIT => fsync,
-      I_CRC_EN   => falling_edge_fsync,
+      I_CRC_EN   => crc_start,--falling_edge_fsync,
       I_DATA     => channel_test_check_144,
       O_CRC_RES  => CRC
       );
