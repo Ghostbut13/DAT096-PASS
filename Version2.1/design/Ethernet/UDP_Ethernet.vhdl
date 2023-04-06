@@ -59,7 +59,7 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   -- constant
   constant CONST_FSYNC          : integer := 44100;
   constant CONST_stream_time    : integer := 3; --time of playing music
-  constant CONST_ROUND          : integer := CONST_stream_time * CONST_FSYNC;
+  constant CONST_ROUND          : integer := CONST_stream_time * CONST_FSYNC + 1;
   constant CONST_send           : integer := 72*8;--400 + CONST_Width_audio;
   constant CONST_cnt_32         : integer := CONST_send/2; --32
   constant CONST_Width_audio    : integer := 64;
@@ -154,7 +154,7 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   signal cnt_100us : integer range 0 to 16383;
   signal cnt_32 : integer range 0 to CONST_cnt_32;
   signal flag_100us : std_logic;
-  signal cnt_write_round : integer range 0 to CONST_ROUND-1;
+  signal cnt_write_round : integer range 0 to CONST_ROUND;
 
   --delay & flag_edge
   signal fsync_d1 : std_logic;
@@ -385,7 +385,7 @@ begin  -- architecture arch_TCP_Ethernet
           next_state <= WRITE_STATE;
         end if;
       when BACK_STATE =>
-        if cnt_write_round < CONST_ROUND then
+        if cnt_write_round < CONST_ROUND-1 then
           if falling_edge_fsync = '1' then
             next_state <= WRITE_STATE;
           else

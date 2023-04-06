@@ -23,7 +23,7 @@ input               I_OPR_RSTN,
 input               I_CRC_INIT,
 input               I_CRC_EN,
 //input     [7:0]     I_DATA,
-input     [1433:0]     I_DATA,
+input     [143:0]     I_DATA,
 output    [31:0]    O_CRC_RES
 );
 // 内部信号
