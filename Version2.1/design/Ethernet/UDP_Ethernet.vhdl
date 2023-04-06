@@ -414,7 +414,7 @@ begin  -- architecture arch_TCP_Ethernet
     end case;
   end process proc_state_flow;
 
-  proc_assingment: process (state,channel_feet_1,channel_feet_2,cnt_write_round) is
+  proc_assingment: process (state,channel_feet_1,channel_feet_2) is
   begin  -- process proc_state_flow
     o_resetn <= '0';--
     mode2 <= '1';
@@ -430,7 +430,7 @@ begin  -- architecture arch_TCP_Ethernet
     OUT_en_mode2  <= '1';
     OUT_en_phyad0   <= '1';
     OUT_en_REFCLK0  <= '1';
-     cnt_write_round <= 0;
+     --cnt_write_round <= 0;
      
     case state is
       when IDLE => 
