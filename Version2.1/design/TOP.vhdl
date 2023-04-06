@@ -36,6 +36,7 @@ entity TOP is
 	---------------Ethernet communication------
 	MDIO                : inout std_logic; --configurate register
     MDC                 : out   std_logic; --configurate clk
+    rstn_ethernet       : in    std_logic; -- reset ethernet on switch
     
     resetN              : out   std_logic; -- reset the PHY ; last 100us at least
     CLKIN               : out   std_logic; -- 50MHz to PHY
@@ -278,7 +279,7 @@ begin  -- architecture
 			  txen => txen,
 			
 			  clk => clk,
-			  rstn => rstn,
+			  rstn => rstn_ethernet,
 			  start => ENABLE_ETHERNET,
 			  fsync => FSYNC,
 			  channel_1 => L1_signal,
