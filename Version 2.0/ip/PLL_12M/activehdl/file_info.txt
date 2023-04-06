@@ -1,0 +1,6 @@
+xpm_cdc.sv,systemverilog,xpm,../../../../../../../../../Xilinx/Vivado/2022.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv,incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"
+xpm_VCOMP.vhd,vhdl,xpm,../../../../../../../../../Xilinx/Vivado/2022.2/data/ip/xpm/xpm_VCOMP.vhd,incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"
+PLL_12M_clk_wiz_0_0_clk_wiz.v,verilog,xil_defaultlib,../../../bd/PLL_12M/ip/PLL_12M_clk_wiz_0_0/PLL_12M_clk_wiz_0_0_clk_wiz.v,incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"
+PLL_12M_clk_wiz_0_0.v,verilog,xil_defaultlib,../../../bd/PLL_12M/ip/PLL_12M_clk_wiz_0_0/PLL_12M_clk_wiz_0_0.v,incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"
+PLL_12M.vhd,vhdl,xil_defaultlib,../../../bd/PLL_12M/sim/PLL_12M.vhd,incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"incdir="../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698"
+glbl.v,Verilog,xil_defaultlib,glbl.v

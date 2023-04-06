@@ -1,0 +1,4 @@
+vhdl xil_defaultlib  \
+"../../../bd/PLL_12M/sim/PLL_12M.vhd" \
+
+nosort

@@ -1,0 +1,7 @@
+verilog xil_defaultlib --include "../../../../version_2.0.gen/sources_1/bd/PLL_12M/ipshared/7698" \
+"../../../bd/PLL_12M/ip/PLL_12M_clk_wiz_0_0/PLL_12M_clk_wiz_0_0_clk_wiz.v" \
+"../../../bd/PLL_12M/ip/PLL_12M_clk_wiz_0_0/PLL_12M_clk_wiz_0_0.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+nosort

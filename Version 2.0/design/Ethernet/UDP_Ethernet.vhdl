@@ -68,7 +68,7 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   --------------------
   constant CONST_ETH_PREMABLE   : std_logic_vector(55 downto 0) := x"55555555555555";
   constant CONST_ETH_SFD        : std_logic_vector(7 downto 0)  := x"57";
-  constant DST_MAC_ADDR         : std_logic_vector(47 downto 0) := x"18e1bf3ebc9d"; --
+  constant DST_MAC_ADDR         : std_logic_vector(47 downto 0) := x"18e1bf3ebc9d"; -- ammar : 28F10E24FB2C
   constant FPGA_MAC_ADDR        : std_logic_vector(47 downto 0) := x"bf5595811716"; --
   constant CONST_ETH_TYPE       : std_logic_vector(15 downto 0) := x"2000";
   -------------------- 
