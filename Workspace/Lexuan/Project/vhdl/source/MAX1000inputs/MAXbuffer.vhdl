@@ -1,7 +1,0 @@
-ENTITY MAXbuffer IS 
-  GENERIC(BUFFER_LENGTH: INTEGER);
-  PORT(
-  clk : STD_LOGIC;
-  rst_n :STD_LOGIC;
-  );
-END ENTITY MAXbuffer;
