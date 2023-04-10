@@ -15,11 +15,11 @@ END ENTITY MAXbuffer;
 
 ARCHITECTURE arch_MAXbuffer OF MAXbuffer IS
   
-COMPONENT singleregister IS
+COMPONENT bitregister IS
   PORT (clk: IN STD_LOGIC;
         din: IN STD_LOGIC;
         dout: OUT STD_LOGIC);
-END COMPONENT singleregister;
+END COMPONENT bitregister;
 
   SIGNAL temp_buffer : STD_LOGIC_VECTOR(BUFFER_LENGTH-1 DOWNTO 0) := (OTHERS => '0');
 
@@ -27,7 +27,7 @@ BEGIN
 
   buffer_inst: FOR i IN 1 TO BUFFER_LENGTH-1 GENERATE
     buffer_inst:
-	COMPONENT singleregister
+	COMPONENT bitregister
     PORT MAP(
 	clk => clk,
     din => temp_buffer(i-1),

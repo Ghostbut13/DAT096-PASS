@@ -1,0 +1,39 @@
+LIBRARY ieee;
+library work;
+USE ieee.std_logic_1164.ALL;
+USE work.parameter.ALL;
+
+ENTITY MAXbuffer IS 
+  GENERIC(BUFFER_LENGTH: INTEGER);
+  PORT(
+  clk : IN STD_LOGIC;
+  rst_n : IN STD_LOGIC;
+  din : IN STD_LOGIC;
+  dout: OUT STD_LOGIC
+  );
+END ENTITY MAXbuffer;
+
+ARCHITECTURE arch_MAXbuffer OF MAXbuffer IS
+  
+  SIGNAL temp : STD_LOGIC;
+  SIGNAL counter : INTEGER := 0;
+  SIGNAL dout_signal : STD_LOGIC;
+
+BEGIN 
+
+ temp <= din;
+ 
+buffer_proc:
+PROCESS(clk,rst_n)
+BEGIN 
+  IF counter < BUFFER_LENGTH THEN
+    temp <= temp;
+	counter <= counter + 1;
+  ELSE
+    dout_signal <= temp;
+  END IF;
+END PROCESS buffer_proc;
+
+  dout <= dout_signal;
+  
+END ARCHITECTURE arch_MAXbuffer;

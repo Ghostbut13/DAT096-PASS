@@ -1,12 +1,13 @@
 ---------------------------
 
- **ver2.0**
+ **ver2.1**
 
 ---
 
 ****version update****
 
 v2.0 We can pipeline ADC to simple algorithm to DAC using four mics
+v2.1 We can also send the four channels data through Ethernet and read the actual data from the ADC to the computer
 
 ------
 
@@ -21,6 +22,8 @@ TOP.vhdl including:
 - package parameter
 - Simple algorithm including: singleregister, shiftregister, powerestimation, max, panningaccumulator, fader, mixer 
 - IP core - PLL
+- UDP_ethernet
+- CRC32_D8.v 
 - DAC data-pipeline
 
 TOP.vhdl workflow:
@@ -32,6 +35,7 @@ TOP.vhdl workflow:
 - I2S receiver collects DATA from ADC and sends the four channels to the algorithm
 - SimlpeAlgorithm takes the inputs and enhances the audio with one output
 - DAC outputs the audio
+- If ethernet is enabled, data is sent to computer
 -----
 
 ****if you want to run it in vivado project****
