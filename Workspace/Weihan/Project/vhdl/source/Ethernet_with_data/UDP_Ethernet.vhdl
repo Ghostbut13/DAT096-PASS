@@ -6,7 +6,7 @@
 -- Author     : weihan gao
 -- Company    : 
 -- Created    : 2023-03-08
--- Last update: 2023-03-31
+-- Last update: 2023-04-04
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ use ieee.numeric_std.all;
 entity UDP_Ethernet is
   
   port (
-    MDIO                : inout std_logic; --configurate register
-    MDC                 : out   std_logic; --configurate clk
+    --MDIO                : inout std_logic; --configurate register
+    --MDC                 : out   std_logic; --configurate clk
     
     resetN              : out   std_logic; -- reset the PHY ; last 100us at least
     CLKIN               : out   std_logic; -- 50MHz to PHY
@@ -57,8 +57,8 @@ end entity UDP_Ethernet;
 
 architecture arch_UDP_Ethernet of UDP_Ethernet is
   -- constant
-  constant CONST_FSYNC          : integer := 44100;
-  constant CONST_stream_time    : integer := 1; --time of playing music
+  constant CONST_FSYNC          : integer := 48000;
+  constant CONST_stream_time    : integer := 3; --time of playing music
   constant CONST_ROUND          : integer := CONST_stream_time * CONST_FSYNC;
   constant CONST_send           : integer := 72*8;--400 + CONST_Width_audio;
   constant CONST_cnt_32         : integer := CONST_send/2; --32
@@ -68,7 +68,7 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   --------------------
   constant CONST_ETH_PREMABLE   : std_logic_vector(55 downto 0) := x"55555555555555";
   constant CONST_ETH_SFD        : std_logic_vector(7 downto 0)  := x"57";
-  constant DST_MAC_ADDR         : std_logic_vector(47 downto 0) := x"18e1bf3ebc9d"; --
+  constant DST_MAC_ADDR         : std_logic_vector(47 downto 0) := x"18e1bf3ebc9d"; -- ammar : 28F10E24FB2C
   constant FPGA_MAC_ADDR        : std_logic_vector(47 downto 0) := x"bf5595811716"; --
   constant CONST_ETH_TYPE       : std_logic_vector(15 downto 0) := x"2000";
   -------------------- 
@@ -84,10 +84,10 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   
   signal   IP_HEAD_CHECK_SUM    : std_logic_vector(15 downto 0)                 ; --
   
-  constant   IP_HEAD_9f3e_CHECK_SUM    : std_logic_vector(15 downto 0)  :=x"f64c"               ; --
+  constant IP_HEAD_9f3e_CHECK_SUM    : std_logic_vector(15 downto 0)  :=x"f64c"               ; --
   
-  constant DST_IP_ADDR          : std_logic_vector(31 downto 0) := x"032a20f0"; --169.254.49.224
-  constant FPGA_IP_ADDR         : std_logic_vector(31 downto 0) := x"6abf4c0b"; --192.168.8.1 
+  constant DST_IP_ADDR          : std_logic_vector(31 downto 0) := x"032a20f0"; --
+  constant FPGA_IP_ADDR         : std_logic_vector(31 downto 0) := x"6abf4c0b"; --
   --------------------
   constant DST_UDP_PROT         : std_logic_vector(15 downto 0)  := x"8484";
   constant FPGA_UDP_PROT        : std_logic_vector(15 downto 0)  := x"dd00";
@@ -114,18 +114,8 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   type Ethernet_state is (
     IDLE,
     RESET_STATE,
-    RDPHYID1_STATE,
-    RDPHYID2_STATE,
-    RESET_soft_STATE,
-    UNRESET_soft_STATE,
     MODE_STATE,
-    UNRESET_STATE,
-
-    RD_BC0_STATE,
-    RD_BS1_STATE,
-    
     WRITE_STATE,
-    wait_last_en_STATE,
     BACK_STATE,
     END_STATE
     );
@@ -154,18 +144,18 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   signal cnt_100us : integer range 0 to 16383;
   signal cnt_32 : integer range 0 to CONST_cnt_32;
   signal flag_100us : std_logic;
-  signal cnt_write_round : integer range 0 to CONST_ROUND-1;
+  signal write_round : natural range 0 to CONST_ROUND;
 
   --delay & flag_edge
   signal fsync_d1 : std_logic;
   signal fsync_d2 : std_logic;
-  signal fsync_d3 : std_logic;
+  --signal fsync_d3 : std_logic;
   signal falling_edge_fsync : std_logic;
   signal rising_edge_fsync : std_logic;
 
   --reg
   signal channel_all_wire : std_logic_vector(CONST_send-1 downto 0);
-  signal channel_all : std_logic_vector(CONST_send-1 downto 0);
+  --signal channel_all : std_logic_vector(CONST_send-1 downto 0);
   signal channel_feet_1 : std_logic;
   signal channel_feet_2 : std_logic;    --Ethernet transmitts two bits data
                                         --every clk_50MHz
@@ -176,7 +166,7 @@ architecture arch_UDP_Ethernet of UDP_Ethernet is
   signal channel_test_000 : std_logic_vector(79 downto 0) := x"00000000000000000000";
   signal channel_test_144 : std_logic_vector(143 downto 0) ;
   signal channel_test_check_144 : std_logic_vector(143 downto 0) ;
-  signal crc_start : std_logic := '0';
+ -- signal crc_start : std_logic := '0';
 
   
   -- declaration
@@ -269,8 +259,21 @@ begin  -- architecture arch_TCP_Ethernet
                       
                       & UDP_LEN              
                       & UDP_HEAD_CHECK
-                      --& channel_1 & channel_2 & channel_3 & channel_4
-                      & channel_test_144
+                      & channel_1(9 downto 8) & channel_1(11 downto 10) & channel_1(13 downto 12) & channel_1(15 downto 14)
+                      & channel_1(1 downto 0) & channel_1(3 downto 2)   & channel_1(5 downto 4)   & channel_1(7 downto 6) 
+                      
+                      & channel_2(9 downto 8) & channel_2(11 downto 10) & channel_2(13 downto 12) & channel_2(15 downto 14)
+                      & channel_2(1 downto 0) & channel_2(3 downto 2)   & channel_2(5 downto 4)   & channel_2(7 downto 6) 
+                      
+                      & channel_3(9 downto 8) & channel_3(11 downto 10) & channel_3(13 downto 12) & channel_3(15 downto 14)
+                      & channel_3(1 downto 0) & channel_3(3 downto 2)   & channel_3(5 downto 4)   & channel_3(7 downto 6) 
+                      
+                      & channel_4(9 downto 8) & channel_4(11 downto 10) & channel_4(13 downto 12) & channel_4(15 downto 14)
+                      & channel_4(1 downto 0) & channel_4(3 downto 2)   & channel_4(5 downto 4)   & channel_4(7 downto 6) 
+
+                      --& channel_1 & channel_2 & channel_3 & channel_4 
+                      & channel_test_000
+                      --& channel_test_144
                       & CRC_new;
   
   ----------------------------------------  
@@ -328,24 +331,23 @@ begin  -- architecture arch_TCP_Ethernet
     if rstn = '0' then                  -- asynchronous reset (active low)
       fsync_d1 <= '0';
       fsync_d2 <= '0';
-      fsync_d3 <= '0';
-      channel_all <= (others => '0');
+      --fsync_d3 <= '0';
+      --channel_all <= (others => '0');
     elsif clk'event and clk = '1' then  -- rising clock edge
       fsync_d1 <= fsync;
       fsync_d2 <= fsync_d1;
-      fsync_d3 <= fsync_d2;
+      --fsync_d3 <= fsync_d2;
 
       if falling_edge_fsync='1' then
-        channel_all <= channel_all_wire;
+        --channel_all <= channel_all_wire;
       end if;
     end if;
   end process proc_delay2;
 
   falling_edge_fsync <= not(fsync_d1) and fsync_d2;
   rising_edge_fsync <=  fsync_d1 and not(fsync_d2);
-  crc_start <= not(fsync_d2) and fsync_d3;
+  --crc_start <= not(fsync_d2) and fsync_d3;
 
-  
   ----------------------------------------
   proc_state_transimit: process(clk,rstn) is
   begin
@@ -357,7 +359,7 @@ begin  -- architecture arch_TCP_Ethernet
     end if;
   end process proc_state_transimit;
   
-  proc_state_flow: process (state,start,flag_100us, rising_edge_fsync,falling_edge_fsync,cnt_32,cnt_write_round) is
+  proc_state_flow: process (state,start,flag_100us, rising_edge_fsync,falling_edge_fsync,cnt_32,write_round) is
   begin  -- process proc_state_flow
     next_state <= IDLE;
     case state is
@@ -386,7 +388,7 @@ begin  -- architecture arch_TCP_Ethernet
           next_state <= WRITE_STATE;
         end if;
       when BACK_STATE =>
-        if cnt_write_round < CONST_ROUND then
+        if write_round < CONST_ROUND-1 then
           if falling_edge_fsync = '1' then
             next_state <= WRITE_STATE;
           else
@@ -404,21 +406,21 @@ begin  -- architecture arch_TCP_Ethernet
 
   proc_assingment: process (state,channel_feet_1,channel_feet_2) is
   begin  -- process proc_state_flow
-    -- o_resetn <= '0';--
-    -- mode2 <= '1';
-    -- mode1 <= '1';
-    -- mode0 <= '1';
-    -- o_TXD_1 <= '0';
-    -- o_TXD_0 <= '0';
-    -- o_txen <= '0';
-    -- PHYAD0  <= '0';--
-    -- INTSEL   <= '1';--
-    -- OUT_en_mode0  <= '1';
-    -- OUT_en_mode1   <= '1';
-    -- OUT_en_mode2  <= '1';
-    -- OUT_en_phyad0   <= '1';
-    -- OUT_en_REFCLK0  <= '1';
-    
+    o_resetn <= '0';--
+    mode2 <= '1';
+    mode1 <= '1';
+    mode0 <= '1';
+    o_TXD_1 <= '0';
+    o_TXD_0 <= '0';
+    o_txen <= '0';
+    PHYAD0  <= '0';--
+    INTSEL   <= '1';--
+    OUT_en_mode0  <= '1';
+    OUT_en_mode1   <= '1';
+    OUT_en_mode2  <= '1';
+    OUT_en_phyad0   <= '1';
+    OUT_en_REFCLK0  <= '1';
+    --write_round <= 0;
     case state is
       when IDLE => 
         
@@ -437,7 +439,7 @@ begin  -- architecture arch_TCP_Ethernet
         OUT_en_phyad0   <= '1';
         OUT_en_REFCLK0  <= '1';
         
-        cnt_write_round <= 0;
+       -- write_round <= 0;
 
         
       when RESET_STATE  => 
@@ -450,7 +452,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_txen <= '0';
         PHYAD0  <= '0';--
         INTSEL   <= '1';--
-        cnt_write_round <= 0;
+        --write_round <= 0;
 
         OUT_en_mode0  <= '1';
         OUT_en_mode1   <= '1';
@@ -467,7 +469,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_TXD_1 <= '0';
         o_TXD_0 <= '0';
         o_txen <= '0';
-        cnt_write_round <= 0;
+        --write_round <= 0;
 
 --        OUT_en_mode0  <= '0';
 --        OUT_en_mode1   <= '0';
@@ -491,7 +493,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_TXD_1 <= channel_feet_2;
         o_TXD_0 <= channel_feet_1;
         o_txen <= '1';
-        
+        --write_round <= write_round;
       when BACK_STATE =>
         o_resetn <= '1';
         mode2 <= '1';
@@ -500,7 +502,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_TXD_1 <= '0';
         o_TXD_0 <= '0';
         o_txen <= '0';
-        cnt_write_round <= cnt_write_round+1;
+        --write_round <= write_round+1;
       when END_STATE  => 
         o_resetn <= '1';
         mode2 <= '1';
@@ -509,7 +511,7 @@ begin  -- architecture arch_TCP_Ethernet
         o_TXD_1 <= '0';
         o_TXD_0 <= '0';
         o_txen <= '0';
-        cnt_write_round <= 0;
+        --write_round <= 0;
       when others => null;
     end case;
   end process proc_assingment;
@@ -538,6 +540,19 @@ begin  -- architecture arch_TCP_Ethernet
       end if;
     end if;
   end process proc_feet;
+  
+  proc_cnt_round:process (clk, rstn) is
+  begin
+    if rstn = '0' then
+        write_round <= 0;
+    elsif rising_edge(clk) then
+        if next_state = BACK_STATE and o_txen='1' then
+            write_round <= write_round +1;
+        end if;
+    end if;
+    end process proc_cnt_round;
+  
+  
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   inst_CRC : CRC32_D8

@@ -17,8 +17,8 @@ architecture arch_ehternet_tb of Ethernet_tb is
   -- declare inst
   component Wrapper_UDP_E is
     port (
-      MDIO                : inout std_logic; --configurate register
-      MDC                 : out   std_logic; --configurate clk
+      --MDIO                : inout std_logic; --configurate register
+      --MDC                 : out   std_logic; --configurate clk
       
       resetN              : out   std_logic; -- reset the PHY ; last 100us at least
       CLKIN               : out   std_logic; -- 50MHz to PHY

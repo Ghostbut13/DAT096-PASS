@@ -23,7 +23,7 @@ input               I_OPR_RSTN,
 input               I_CRC_INIT,
 input               I_CRC_EN,
 //input     [7:0]     I_DATA,
-input     [1433:0]     I_DATA,
+input     [143:0]     I_DATA,
 output    [31:0]    O_CRC_RES
 );
 // 内部信号
@@ -32,9 +32,9 @@ reg  [31:0] R_CRC_RES;
  
 genvar GV_8;
 generate
-    for(GV_8 = 0;GV_8 < 8;GV_8 = GV_8 + 1)
+    for(GV_8 = 0;GV_8 < 144;GV_8 = GV_8 + 1)
     begin
-        assign W_DATA[GV_8] = I_DATA[159-GV_8];
+        assign W_DATA[GV_8] = I_DATA[143-GV_8];
     end
 endgenerate
  

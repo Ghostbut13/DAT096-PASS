@@ -7,8 +7,8 @@ use ieee.numeric_std.all;
 entity Wrapper_UDP_E is
   
   port (
-    MDIO                : inout std_logic; --configurate register
-    MDC                 : out   std_logic; --configurate clk
+    --MDIO                : inout std_logic; --configurate register
+    --MDC                 : out   std_logic; --configurate clk
     
     resetN              : out   std_logic; -- reset the PHY ; last 100us at least
     CLKIN               : out   std_logic; -- 50MHz to PHY
@@ -37,14 +37,14 @@ architecture arch_UDP_Ethernet of Wrapper_UDP_E is
   signal fsync : std_logic:='0'; 
   signal cnt_20us : integer ;
 
-  signal channel_64_tb : std_logic_vector(63 downto 0) := x"0001acab91aeffff";
+  signal channel_64_tb : std_logic_vector(63 downto 0) :=  x"5700fc011101fc11";--x"0001acab91aeffff";
   -- signal channel_64_tb : std_logic_vector(63 downto 0) := x"ffffffffffffffff";
   
   
   component UDP_Ethernet is
     port (
-      MDIO                : inout std_logic; --configurate register
-      MDC                 : out   std_logic; --configurate clk
+      --MDIO                : inout std_logic; --configurate register
+      --MDC                 : out   std_logic; --configurate clk
       
       resetN              : out   std_logic; -- reset the PHY ; last 100us at least
       CLKIN               : out   std_logic; -- 50MHz to PHY
@@ -67,14 +67,14 @@ architecture arch_UDP_Ethernet of Wrapper_UDP_E is
       channel_3 : in    std_logic_vector(15 downto 0);
       channel_4 : in    std_logic_vector(15 downto 0)
       );
-  end component TCP_Ethernet;
+  end component UDP_Ethernet;
   
   
 begin
-  tcp1:TCP_Ethernet
+  tcp1:UDP_Ethernet
     port map (
-      MDIO                =>MDIO,
-      MDC                 =>MDC,
+      --MDIO                =>MDIO,
+      --MDC                 =>MDC,
       
       resetN              =>resetN,
       CLKIN               =>CLKIN,
