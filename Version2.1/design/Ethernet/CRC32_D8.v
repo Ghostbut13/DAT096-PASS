@@ -32,9 +32,9 @@ reg  [31:0] R_CRC_RES;
  
 genvar GV_8;
 generate
-    for(GV_8 = 0;GV_8 < 8;GV_8 = GV_8 + 1)
+    for(GV_8 = 0;GV_8 < 144;GV_8 = GV_8 + 1)
     begin
-        assign W_DATA[GV_8] = I_DATA[159-GV_8];
+        assign W_DATA[GV_8] = I_DATA[143-GV_8];
     end
 endgenerate
  
