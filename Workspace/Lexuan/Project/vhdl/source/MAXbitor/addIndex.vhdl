@@ -6,8 +6,10 @@
 -- the algorithm takes 1 cycle
 
 LIBRARY ieee;
-library work;
+LIBRARY work;
 USE ieee.std_logic_1164.ALL;
+use ieee.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
 USE work.parameter.ALL;
 
 ENTITY addIndex IS
@@ -15,7 +17,7 @@ ENTITY addIndex IS
     clk : IN STD_LOGIC;
 --	rst_n : IN STD_LOGIC;
 	din : IN xcorrdata;
-	dout : OUT xcorrindex;
+	dout : OUT xcorrindex
 	);
 END ENTITY addIndex;
 
@@ -27,7 +29,7 @@ ARCHITECTURE arch_addIndex OF addIndex IS
 	
 	BEGIN
 	  FOR data_index IN 0 TO xcorr_REGISTER_LENGTH-1 LOOP
-	    output(data_index) := input(data_index) & STD_LOGIC_VECTOR(TO_UNSIGNED(data_index,7));
+	    output(data_index) := input(data_index) & STD_LOGIC_VECTOR(TO_UNSIGNED(data_index,xcorr_INDEX_WIDTH));
 	  END LOOP;
 	  RETURN output;
   END add;

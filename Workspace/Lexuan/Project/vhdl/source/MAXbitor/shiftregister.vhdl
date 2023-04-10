@@ -22,8 +22,10 @@ END shiftregister;
 
 ARCHITECTURE arch_shiftregister OF shiftregister IS
 
+TYPE datasize IS ARRAY (0 TO REGISTER_NUM-1) OF STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0);
+
 SIGNAL data: STD_LOGIC_VECTOR(INPUT_WIDTH*REGISTER_NUM-1 DOWNTO 0) := (others => '0');
-signal dout_sig: xcorrdata := ((others => (others=>'0')));
+signal dout_sig: datasize := ((others => (others=>'0')));
 
 
 COMPONENT singleregister IS
@@ -52,7 +54,7 @@ BEGIN
 IF rst_n = '0' THEN
 	data <= (OTHERS=> '0');
 END IF;
-IF RISING_EDGE(clk) THEN
+IF FALLING_EDGE(clk) THEN
    data(INPUT_WIDTH*REGISTER_NUM-1 DOWNTO INPUT_WIDTH) <= data(INPUT_WIDTH*(REGISTER_NUM-1)-1 DOWNTO 0);
    data(INPUT_WIDTH-1 DOWNTO 0) <= din;
  END IF;
