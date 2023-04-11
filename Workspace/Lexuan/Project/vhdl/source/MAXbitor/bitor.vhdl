@@ -41,7 +41,7 @@ ARCHITECTURE arch_MAXbitor OF bitor IS
     IF 	orresult = '0' THEN 
 	  marked_input := last_column;
 	ELSE 
-	  marked_input := input;
+	  marked_input := input and last_column;
 	END IF;
 	
 	output := marked_input & orresult;

@@ -17,7 +17,7 @@ ENTITY shiftregister IS
   PORT(clk: IN STD_LOGIC;
        rst_n: IN STD_LOGIC;
        din: IN STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0);
-       dout: OUT STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0));
+       dout: OUT STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0) := (OTHERS => '0'));
 END shiftregister;
 
 ARCHITECTURE arch_shiftregister OF shiftregister IS

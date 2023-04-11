@@ -130,13 +130,13 @@ BEGIN
    COMPONENT bitor
    PORT MAP(
      clk => clk,
-	 din => transposition_out_signal(0),
+	 din => bitor_input_signal(0),
 	 din_last => bitor_input_last_signal(1),
 	 dout_bitor => outputvalue(0),
 	 dout_last => bitor_input_last_signal(0)
    );
   
-  outputbuffer: FOR i IN 2 TO xcorr_DATA_WIDTH-1 GENERATE
+  outputbuffer: FOR i IN 1 TO xcorr_DATA_WIDTH-1 GENERATE
     buffer_inst:
 	COMPONENT MAXbuffer
     GENERIC MAP(BUFFER_LENGTH => i+1)
@@ -148,8 +148,8 @@ BEGIN
     );
   END GENERATE;
   
-  outputvalue_buffer <= bitor_result_signal(1);
-  outputvalue(1) <= bitor_result_signal(1);
+--  outputvalue_buffer <= bitor_result_signal(1);
+--  outputvalue(1) <= bitor_result_signal(1);
   
   MAXvalue <= outputvalue(xcorr_DATA_WIDTH-1 DOWNTO xcorr_INDEX_WIDTH);
   dout_index <= outputvalue(xcorr_INDEX_WIDTH-1 DOWNTO 0);

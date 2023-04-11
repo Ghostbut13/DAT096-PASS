@@ -7,7 +7,7 @@ USE work.parameter.ALL;
 ENTITY bitregister IS
   PORT (clk: IN STD_LOGIC;
         din: IN STD_LOGIC;
-        dout: OUT STD_LOGIC);
+        dout: OUT STD_LOGIC :='0');
 END bitregister;
 
 ARCHITECTURE arch_bitregister OF bitregister IS
