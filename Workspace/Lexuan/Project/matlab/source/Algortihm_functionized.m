@@ -12,13 +12,13 @@ for i = 1:length(mY(:,1))
     powAcc(:,2) = [abs(mY(i,2)); powAcc(1:end-1, 2)];
     powAcc(:,3) = [abs(mY(i,3)); powAcc(1:end-1, 3)];
     powAcc(:,4) = [abs(mY(i,4)); powAcc(1:end-1, 4)]; 
-    pY(i,1) = mean(powAcc(:,1));
-    pY(i,2) = mean(powAcc(:,2));
-    pY(i,3) = mean(powAcc(:,3));
-    pY(i,4) = mean(powAcc(:,4));
+    pY(i,1) = sum(powAcc(:,1));
+    pY(i,2) = sum(powAcc(:,2));
+    pY(i,3) = sum(powAcc(:,3));
+    pY(i,4) = sum(powAcc(:,4));
 end
 
-pY = pY./max(pY);
+npY = pY./max(pY); %normalized pY
 %mY = mY./max(abs(mY));
 
 %highpass
@@ -48,7 +48,7 @@ plot(mY);
 
 figure(2);
 len = length(mY(:,1));%48000;
-len = 2*48000;
+%len = 48000;
 d = ceil(48000/343);
 signalAcc = zeros(10000,4);
 crossAcc = zeros(4*d,3);
@@ -60,30 +60,63 @@ for i=1:len
     signalAcc(:,4) = [mY(i,4); signalAcc(1:end-1,4)]; 
 
 
-    crossAcc(:,1) = mycrossCorre(crossAcc(:,1), signalAcc(:,2),signalAcc(:,4),floor(length(crossAcc(:,1))/2)); % crosscorr mic 2 and 4
+    crossAcc(:,1) = mycrossCorre(crossAcc(:,1), signalAcc(:,1),signalAcc(:,2),floor(length(crossAcc(:,1))/2)); % crosscorr mic 1 and 2
     crossAcc(:,2) = mycrossCorre(crossAcc(:,2), signalAcc(:,2),signalAcc(:,3),floor(length(crossAcc(:,2))/2)); % mic 2 and 3
     crossAcc(:,3) = mycrossCorre(crossAcc(:,3), signalAcc(:,3),signalAcc(:,4),floor(length(crossAcc(:,3))/2)); % mic 3 and 4
-%     [A, lags(i,1)] = max(crossAcc(:,1));
-%     lags(i,1) = lags(i,1) -length(crossAcc(:,1))/2;
-%     [A, lags(i,2)] = max(crossAcc(:,2));
-%     lags(i,2) = lags(i,2) -length(crossAcc(:,1))/2;
-%     [A, lags(i,3)] = max(crossAcc(:,3));
-%     lags(i,3) = lags(i,3) -length(crossAcc(:,1))/2;
     lags(i,1) = myMax(crossAcc(:,1)) -length(crossAcc(:,1))/2;
     lags(i,2) = myMax(crossAcc(:,2)) -length(crossAcc(:,1))/2;
     lags(i,3) = myMax(crossAcc(:,3)) -length(crossAcc(:,1))/2;
-
-
-    if mod(i,1000) == 1
-        hold on;
-        n=1;
-        %plot3(crossAcc(:,1), (1:length(crossAcc(:,1)))-ceil(length(crossAcc(:,1))/2),i*ones(length(crossAcc(:,1)),1), 'black');
-        plot3(crossAcc(:,n), (1:length(crossAcc(:,n)))-ceil(length(crossAcc(:,n))/2),(i/48000)*ones(length(crossAcc(:,n)),1), 'color', [pY(i,3), pY(i,3), 0]);
-        [A,I] = max(crossAcc(:,n));
-        plot3(A,I-ceil(length(crossAcc(:,n))/2),i/48000, 'o');
+    
+    %gateing
+    if pY(i,2) < 5000 && i>1
+        lags(i,1) = lags(i-1,1) + 0.2*(lags(i,1)-lags(i-1,1));
+        lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
     end
+    if pY(i,3) < 5000 && i>1
+        lags(i,3) = lags(i-1,3) + 0.2*(lags(i,3)-lags(i-1,3));
+        lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
+    end
+
+
+%     if mod(i,1000) == 1
+%         hold on;
+%         n=1;
+%         %plot3(crossAcc(:,1), (1:length(crossAcc(:,1)))-ceil(length(crossAcc(:,1))/2),i*ones(length(crossAcc(:,1)),1), 'black');
+%         plot3(crossAcc(:,n), (1:length(crossAcc(:,n)))-ceil(length(crossAcc(:,n))/2),(i/48000)*ones(length(crossAcc(:,n)),1), 'color', [npY(i,3), npY(i,3), 0]);
+%         [A,I] = max(crossAcc(:,n));
+%         plot3(A,I-ceil(length(crossAcc(:,n))/2),i/48000, 'o');
+%     end
 end
 %%
+% 
+% delta = 0.01;
+% lags(1,:) = [0,0,0];
+% for i=2:length(lags(:,1))
+%     if lags(i,1) > lags(i-1,1)
+%         lags(i,1) = lags(i-1,1) +delta;
+%     elseif lags(i,1) < lags(i-1,1)
+%         lags(i,1) = lags(i-1,1) -delta;
+%     end
+% 
+% 
+%     if lags(i,2) > lags(i-1,2)
+%         lags(i,2) = lags(i-1,2) +delta;
+%     elseif lags(i,2) < lags(i-1,2)
+%         lags(i,2) = lags(i-1,2) -delta;
+%     end
+% 
+% 
+%     if lags(i,3) > lags(i-1,3)
+%         lags(i,3) = lags(i-1,3) +delta;
+%     elseif lags(i,3) < lags(i-1,3)
+%         lags(i,3) = lags(i-1,3) -delta;
+%     end
+% end
+
+
+
+
+
 figure(3)
 hold on
 plot(lags(:,1))
@@ -115,6 +148,27 @@ for i=1:len
     choords(i,1) = x;
     choords(i,2) = y;
 end
+
+choords(choords > 5) = 5;
+choords(choords < -5) = -5;
+choords(isnan(choords)) = 0;
+delta = 0.0001; % panning accumulator
+choords(1,:) = [0, 0];
+for i=2:length(choords(:,1))
+    if choords(i,1) > choords(i-1,1)
+        choords(i,1) = choords(i-1,1) + delta;
+    elseif choords(i,1) < choords(i-1,1)
+        choords(i,1) = choords(i-1,1) - delta;
+    end
+
+
+    if choords(i,2) > choords(i-1,2)
+        choords(i,2) = choords(i-1,2) + delta;
+    elseif choords(i,2) < choords(i-1,2)
+        choords(i,2) = choords(i-1,2) - delta;
+    end
+end
+
 
 figure(5)
 plot(choords(:,1), choords(:,2), 'o');
