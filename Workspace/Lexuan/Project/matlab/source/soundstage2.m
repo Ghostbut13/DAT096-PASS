@@ -1,4 +1,4 @@
-clc, clear all, close all
+%clc, clear all, close all
 [stereoY, Fs] = audioread("test_dialog_mono.wav");
 Y = stereoY(:,1);
 m = max(abs(Y));
