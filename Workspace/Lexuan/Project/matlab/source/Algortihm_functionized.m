@@ -2,8 +2,8 @@ clc, clear all, close all
 
 %signal=[zeros(1,200), sin(linspace(0,40*pi, 10000))];
 %load('movingactor4-1_reading.mat'); % load mY
-load('Ether_Channel_3(1m_80dB_8s).mat')
-%load('movingactor4-1_reading.mat')
+load('Ether_Channel_3(1m_80dB_8s).mat');
+%load('movingactor4-1_reading.mat');
 
 pY = zeros(length(mY(:,1)),4);
 powAcc = zeros(1000,4);
@@ -17,6 +17,32 @@ for i = 1:length(mY(:,1))
     pY(i,3) = sum(powAcc(:,3));
     pY(i,4) = sum(powAcc(:,4));
 end
+
+% pY(pY>1000000) = 1000000;
+% pY(pY<300000) = 300000;
+
+fc = 4;
+[n,d] = butter(2, fc/(48000/2), 'low');
+sys = tf(n,d, 1/48000);
+fpY(:,1) = lsim(sys, pY(:,1), []);
+fpY(:,2) = lsim(sys, pY(:,2), []);
+fpY(:,3) = lsim(sys, pY(:,3), []);
+fpY(:,4) = lsim(sys, pY(:,4), []);
+
+
+
+% ppY = zeros(length(mY(:,1)),4);
+% powAcc = zeros(1000,4);
+% for i = 1:length(mY(:,1))
+%     powAcc(:,1) = [pY(i,1); powAcc(1:end-1, 1)];
+%     powAcc(:,2) = [pY(i,2); powAcc(1:end-1, 2)];
+%     powAcc(:,3) = [pY(i,3); powAcc(1:end-1, 3)];
+%     powAcc(:,4) = [pY(i,4); powAcc(1:end-1, 4)]; 
+%     ppY(i,1) = sum(powAcc(:,1))/1000;
+%     ppY(i,2) = sum(powAcc(:,2))/1000;
+%     ppY(i,3) = sum(powAcc(:,3))/1000;
+%     ppY(i,4) = sum(powAcc(:,4))/1000;
+% end
 
 npY = pY./max(pY); %normalized pY
 %mY = mY./max(abs(mY));
@@ -40,44 +66,68 @@ fY(:,2) = lsim(sys, fY(:,2), []);
 fY(:,3) = lsim(sys, fY(:,3), []);
 fY(:,4) = lsim(sys, fY(:,4), []);
 
-mY=fY;
+%mY=fY;
 
 figure(1)
 plot(mY);
 
 
 figure(2);
+plot(pY(:,3));
+hold on
+plot(fpY(:,3));
+
+
+%%
 len = length(mY(:,1));%48000;
 %len = 48000;
 d = ceil(48000/343);
 signalAcc = zeros(10000,4);
-crossAcc = zeros(4*d,3);
+crossAcc = zeros(2*d,3);
 lags = zeros(len,3);
 for i=1:len
+    %shift register
     signalAcc(:,1) = [mY(i,1); signalAcc(1:end-1,1)]; 
     signalAcc(:,2) = [mY(i,2); signalAcc(1:end-1,2)]; 
     signalAcc(:,3) = [mY(i,3); signalAcc(1:end-1,3)]; 
     signalAcc(:,4) = [mY(i,4); signalAcc(1:end-1,4)]; 
 
-
+    %crosscorrelation
     crossAcc(:,1) = mycrossCorre(crossAcc(:,1), signalAcc(:,1),signalAcc(:,2),floor(length(crossAcc(:,1))/2)); % crosscorr mic 1 and 2
     crossAcc(:,2) = mycrossCorre(crossAcc(:,2), signalAcc(:,2),signalAcc(:,3),floor(length(crossAcc(:,2))/2)); % mic 2 and 3
     crossAcc(:,3) = mycrossCorre(crossAcc(:,3), signalAcc(:,3),signalAcc(:,4),floor(length(crossAcc(:,3))/2)); % mic 3 and 4
+    %max correlation index
     lags(i,1) = myMax(crossAcc(:,1)) -length(crossAcc(:,1))/2;
     lags(i,2) = myMax(crossAcc(:,2)) -length(crossAcc(:,1))/2;
     lags(i,3) = myMax(crossAcc(:,3)) -length(crossAcc(:,1))/2;
     
     %gateing
-    if pY(i,2) < 5000 && i>1
-        lags(i,1) = lags(i-1,1) + 0.2*(lags(i,1)-lags(i-1,1));
-        lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
+%     if pY(i,2) < 25000 && i>1
+%         lags(i,1) = lags(i-1,1) + 0.2*(lags(i,1)-lags(i-1,1));
+%         lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
+%     end
+%     if pY(i,3) < 25000 && i>1
+%         lags(i,3) = lags(i-1,3) + 0.2*(lags(i,3)-lags(i-1,3));
+%         lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
+%     end
+%     if fpY(i,2) > pY(i,2) && i>1
+%         lags(i,1) = lags(i-1,1) + 0.1*(lags(i,1)-lags(i-1,1));
+%         lags(i,2) = lags(i-1,2) + 0.1*(lags(i,2)-lags(i-1,2));
+%     end
+%     if fpY(i,3) > pY(i,3) && i>1
+%         lags(i,3) = lags(i-1,3) + 0.1*(lags(i,3)-lags(i-1,3));
+%         lags(i,2) = lags(i-1,2) + 0.1*(lags(i,2)-lags(i-1,2));
+%     end
+    if (fpY(i,2) > pY(i,2) || pY(i,2) < 20000) && i>1
+        lags(i,1) = lags(i-1,1) + 0.01*sign(lags(i,1) -lags(i-1,1));
+        lags(i,2) = lags(i-1,2) + 0.01*sign(lags(i,2) -lags(i-1,2));
     end
-    if pY(i,3) < 5000 && i>1
-        lags(i,3) = lags(i-1,3) + 0.2*(lags(i,3)-lags(i-1,3));
-        lags(i,2) = lags(i-1,2) + 0.2*(lags(i,2)-lags(i-1,2));
+    if (fpY(i,3) > pY(i,3) || pY(i,3) < 20000) && i>1
+        lags(i,3) = lags(i-1,3) + 0.01*sign(lags(i,3) -lags(i-1,3));
+        lags(i,2) = lags(i-1,2) + 0.01*sign(lags(i,2) -lags(i-1,2));
     end
 
-
+ 
 %     if mod(i,1000) == 1
 %         hold on;
 %         n=1;
@@ -115,6 +165,15 @@ end
 
 
 
+% fc = 4;
+% [n,d] = butter(2, fc/(48000/2), 'low');
+% sys = tf(n,d, 1/48000);
+% lags(:,1) = lsim(sys, lags(:,1), []);
+% lags(:,2) = lsim(sys, lags(:,2), []);
+% lags(:,3) = lsim(sys, lags(:,3), []);
+
+
+
 
 
 figure(3)
@@ -125,6 +184,7 @@ plot(lags(:,3))
 figure(4)
 plot(mY(:,4))
 
+a=0;
 choords = zeros(len,2);
 for i=1:len
     delay1 = 343*lags(i,2)/48000;
@@ -141,34 +201,50 @@ for i=1:len
     %D = ((-2*A-2*B)*x+ A^2 + B^2 - delay1^2 - delay2^2)/(2*(delay1 + delay2));
     D = (-2*x*A + A^2 - delay1^2)/(2*delay1);
        
-    y = abs(D^2 - x^2);
+    y = (D^2 - x^2);
+    if y<0
+        y = choords(i-1,2);
+        x = choords(i-1,1);
+        a=a+1;
+    end
     y = sqrt(y);
     x = 3 -2.5 + x;
 
     choords(i,1) = x;
     choords(i,2) = y;
 end
+% 
+% choords(choords > 5) = 5;
+% choords(choords < -5) = -5;
+% choords(isnan(choords)) = 0;
+% delta = 0.0001; % panning accumulator
+% choords(1,:) = [0, 0];
+% for i=2:length(choords(:,1))
+%     if choords(i,1) > choords(i-1,1)
+%         choords(i,1) = choords(i-1,1) + delta;
+%     elseif choords(i,1) < choords(i-1,1)
+%         choords(i,1) = choords(i-1,1) - delta;
+%     end
+% 
+% 
+%     if choords(i,2) > choords(i-1,2)
+%         choords(i,2) = choords(i-1,2) + delta;
+%     elseif choords(i,2) < choords(i-1,2)
+%         choords(i,2) = choords(i-1,2) - delta;
+%     end
+% end
+% 
+
 
 choords(choords > 5) = 5;
 choords(choords < -5) = -5;
 choords(isnan(choords)) = 0;
-delta = 0.0001; % panning accumulator
-choords(1,:) = [0, 0];
-for i=2:length(choords(:,1))
-    if choords(i,1) > choords(i-1,1)
-        choords(i,1) = choords(i-1,1) + delta;
-    elseif choords(i,1) < choords(i-1,1)
-        choords(i,1) = choords(i-1,1) - delta;
-    end
 
-
-    if choords(i,2) > choords(i-1,2)
-        choords(i,2) = choords(i-1,2) + delta;
-    elseif choords(i,2) < choords(i-1,2)
-        choords(i,2) = choords(i-1,2) - delta;
-    end
-end
-
+fc = 4;
+[n,d] = butter(2, fc/(48000/2), 'low');
+sys = tf(n,d, 1/48000);
+choords(:,1) = lsim(sys, choords(:,1), []);
+choords(:,2) = lsim(sys, choords(:,2), []);
 
 figure(5)
 plot(choords(:,1), choords(:,2), 'o');
@@ -206,6 +282,8 @@ function newAcc = mycrossCorre(acc, X, Y, maxlag)
     newAcc = acc;
 end
 
+
+
 function Y = myMax(X)
     m = 0;
     i = 0;
@@ -226,7 +304,7 @@ function occurancePlot(X,Y)
     xMax = 2;
     yMax = 4;
     
-    res = 100;
+    res = 20;
     XY = zeros(res*yMax,2*res*xMax);
 
     x = round(X.*res);
