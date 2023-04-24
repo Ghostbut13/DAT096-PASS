@@ -1,71 +1,137 @@
-close all
+clc, close all, clear all
+
+
+res=6;
+xMax = 10;
+yMax = 10;
 
 d = ceil(48000/343);
 lags=-d:d;
 lags(1) = -139.9;
 lags(end) = 139.9; % manually enter max lags as ceil is to much but floor would remove them.
-% Xs = [];
-% Ys = [];
 
-LUT = [];
-for i=1:2*d +1
-    lag = lags(i);
-    delay = 343.*lag./48000;
-    
-    A = liner(delay, [2,3], 1);
-    LUT = addLagArray(LUT, A, 256/20, 10,10);
-end
-LUT(:,:,1) = [];
+LUT = generateLUT(xMax, yMax,res, lags, 1);
+
+d = 2*ceil(48000/343);
+lags=-d:d;
+lags(1) = 2*-139.9;
+lags(end) = 2*139.9; % manually enter max lags as ceil is to much but floor would remove them.
+
+LUT2 = generateLUT(xMax, yMax,res, lags, 2);
+
+
 % surf(LUT(:,:,1)')
 % surf(LUT(:,:,200)')
-%%
-array = zeros(512,256);
+%% 18    74   105    89   177   193
+array = zeros(2*2^res,2^res);
+m = -1;
+lag = -105;
+array = addLineArray(array, LUT, lag, m, res, xMax, 140);
+m = 0;
+lag = -74;
+array = addLineArray(array, LUT, lag, m, res, xMax, 140);
 m = 1;
-dx = (m+9-1.5)*256/20;
-dx = round(dx);
-lag = -90;
-array(dx:dx+255, :) = array(dx:dx+255, :) + LUT(:,:,lag+141);
+lag = -18;
+array = addLineArray(array, LUT, lag, m, res, xMax, 140);
+m = -0.5;
+lag = -177;
+array = addLineArray(array, LUT2, lag, m, res, xMax, floor(length(LUT2(1,1,:))/2));
+m = 0.5;
+lag = -89;
+array = addLineArray(array, LUT2, lag, m, res, xMax, floor(length(LUT2(1,1,:))/2));
 
-m = 2;
-dx = (m+9-1.5)*256/20;
-dx = round(dx);
-lag = 60;
-array(dx:dx+255, :) = array(dx:dx+255, :) + LUT(:,:,lag+141);
+% 
 
-
-m = 3;
-dx = (m+9-1.5)*256/20;
-dx = round(dx);
-lag = 100;
-array(dx:dx+255, :) = array(dx:dx+255, :) + LUT(:,:,lag+141);
+plotArray(array', xMax, yMax, res)
 
 
-m = 4;
-dx = (m+9-1.5)*256/20;
-dx = round(dx);
-lag = 130;
-array(dx:dx+255, :) = array(dx:dx+255, :) + LUT(:,:,lag+141);
+%
+% close all
+% A = LUT(:,:,1);
+% for i= 2:length(LUT(1,1,:))
+%     A = A + LUT(:,:,i);
+% end
+% surf(A);
+% figure
+% A = LUT2(:,:,1);
+% for i= 2:length(LUT2(1,1,:))
+%     A = A + LUT2(:,:,i);
+% end
+% surf(A);
 
 
-surf(array')
 
 
-function A=addLagArray(array, choords, res, xMax, yMax)
+function plotArray(array, xMax, yMax, res)
+    figure(100)
+    sf=surf(array);
+    XD = get(sf, 'XData');
+    YD = get(sf, 'YData');
+    ZD = get(sf, 'ZData');
+    close
+    %figure(11)
+    hold on
+    surf(2*XD/(2^res) * xMax -2*xMax, YD/(2^res) * yMax, ZD)
+end
+
+
+function A=addLineArray(array, LUT, lag, m,res, xMax, maxLag)
+    dx = (m+xMax)*(2^res / (2*xMax)) +1;
+    dx = floor(dx);
+    array(dx:dx+(2^res -1), :) = array(dx:dx+(2^res -1), :) + LUT(:,:,lag+maxLag +1);
+    A = array;
+end
+
+
+function A=generateLUT(xMax, yMax, res, lags, micD)
+    
+    LUT = [];
+    for i=1:length(lags)
+        lag = lags(i);
+        delay = 343.*lag./48000;
+    
+        B = liner(delay, micD);
+        LUT = addLagLUT(LUT, B, res, xMax,yMax);
+    end
+    LUT(:,:,1) = [];
+    A = LUT;
+end
+
+
+function A=addLagLUT(array, choords, res, xMax, yMax)
+   %takes coordinate vector and assembles it down to a fixed
+   %resoultion grid, aka rasterize the coordinate vector.
+
+    res = 2^res;
     X = choords(:,1);
     Y = choords(:,2);
+
+    % remove zeros
     X(Y==0) = [];
     Y(Y==0) = [];
-    
-    X= round(X*res);
-    Y= round(2*Y*res);
-    Y=Y+1;
 
-    XY = zeros(2*res*xMax,2*res*yMax);
+    Y(abs(X)>=xMax) = [];
+    X(abs(X)>=xMax) = [];
+    X(Y>=yMax) = [];
+    Y(Y>=yMax) = [];
+    X(Y<0) = [];
+    Y(Y<0) = [];
+    
+
+
+    % normalize
+    X=(X/xMax +1)/2;
+    Y=Y/yMax; 
+
+    X= floor(X*(res-1)+1);
+    Y= floor(Y*(res-1)+1);
+    %X=X+1;
+    %Y=Y+1;
+
+    XY = zeros(res,res);
 
     for i = 1:length(X)
-        if abs(X(i)) < xMax*res && Y(i)> 0 && Y(i) < 2*yMax*res 
-            XY( X(i)  + xMax*res,  Y(i) ) = 1+ XY( X(i)  + xMax*res,  Y(i) );
-        end
+        XY(X(i),  Y(i)) = 1+ XY(X(i),  Y(i));
     end
 
     array(:,:,end+1) = XY;
@@ -73,21 +139,23 @@ function A=addLagArray(array, choords, res, xMax, yMax)
 end
 
 
-function XY=liner(delay, mics, micD)
+function XY=liner(delay, micD)
+% creates vector with coordinates corrisponding to the 'valid' line
+    dx = micD;
     if delay < 0
        delay = -delay;
-       mics = [mics(2), mics(1)];
+       dx = -dx;
     end
-    dx = -(mics(1) - mics(2))*micD;
     n=10000;
-    a = linspace(0, 10, n);
+    a = linspace(micD/2-delay, 12, n);
+    %a(a<0) = [];
     chords= zeros(n,2);
-    for i=1:n
-        chords(i,:) = choordFinder(a(i), delay, dx);
+    for i=1:length(a)
+        chords(i,:) = choordFinder(a(i), delay, micD);
+        chords(i,1) = chords(i,1)*sign(dx);
     end
     hold on
-    %plot3(chords(:,1)+mics(1)*micD-2.5, chords(:,2), z*ones(length(chords(:,1)),1) ,color);
-    XY = [chords(:,1)+mics(1)*micD-2.5, chords(:,2)];
+    XY = [chords(:,1)-dx/2, chords(:,2)];
 end
 
 function XY=choordFinder(A, delay, micD)
@@ -105,7 +173,7 @@ function XY=choordFinder(A, delay, micD)
     XY = [micD-x,y];
 end
 
-function distrobutionPlot(X,Y)  
+function distributionPlot(X,Y)  
     figure(100)
     xMax = 11;
     yMax = 11;
