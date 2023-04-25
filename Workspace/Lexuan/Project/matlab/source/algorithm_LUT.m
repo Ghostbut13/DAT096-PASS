@@ -1,7 +1,7 @@
 clc, close all, clear all
 
 
-res=6;
+res=8;
 xMax = 10;
 yMax = 10;
 
@@ -22,27 +22,58 @@ LUT2 = generateLUT(xMax, yMax,res, lags, 2);
 
 % surf(LUT(:,:,1)')
 % surf(LUT(:,:,200)')
+
+%%
+load("Ether_Channel_3(1m_80dB_8s)");
+
+
+micDistance = 1; % meters
+len = length(mY(:,1));%48000;
+len = 12000;
+d = ceil(48000/343);
+signalAcc = zeros(1000,4);
+crossAcc = zeros(4*d,6);
+lags = zeros(len,6);
+XY = zeros(len,2);
+for i=2:len
+    %shift register
+    signalAcc(:,1) = [mY(i,1); signalAcc(1:end-1,1)]; 
+    signalAcc(:,2) = [mY(i,2); signalAcc(1:end-1,2)]; 
+    signalAcc(:,3) = [mY(i,3); signalAcc(1:end-1,3)]; 
+    signalAcc(:,4) = [mY(i,4); signalAcc(1:end-1,4)]; 
+
+    %crosscorrelation
+    crossAcc(:,1) = mycrossCorre(crossAcc(:,1), signalAcc(:,1),signalAcc(:,2),floor(length(crossAcc(:,1))/2)); % crosscorr mic 1 and 2
+    crossAcc(:,2) = mycrossCorre(crossAcc(:,2), signalAcc(:,2),signalAcc(:,3),floor(length(crossAcc(:,2))/2)); % mic 2 and 3
+    crossAcc(:,3) = mycrossCorre(crossAcc(:,3), signalAcc(:,3),signalAcc(:,4),floor(length(crossAcc(:,3))/2)); % mic 3 and 4
+    crossAcc(:,4) = mycrossCorre(crossAcc(:,4), signalAcc(:,1),signalAcc(:,3),floor(length(crossAcc(:,4))/2)); % crosscorr mic 1 and 3
+    crossAcc(:,5) = mycrossCorre(crossAcc(:,5), signalAcc(:,2),signalAcc(:,4),floor(length(crossAcc(:,5))/2)); % mic 2 and 4
+    crossAcc(:,6) = mycrossCorre(crossAcc(:,6), signalAcc(:,1),signalAcc(:,4),floor(length(crossAcc(:,6))/2)); % mic 1 and 4
+    
+    %max correlation index
+    lags(i,1) = myMax(crossAcc(d:3*d,1)) -d;
+    lags(i,2) = myMax(crossAcc(d:3*d,2)) -d;
+    lags(i,3) = myMax(crossAcc(d:3*d,3)) -d;
+    lags(i,4) = myMax(crossAcc(:,4)) -2*d;
+    lags(i,5) = myMax(crossAcc(:,5)) -2*d;
+    lags(i,6) = myMax(crossAcc(:,6)) -2*d;
+    
+    
+    [XYc, ~] = LUTCoordinate(lags(i, 1:5), res, LUT, LUT2, xMax, yMax);
+    XY(i,:) = XYc;
+end
+
+
+plot(XY(:,1), XY(:,2));
+%%
+
+distributionPlot(XY(:,1), XY(:,2))
+
+
+
 %% 18    74   105    89   177   193
-array = zeros(2*2^res,2^res);
-m = -1;
-lag = -105;
-array = addLineArray(array, LUT, lag, m, res, xMax, 140);
-m = 0;
-lag = -74;
-array = addLineArray(array, LUT, lag, m, res, xMax, 140);
-m = 1;
-lag = -18;
-array = addLineArray(array, LUT, lag, m, res, xMax, 140);
-m = -0.5;
-lag = -177;
-array = addLineArray(array, LUT2, lag, m, res, xMax, floor(length(LUT2(1,1,:))/2));
-m = 0.5;
-lag = -89;
-array = addLineArray(array, LUT2, lag, m, res, xMax, floor(length(LUT2(1,1,:))/2));
-
-% 
-
-plotArray(array', xMax, yMax, res)
+% [XY, array] = LUTCoordinate([18, 74, 105, 89, 177, 193], res, LUT, LUT2, xMax, yMax);
+% plotArray(array', xMax, yMax, res)
 
 
 %
@@ -59,8 +90,29 @@ plotArray(array', xMax, yMax, res)
 % end
 % surf(A);
 
+function [XY, array]=LUTCoordinate(delay, res, LUT, LUT2, xMax, yMax)
+    array = zeros(2*2^res,2^res);
+    m = -1;
+    array = addLineArray(array, LUT, delay(1)-1, m, res, xMax, 140);
+    m = 0;
+    array = addLineArray(array, LUT, delay(2)-1, m, res, xMax, 140);
+    m = 1;
+    array = addLineArray(array, LUT, delay(3)-1, m, res, xMax, 140);
+    m = -0.5;
+    array = addLineArray(array, LUT2, delay(4)-1, m, res, xMax, floor(length(LUT2(1,1,:))/2));
+    m = 0.5;
+    array = addLineArray(array, LUT2, delay(5)-1, m, res, xMax, floor(length(LUT2(1,1,:))/2));
 
-
+    % Get coordinates from max point in array
+    [A,X] = max(array);
+    [A,Y] = max(A);
+    X = X(Y);
+    X = (X/(2^res))*xMax -xMax;
+    Y = (Y/(2^res))*yMax;
+    
+    XY = [2*X, Y];
+    array = array;
+end
 
 function plotArray(array, xMax, yMax, res)
     figure(100)
@@ -205,3 +257,30 @@ function distributionPlot(X,Y)
     hold on
     surf(XD/res -xMax, YD/res, ZD)
 end
+
+
+function newAcc = mycrossCorre(acc, X, Y, maxlag)
+    for l=1-maxlag:maxlag
+        %new = X(lag)*Y(1); % simplification for non negative lag values
+        new = X(maxlag+l).*Y(maxlag); % to accept negative lag values we need to delay the signal with the amount of max negative lag
+    
+        old = X(end-maxlag + l).*Y(end-maxlag);
+    
+        acc(l+maxlag) = acc(l+maxlag) + new - old;
+    end
+    newAcc = acc;
+end
+
+
+function Y = myMax(X)
+    m = 0;
+    i = 0;
+    for a=1:length(X)
+        if X(a) >= m
+            m = X(a);
+            i = a;
+        end
+    end
+    Y=i;
+end
+
