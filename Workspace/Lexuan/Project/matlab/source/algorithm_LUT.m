@@ -1,9 +1,9 @@
-clc, close all, clear all
+clc, close all
 
 
-res=8;
+res=6;
 xMax = 10;
-yMax = 10;
+yMax = 6;
 
 d = ceil(48000/343);
 lags=-d:d;
@@ -19,9 +19,18 @@ lags(end) = 2*139.9; % manually enter max lags as ceil is to much but floor woul
 
 LUT2 = generateLUT(xMax, yMax,res, lags, 2);
 
+d = 3*ceil(48000/343);
+lags=-d:d;
+lags(1) = 3*-139.9;
+lags(end) = 3*139.9; % manually enter max lags as ceil is to much but floor would remove them.
 
-% surf(LUT(:,:,1)')
-% surf(LUT(:,:,200)')
+LUT3 = generateLUT(xMax, yMax,res, lags, 3);
+
+%%
+hold on
+surf(LUT(:,:,1)')
+surf(LUT(:,:,200)')
+surf(LUT(:,:,281)')
 
 %%
 load("Ether_Channel_3(1m_80dB_8s)");
@@ -29,12 +38,13 @@ load("Ether_Channel_3(1m_80dB_8s)");
 
 micDistance = 1; % meters
 len = length(mY(:,1));%48000;
-len = 12000;
+len = 48000;
 d = ceil(48000/343);
-signalAcc = zeros(1000,4);
-crossAcc = zeros(4*d,6);
+signalAcc = zeros(10000,4);
+crossAcc = zeros(2*d,3);
+crossAcc2 = zeros(2*2*d,2);
+crossAcc3 = zeros(3*2*d,1);
 lags = zeros(len,6);
-XY = zeros(len,2);
 for i=2:len
     %shift register
     signalAcc(:,1) = [mY(i,1); signalAcc(1:end-1,1)]; 
@@ -46,30 +56,65 @@ for i=2:len
     crossAcc(:,1) = mycrossCorre(crossAcc(:,1), signalAcc(:,1),signalAcc(:,2),floor(length(crossAcc(:,1))/2)); % crosscorr mic 1 and 2
     crossAcc(:,2) = mycrossCorre(crossAcc(:,2), signalAcc(:,2),signalAcc(:,3),floor(length(crossAcc(:,2))/2)); % mic 2 and 3
     crossAcc(:,3) = mycrossCorre(crossAcc(:,3), signalAcc(:,3),signalAcc(:,4),floor(length(crossAcc(:,3))/2)); % mic 3 and 4
-    crossAcc(:,4) = mycrossCorre(crossAcc(:,4), signalAcc(:,1),signalAcc(:,3),floor(length(crossAcc(:,4))/2)); % crosscorr mic 1 and 3
-    crossAcc(:,5) = mycrossCorre(crossAcc(:,5), signalAcc(:,2),signalAcc(:,4),floor(length(crossAcc(:,5))/2)); % mic 2 and 4
-    crossAcc(:,6) = mycrossCorre(crossAcc(:,6), signalAcc(:,1),signalAcc(:,4),floor(length(crossAcc(:,6))/2)); % mic 1 and 4
+    crossAcc2(:,1) = mycrossCorre(crossAcc2(:,1), signalAcc(:,1),signalAcc(:,3),floor(length(crossAcc2(:,1))/2)); % crosscorr mic 1 and 3
+    crossAcc2(:,2) = mycrossCorre(crossAcc2(:,2), signalAcc(:,2),signalAcc(:,4),floor(length(crossAcc2(:,2))/2)); % mic 2 and 4
+    crossAcc3(:,1) = mycrossCorre(crossAcc3(:,1), signalAcc(:,1),signalAcc(:,4),floor(length(crossAcc3(:,1))/2)); % mic 1 and 4
     
     %max correlation index
-    lags(i,1) = myMax(crossAcc(d:3*d,1)) -d;
-    lags(i,2) = myMax(crossAcc(d:3*d,2)) -d;
-    lags(i,3) = myMax(crossAcc(d:3*d,3)) -d;
-    lags(i,4) = myMax(crossAcc(:,4)) -2*d;
-    lags(i,5) = myMax(crossAcc(:,5)) -2*d;
-    lags(i,6) = myMax(crossAcc(:,6)) -2*d;
+    lags(i,1) = myMax(crossAcc(:,1)) -d;
+    lags(i,2) = myMax(crossAcc(:,2)) -d;
+    lags(i,3) = myMax(crossAcc(:,3)) -d;
+    lags(i,4) = myMax(crossAcc2(:,1)) -2*d;
+    lags(i,5) = myMax(crossAcc2(:,2)) -2*d;
+    lags(i,6) = myMax(crossAcc3(:,1)) -3*d;
     
     
-    [XYc, ~] = LUTCoordinate(lags(i, 1:5), res, LUT, LUT2, xMax, yMax);
+    
+end
+
+%%
+% fc = 1;
+% lagsF =[];
+% [n,d] = butter(2, fc/(48000/2), 'low');
+% sys = tf(n,d, 1/48000);
+% lagsF(:,1) = lsim(sys, lags(:,1), []);
+% lagsF(:,2) = lsim(sys, lags(:,2), []);
+% lagsF(:,3) = lsim(sys, lags(:,3), []);
+% lagsF(:,4) = lsim(sys, lags(:,4), []);
+% lagsF(:,5) = lsim(sys, lags(:,5), []);
+% lagsF(:,6) = lsim(sys, lags(:,6), []);
+% 
+% lagsF = round(lagsF);
+
+
+XY = zeros(len,2);
+for i=1:len
+    [XYc, ~] = LUTCoordinate(lags(i, :), res, LUT, LUT2, LUT3, xMax, yMax);
     XY(i,:) = XYc;
 end
 
 
-plot(XY(:,1), XY(:,2));
-%%
+fc = 10;
+[n,d] = butter(2, fc/(48000/2), 'low');
+sys = tf(n,d, 1/48000);
+XY(:,1) = lsim(sys, XY(:,1), []);
+XY(:,2) = lsim(sys, XY(:,2), []);
 
+%%
+close all
+figure(1)
+plot(XY(:,1), XY(:,2));
+figure(2)
+plot(XY(:,1))
+hold on
+plot(XY(:,2))
+figure(3)
 distributionPlot(XY(:,1), XY(:,2))
 
-
+figure(4)
+[XYc, A] = LUTCoordinate(lags(40000, :), res, LUT, LUT2, LUT3, xMax, yMax);
+%[XYc, A] = LUTCoordinate([0,0,0,0,0], res, LUT, LUT2, xMax, yMax);
+plotArray(A', xMax, yMax, res)
 
 %% 18    74   105    89   177   193
 % [XY, array] = LUTCoordinate([18, 74, 105, 89, 177, 193], res, LUT, LUT2, xMax, yMax);
@@ -90,19 +135,21 @@ distributionPlot(XY(:,1), XY(:,2))
 % end
 % surf(A);
 
-function [XY, array]=LUTCoordinate(delay, res, LUT, LUT2, xMax, yMax)
+function [XY, array]=LUTCoordinate(delay, res, LUT, LUT2, LUT3, xMax, yMax)
     array = zeros(2*2^res,2^res);
     m = -1;
-    array = addLineArray(array, LUT, delay(1)-1, m, res, xMax, 140);
+    array = addLineArray(array, LUT, delay(1), m, res, xMax, 140);
     m = 0;
-    array = addLineArray(array, LUT, delay(2)-1, m, res, xMax, 140);
+    array = addLineArray(array, LUT, delay(2), m, res, xMax, 140);
     m = 1;
-    array = addLineArray(array, LUT, delay(3)-1, m, res, xMax, 140);
+    array = addLineArray(array, LUT, delay(3), m, res, xMax, 140);
     m = -0.5;
-    array = addLineArray(array, LUT2, delay(4)-1, m, res, xMax, floor(length(LUT2(1,1,:))/2));
+    array = addLineArray(array, LUT2, delay(4), m, res, xMax, floor(length(LUT2(1,1,:))/2));
     m = 0.5;
-    array = addLineArray(array, LUT2, delay(5)-1, m, res, xMax, floor(length(LUT2(1,1,:))/2));
-
+    array = addLineArray(array, LUT2, delay(5), m, res, xMax, floor(length(LUT2(1,1,:))/2));
+    m = 0;
+    array = addLineArray(array, LUT3, delay(6), m, res, xMax, floor(length(LUT3(1,1,:))/2));
+    
     % Get coordinates from max point in array
     [A,X] = max(array);
     [A,Y] = max(A);
@@ -146,7 +193,8 @@ function A=generateLUT(xMax, yMax, res, lags, micD)
         LUT = addLagLUT(LUT, B, res, xMax,yMax);
     end
     LUT(:,:,1) = [];
-    A = LUT;
+    
+    A = LUT; % return normalized LUT
 end
 
 
@@ -185,8 +233,19 @@ function A=addLagLUT(array, choords, res, xMax, yMax)
     for i = 1:length(X)
         XY(X(i),  Y(i)) = 1+ XY(X(i),  Y(i));
     end
-
-    array(:,:,end+1) = XY;
+    XY(XY>0) = 1;
+    
+    maxd = round(sqrt((res -res/2)^2 + (res)^2));
+    D = linspace(1, 0.5, maxd);
+    for x=1:res
+        for y=1:res
+            rx = x-res/2;
+            d = round( sqrt(rx^2 +y^2));
+            XY(x,y) = XY(x,y)*D(d);
+        end
+    end
+    
+    array(:,:,end+1) = XY/max(max(XY));
     A = array;
 end
 
