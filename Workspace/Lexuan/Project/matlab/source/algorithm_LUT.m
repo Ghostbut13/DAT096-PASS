@@ -33,12 +33,48 @@ surf(LUT(:,:,200)')
 surf(LUT(:,:,281)')
 
 %%
-load("Ether_Channel_3(1m_80dB_8s)");
+load("movingactorYaxis4_reading_70dB_lecroom");
 
+pY = zeros(length(mY(:,1)),4);
+powAcc = zeros(1000,4);
+for i = 1:length(mY(:,1))
+    powAcc(:,1) = [abs(mY(i,1)); powAcc(1:end-1, 1)];
+    powAcc(:,2) = [abs(mY(i,2)); powAcc(1:end-1, 2)];
+    powAcc(:,3) = [abs(mY(i,3)); powAcc(1:end-1, 3)];
+    powAcc(:,4) = [abs(mY(i,4)); powAcc(1:end-1, 4)]; 
+    pY(i,1) = sum(powAcc(:,1));
+    pY(i,2) = sum(powAcc(:,2));
+    pY(i,3) = sum(powAcc(:,3));
+    pY(i,4) = sum(powAcc(:,4));
+end
+
+% pY(pY>1000000) = 1000000;
+% pY(pY<300000) = 300000;
+
+fc = 20;
+[n,d] = butter(2, fc/(48000/2), 'low');
+sys = tf(n,d, 1/48000);
+fpY(:,1) = lsim(sys, pY(:,1), []);
+fpY(:,2) = lsim(sys, pY(:,2), []);
+fpY(:,3) = lsim(sys, pY(:,3), []);
+fpY(:,4) = lsim(sys, pY(:,4), []);
+
+
+
+
+fY = zeros(length(mY(:,1)),4);
+fc = 2000;
+[n,d] = butter(3, fc/(48000/2), 'high');
+sys = tf(n,d, 1/48000);
+fY(:,1) = lsim(sys, mY(:,1), []);
+fY(:,2) = lsim(sys, mY(:,2), []);
+fY(:,3) = lsim(sys, mY(:,3), []);
+fY(:,4) = lsim(sys, mY(:,4), []);
+mY = fY;
 
 micDistance = 1; % meters
 len = length(mY(:,1));%48000;
-len = 48000;
+% len = 48000;
 d = ceil(48000/343);
 signalAcc = zeros(10000,4);
 crossAcc = zeros(2*d,3);
@@ -68,7 +104,15 @@ for i=2:len
     lags(i,5) = myMax(crossAcc2(:,2)) -2*d;
     lags(i,6) = myMax(crossAcc3(:,1)) -3*d;
     
-    
+%     if sum(fpY(i,:)) < sum(fpY(i-1,:))
+%         lags(i,1) = lags(i-1,1) + 0.01*sign(lags(i,1) -lags(i-1,1));
+%         lags(i,2) = lags(i-1,2) + 0.01*sign(lags(i,2) -lags(i-1,2));
+%         lags(i,3) = lags(i-1,3) + 0.01*sign(lags(i,3) -lags(i-1,3));
+%         lags(i,4) = lags(i-1,4) + 0.01*sign(lags(i,4) -lags(i-1,4));
+%         lags(i,5) = lags(i-1,5) + 0.01*sign(lags(i,5) -lags(i-1,5));
+%         lags(i,6) = lags(i-1,6) + 0.01*sign(lags(i,6) -lags(i-1,6));
+%     end
+
     
 end
 
@@ -88,17 +132,48 @@ end
 
 
 XY = zeros(len,2);
-for i=1:len
-    [XYc, ~] = LUTCoordinate(lags(i, :), res, LUT, LUT2, LUT3, xMax, yMax);
+for i=2:len
+    [XYc, ~] = LUTCoordinate(round(lags(i, :)), res, LUT, LUT2, LUT3, xMax, yMax);
+
     XY(i,:) = XYc;
+    if sum(fpY(i,:)) < sum(fpY(i-1,:))
+        XY(i,1) = XY(i-1,1);
+        XY(i,2) = XY(i-1,2);
+    end
 end
 
+
+
+
+%%
+load("XY.mat");
+close all
 
 fc = 10;
 [n,d] = butter(2, fc/(48000/2), 'low');
 sys = tf(n,d, 1/48000);
 XY(:,1) = lsim(sys, XY(:,1), []);
 XY(:,2) = lsim(sys, XY(:,2), []);
+
+
+
+Y = zeros(len,1);
+sY = zeros(len,1);
+for i= 1:len
+    if XY(i,2) < 0
+        XY(i,2) =0;
+    end
+    G = sqrt(XY(i,2));
+    sY(i) = sum( mY(i,:));
+    Y(i) = sum( mY(i,:)*G );
+end
+
+figure
+hold on
+plot(sY./max(sY))
+plot(Y./max(Y))
+
+
 
 %%
 close all
@@ -112,7 +187,7 @@ figure(3)
 distributionPlot(XY(:,1), XY(:,2))
 
 figure(4)
-[XYc, A] = LUTCoordinate(lags(40000, :), res, LUT, LUT2, LUT3, xMax, yMax);
+[XYc, A] = LUTCoordinate(round(lags(40000, :)), res, LUT, LUT2, LUT3, xMax, yMax);
 %[XYc, A] = LUTCoordinate([0,0,0,0,0], res, LUT, LUT2, xMax, yMax);
 plotArray(A', xMax, yMax, res)
 
