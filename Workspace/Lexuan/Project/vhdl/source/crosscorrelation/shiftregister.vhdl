@@ -21,52 +21,13 @@ ENTITY shiftregister IS
   PORT(clk: IN STD_LOGIC;
        rst_n: IN STD_LOGIC;
        din: IN STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0);
-       dout: OUT xcorrdata);
+       dout: OUT outputdata);
 END shiftregister;
 
 ARCHITECTURE arch_shiftregister OF shiftregister IS
 
---implementation 1
-
---SIGNAL data: outputdata;
-
---COMPONENT singleregister IS
---  GENERIC(SIGNAL_WIDTH : INTEGER := 16);
---  PORT (clk: IN STD_LOGIC;
---        din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
---        dout: OUT STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0));
---END COMPONENT singleregister;
-
---BEGIN
-
---  G: FOR i IN 1 TO REGISTER_LENGTH-1 GENERATE
---	register_i:
---        COMPONENT singleregister
---  	GENERIC MAP(SIGNAL_WIDTH => SIGNAL_WIDTH)
- -- 	PORT MAP(clk => clk,
---                 din => data(i-1),
---                 dout => data(i));
---END GENERATE;
-
---first_register:
---COMPONENT singleregister
---  	GENERIC MAP(SIGNAL_WIDTH => SIGNAL_WIDTH)
---  	PORT MAP(clk => clk,
---                 din => din,
---                 dout => data(0));
-
---shift_process:
---PROCESS(clk)
---BEGIN
---  IF RISING_EDGE(clk) THEN
---      dout <= data;
---  END IF;
---END PROCESS shift_process;
-
---implementation 2
-
 SIGNAL data: STD_LOGIC_VECTOR(INPUT_WIDTH*REGISTER_NUM-1 DOWNTO 0) := (others => '0');
-signal dout_sig: xcorrdata := ((others => (others=>'0')));
+signal dout_sig: outputdata := ((others => (others=>'0')));
 
 
 COMPONENT singleregister IS
