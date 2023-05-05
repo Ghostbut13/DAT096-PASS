@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <circuit>
-  <version>2</version>
+  <version>1</version>
   <attributes/>
   <visualElements>
     <visualElement>
       <elementName>External</elementName>
       <elementAttributes>
         <entry>
-          <string>Label</string>
-          <string>simple_dual_two_clocks</string>
-        </entry>
-        <entry>
           <string>applicationType</string>
           <appType>GHDL</appType>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>simple_dual_two_clocks</string>
         </entry>
         <entry>
           <string>externalInputs</string>
@@ -161,12 +161,12 @@ end syn;</string>
       <elementName>Clock</elementName>
       <elementAttributes>
         <entry>
-          <string>Frequency</string>
-          <int>5</int>
-        </entry>
-        <entry>
           <string>runRealTime</string>
           <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>Frequency</string>
+          <int>5</int>
         </entry>
       </elementAttributes>
       <pos x="780" y="220"/>
@@ -250,6 +250,163 @@ end syn;</string>
       </elementAttributes>
       <pos x="1620" y="360"/>
     </visualElement>
+    <visualElement>
+      <elementName>External</elementName>
+      <elementAttributes>
+        <entry>
+          <string>applicationType</string>
+          <appType>GHDL</appType>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>switch</string>
+        </entry>
+        <entry>
+          <string>externalInputs</string>
+          <string>clk,rst_n,index_PE:3,cc1_max:16,cc2_MAX:16,cc3_MAX:16</string>
+        </entry>
+        <entry>
+          <string>Code</string>
+          <string>-- switcher description: we get indexer from power max. This will then help us find the neighbouring mics. 
+-- If indexer is 2 we know that 1, 2, 3 are affected. Therefore, we take the cc1 and cc2, because cc1 have 2-1 and (-)cc2 have 2-3
+--    cc1: mics 1 and 2
+--    cc2: mics 2 and 3 
+-- (-)cc2: mics 3 and 2
+--    cc3: mics 3 and 4
+-- we output the two delta values being the max value from each correlation and the common index_out from the cross-corelation.
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+
+
+ENTITY switch IS
+  PORT  (
+    clk			: IN STD_LOGIC ;
+	rst_n 		: IN STD_LOGIC;
+	index_PE  	: IN STD_LOGIC_VECTOR (2 downto 0);
+	cc1_max 	: IN STD_LOGIC_VECTOR (15 downto 0);
+	cc2_MAX 	: IN STD_LOGIC_VECTOR (15 downto 0);
+	cc3_MAX 	: IN STD_LOGIC_VECTOR (15 downto 0);
+	index_out	: OUT STD_LOGIC_VECTOR (2 downto 0);
+	delta1		: OUT STD_LOGIC_VECTOR (15 downto 0);
+    delta2 		: out std_logic_vector (15 downto 0)  
+    );
+END ENTITY switch;
+
+ARCHITECTURE ARCH_switch OF switch IS
+
+  SIGNAL delta1_out_signal: STD_LOGIC_VECTOR (15 DOWNTO 0);
+  SIGNAL delta2_out_signal: STD_LOGIC_VECTOR (15 DOWNTO 0);
+  begin
+  
+--  delta1_out_signal &lt;=   (cc1_max + (conv_integer(index_PE) &lt; 3)) 
+--						 + (cc2_MAX + (conv_integer(index_PE) &gt;= 3));
+--  delta2_out_signal &lt;=   (cc2_MAX + (conv_integer(index_PE) &lt; 3)) 
+-- 					     + (cc3_MAX +(conv_integer(index_PE) &gt;= 3));
+    delta1_out_signal &lt;= cc1_max when (conv_integer(index_PE) &lt; 3) else
+						 cc2_MAX;
+    
+	delta2_out_signal &lt;= cc2_max when (conv_integer(index_PE) &lt; 3) else
+						 cc3_MAX;
+ 
+ delta1 &lt;= delta1_out_signal;
+ delta2 &lt;= delta2_out_signal;
+
+END ARCH_switch;</string>
+        </entry>
+        <entry>
+          <string>externalOutputs</string>
+          <string>index_out:3,delta1:16,delta2:16</string>
+        </entry>
+        <entry>
+          <string>Width</string>
+          <int>9</int>
+        </entry>
+      </elementAttributes>
+      <pos x="940" y="-40"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes/>
+      <pos x="760" y="-140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes/>
+      <pos x="760" y="-100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="760" y="-60"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="760" y="-20"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="760" y="20"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="760" y="60"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="1180" y="-60"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="1200" y="-20"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="1220" y="20"/>
+    </visualElement>
   </visualElements>
   <wires>
     <wire>
@@ -265,12 +422,12 @@ end syn;</string>
       <p2 x="1540" y="320"/>
     </wire>
     <wire>
-      <p1 x="1360" y="160"/>
-      <p2 x="1380" y="160"/>
+      <p1 x="860" y="0"/>
+      <p2 x="940" y="0"/>
     </wire>
     <wire>
-      <p1 x="940" y="480"/>
-      <p2 x="960" y="480"/>
+      <p1 x="1120" y="0"/>
+      <p2 x="1140" y="0"/>
     </wire>
     <wire>
       <p1 x="720" y="260"/>
@@ -283,6 +440,106 @@ end syn;</string>
     <wire>
       <p1 x="1180" y="260"/>
       <p2 x="1220" y="260"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="200"/>
+      <p2 x="900" y="200"/>
+    </wire>
+    <wire>
+      <p1 x="760" y="-140"/>
+      <p2 x="900" y="-140"/>
+    </wire>
+    <wire>
+      <p1 x="1340" y="460"/>
+      <p2 x="1400" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="1520" y="460"/>
+      <p2 x="1600" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="1400" y="400"/>
+      <p2 x="1520" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="1580" y="400"/>
+      <p2 x="1620" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="1520" y="400"/>
+      <p2 x="1540" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="760" y="-20"/>
+      <p2 x="840" y="-20"/>
+    </wire>
+    <wire>
+      <p1 x="880" y="-20"/>
+      <p2 x="940" y="-20"/>
+    </wire>
+    <wire>
+      <p1 x="1120" y="-20"/>
+      <p2 x="1200" y="-20"/>
+    </wire>
+    <wire>
+      <p1 x="860" y="340"/>
+      <p2 x="900" y="340"/>
+    </wire>
+    <wire>
+      <p1 x="1340" y="340"/>
+      <p2 x="1420" y="340"/>
+    </wire>
+    <wire>
+      <p1 x="1520" y="340"/>
+      <p2 x="1600" y="340"/>
+    </wire>
+    <wire>
+      <p1 x="760" y="20"/>
+      <p2 x="820" y="20"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="20"/>
+      <p2 x="940" y="20"/>
+    </wire>
+    <wire>
+      <p1 x="1140" y="20"/>
+      <p2 x="1220" y="20"/>
+    </wire>
+    <wire>
+      <p1 x="760" y="280"/>
+      <p2 x="880" y="280"/>
+    </wire>
+    <wire>
+      <p1 x="1000" y="280"/>
+      <p2 x="1060" y="280"/>
+    </wire>
+    <wire>
+      <p1 x="1340" y="220"/>
+      <p2 x="1380" y="220"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="220"/>
+      <p2 x="1220" y="220"/>
+    </wire>
+    <wire>
+      <p1 x="780" y="220"/>
+      <p2 x="900" y="220"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="540"/>
+      <p2 x="1660" y="540"/>
+    </wire>
+    <wire>
+      <p1 x="1360" y="160"/>
+      <p2 x="1380" y="160"/>
+    </wire>
+    <wire>
+      <p1 x="940" y="480"/>
+      <p2 x="960" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="760" y="-100"/>
+      <p2 x="880" y="-100"/>
     </wire>
     <wire>
       <p1 x="1340" y="420"/>
@@ -301,8 +558,8 @@ end syn;</string>
       <p2 x="960" y="420"/>
     </wire>
     <wire>
-      <p1 x="840" y="200"/>
-      <p2 x="900" y="200"/>
+      <p1 x="900" y="-40"/>
+      <p2 x="940" y="-40"/>
     </wire>
     <wire>
       <p1 x="760" y="360"/>
@@ -329,6 +586,10 @@ end syn;</string>
       <p2 x="1540" y="360"/>
     </wire>
     <wire>
+      <p1 x="820" y="40"/>
+      <p2 x="940" y="40"/>
+    </wire>
+    <wire>
       <p1 x="740" y="300"/>
       <p2 x="760" y="300"/>
     </wire>
@@ -349,32 +610,12 @@ end syn;</string>
       <p2 x="1500" y="300"/>
     </wire>
     <wire>
-      <p1 x="1340" y="460"/>
-      <p2 x="1400" y="460"/>
-    </wire>
-    <wire>
-      <p1 x="1520" y="460"/>
-      <p2 x="1600" y="460"/>
-    </wire>
-    <wire>
       <p1 x="860" y="240"/>
       <p2 x="900" y="240"/>
     </wire>
     <wire>
       <p1 x="1060" y="240"/>
       <p2 x="1100" y="240"/>
-    </wire>
-    <wire>
-      <p1 x="1400" y="400"/>
-      <p2 x="1520" y="400"/>
-    </wire>
-    <wire>
-      <p1 x="1580" y="400"/>
-      <p2 x="1620" y="400"/>
-    </wire>
-    <wire>
-      <p1 x="1520" y="400"/>
-      <p2 x="1540" y="400"/>
     </wire>
     <wire>
       <p1 x="780" y="180"/>
@@ -385,18 +626,6 @@ end syn;</string>
       <p2 x="1440" y="180"/>
     </wire>
     <wire>
-      <p1 x="860" y="340"/>
-      <p2 x="900" y="340"/>
-    </wire>
-    <wire>
-      <p1 x="1340" y="340"/>
-      <p2 x="1420" y="340"/>
-    </wire>
-    <wire>
-      <p1 x="1520" y="340"/>
-      <p2 x="1600" y="340"/>
-    </wire>
-    <wire>
       <p1 x="1420" y="440"/>
       <p2 x="1520" y="440"/>
     </wire>
@@ -405,24 +634,12 @@ end syn;</string>
       <p2 x="1540" y="440"/>
     </wire>
     <wire>
-      <p1 x="760" y="280"/>
-      <p2 x="880" y="280"/>
+      <p1 x="760" y="-60"/>
+      <p2 x="860" y="-60"/>
     </wire>
     <wire>
-      <p1 x="1000" y="280"/>
-      <p2 x="1060" y="280"/>
-    </wire>
-    <wire>
-      <p1 x="1340" y="220"/>
-      <p2 x="1380" y="220"/>
-    </wire>
-    <wire>
-      <p1 x="1160" y="220"/>
-      <p2 x="1220" y="220"/>
-    </wire>
-    <wire>
-      <p1 x="780" y="220"/>
-      <p2 x="900" y="220"/>
+      <p1 x="1120" y="-60"/>
+      <p2 x="1180" y="-60"/>
     </wire>
     <wire>
       <p1 x="1180" y="380"/>
@@ -441,8 +658,8 @@ end syn;</string>
       <p2 x="880" y="380"/>
     </wire>
     <wire>
-      <p1 x="840" y="540"/>
-      <p2 x="1660" y="540"/>
+      <p1 x="760" y="60"/>
+      <p2 x="940" y="60"/>
     </wire>
     <wire>
       <p1 x="1440" y="180"/>
@@ -461,12 +678,20 @@ end syn;</string>
       <p2 x="960" y="480"/>
     </wire>
     <wire>
+      <p1 x="1120" y="-60"/>
+      <p2 x="1120" y="-40"/>
+    </wire>
+    <wire>
       <p1 x="1060" y="240"/>
       <p2 x="1060" y="280"/>
     </wire>
     <wire>
       <p1 x="1380" y="160"/>
       <p2 x="1380" y="220"/>
+    </wire>
+    <wire>
+      <p1 x="900" y="-140"/>
+      <p2 x="900" y="-40"/>
     </wire>
     <wire>
       <p1 x="1480" y="360"/>
@@ -483,6 +708,10 @@ end syn;</string>
     <wire>
       <p1 x="840" y="320"/>
       <p2 x="840" y="540"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="-20"/>
+      <p2 x="840" y="20"/>
     </wire>
     <wire>
       <p1 x="1420" y="340"/>
@@ -521,8 +750,20 @@ end syn;</string>
       <p2 x="880" y="400"/>
     </wire>
     <wire>
+      <p1 x="880" y="-100"/>
+      <p2 x="880" y="-20"/>
+    </wire>
+    <wire>
       <p1 x="820" y="300"/>
       <p2 x="820" y="360"/>
+    </wire>
+    <wire>
+      <p1 x="820" y="20"/>
+      <p2 x="820" y="40"/>
+    </wire>
+    <wire>
+      <p1 x="1140" y="0"/>
+      <p2 x="1140" y="20"/>
     </wire>
     <wire>
       <p1 x="1400" y="400"/>
@@ -547,6 +788,10 @@ end syn;</string>
     <wire>
       <p1 x="860" y="340"/>
       <p2 x="860" y="380"/>
+    </wire>
+    <wire>
+      <p1 x="860" y="-60"/>
+      <p2 x="860" y="0"/>
     </wire>
     <wire>
       <p1 x="1660" y="360"/>
