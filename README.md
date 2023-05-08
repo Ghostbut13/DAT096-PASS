@@ -1,10 +1,10 @@
-<font size=6>**FPGA implementation microphone system for a theatre stage:**</font>
+# <font size=6>**FPGA implementation microphone system for a theatre stage:**</font>
 
 ----------------
 
 
 
-<font size=4>**Specification**</font>
+## <font size=4>**Specification**</font>
 
 - In the theatre it’s sometimes hard to hear what’s being said since the actors want to speak in a natural voice; shouting when acting in a play would be strange. Since this is a problem people have been looking into ways to solve this. An obvious solution is to use microphones but it will look awkward if the actors go round holding microphones, so we need another way. In most cases we don’t want to give full amplification of the voices but just some gentle boost and support to the voice coming from the stage.
 
@@ -23,7 +23,7 @@
 
 
 
-<font size=4>**What is our project NOT for...?**</font>
+## <font size=4>**What is our project NOT for...?**</font>
 
 - ...Any aim for commercial application since it is a ***prototype*** on FPGA only.
 
@@ -37,7 +37,7 @@
 
   
 
-<font size=4>**What is our project for...?**</font>
+## <font size=4>**What is our project for...?**</font>
 
 - ...An Education, research platform for hardware and MATLAB algorithm design.
 - ...Simple 4-channel "_Stereo Panorama_" rebuilding in open scenes (like big lecture room, theater) thanks to good channel select/pan algorithm.
@@ -48,7 +48,7 @@
 
 
 
-\*<font size=4>**What can be better in future?**</font>
+##　\*<font size=4>**What can be better in future?**</font>
 
 - **Branch A**  --- Algorithm in MATLAB
 
@@ -89,7 +89,7 @@
 
 
 
-<font size=4>**Block Diagram and System Introduction**</font>
+## <font size=4>**Block Diagram and System Introduction**</font>
 
 ![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/DAT096-Block_Diagram.png)
 
@@ -101,7 +101,9 @@ To customize the peripheral ADC parameters, such as the I$2$S protocol and diffe
 
 
 
-<font size=4>**MATLAB algorithm design** </font>
+
+
+## <font size=4>**MATLAB algorithm design** </font>
 
 As core of the system, we have designed and tested the algorithm's structure consisting of multiple sub-modules.
 
@@ -109,7 +111,7 @@ As core of the system, we have designed and tested the algorithm's structure con
 
 
 
-<font size=4>**Communication between MATLAB and FPGA**</font>
+##  <font size=4>**Communication between MATLAB and FPGA**</font>
 
 The 100 MHz high-speed **Ethernet** port supported by Nexys 100T, facilitates the efficient transmission of 64-bit audio streams in LAB environment to a PC to polish up our algorithm design. An Ethernet frame comprises headers, data, and Cyclic Redundancy Check (CRC). The headers are parsed by the PC receiver to extract information such as MAC and IP addresses, as well as the transmission protocol. The ***User Datagram Protocol (UDP)*** provides a concise and reliable transmission mechanism for real-time audio data, making it the preferred option over ***Transmission Control Protocol (TCP)***. Additionally, the received data and the checksum can be verified using the CRC.
 
@@ -117,7 +119,7 @@ MATLAB provides a toolbox to receive streams through UDP, also, like what we use
 
 
 
-<font size=4>**KEY Parameter**</font>
+## <font size=4>**KEY Parameter**</font>
 
 - Audio : I$2$S audio format with 48kHz FSYNC, 6.144MHz BCLK, and 16-bit wordlength
 - Ethernet : 100MHz
@@ -127,47 +129,47 @@ MATLAB provides a toolbox to receive streams through UDP, also, like what we use
 
 
 
-<font size=4>**VHDL Design Details**</font>
+## <font size=4>**VHDL Design Details**</font>
 
 A file tree to show our project design here (_also in the newest released version folder_): 
 
 \***<font size=5>TOP.vhdl </font>**
 
-​	|— **Control unit:**
+​	&ensp;|— **Control unit:**
 
-​			|— ACFC (ADC configuration flow controller)
+​			&ensp;&ensp;|— ACFC (ADC configuration flow controller)
 
-​	|— **Interface in control path**
+​	&ensp;|— **Interface in control path**
 
-​			|— I2C master
+​			&ensp;&ensp;|— I2C master
 
-​	|— **Interface in datapath**:
+​	&ensp;|— **Interface in datapath**:
 
-​			|— I2S receiver
+​			&ensp;&ensp;|— I2S receiver
 
-​			|— UDP_ethernet
+​			&ensp;&ensp;|— UDP_ethernet
 
-​					|—CRC
+​					&ensp;&ensp;&ensp;&ensp;|—CRC
 
-​	|— **Simple-Algorithm :**
+​	&ensp;|— **Simple-Algorithm :**
 
-​			|— _single register_
+​			&ensp;&ensp;|— _single register_
 
-​			|— _shift register_
+​			&ensp;&ensp;|— _shift register_
 
-​			|— _power estimation_
+​			&ensp;&ensp;|— _power estimation_
 
-​			|— _max_
+​			&ensp;&ensp;|— _max_
 
-​			|— _panning accumulator_
+​			&ensp;&ensp;|— _panning accumulator_
 
-​			|— _fader_
+​			&ensp;&ensp;|— _fader_
 
-​			|—_mixer_
+​			&ensp;&ensp;|—_mixer_
 
-​	|—**other files**
+​	&ensp;|—**other files**
 
-​			|—PLL
+​			&ensp;&ensp;|—PLL
 
 
 
@@ -234,9 +236,9 @@ entity I2C_Interface is
     );
 end entity I2C_Interface;
 ```
- 
 
-![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png)
+
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png=400x300)
 
 
 
