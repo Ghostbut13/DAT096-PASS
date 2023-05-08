@@ -177,7 +177,7 @@ FSM design is used widely in the control unit and interfaces. A **_half-fixed_ *
 
 ```vhdl
 --The Brain
-.
+	.
     .
     .
 case state is
@@ -237,7 +237,7 @@ entity I2C_Interface is
 end entity I2C_Interface;
 ```
 
-<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"  width="400"  height = "300" />
+<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "500" />
 
 ## <font size=4>**TOP.vhdl workflow** (_newest version_)</font>
 
