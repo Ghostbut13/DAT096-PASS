@@ -137,39 +137,39 @@ A file tree to show our project design here (_also in the newest released versio
 
 ​	&ensp;|— **Control unit:**
 
-​			&ensp;&ensp;|— ACFC (ADC configuration flow controller)
+​			&ensp;&ensp;&ensp;&ensp;|— ACFC (ADC configuration flow controller)
 
 ​	&ensp;|— **Interface in control path**
 
-​			&ensp;&ensp;|— I2C master
+​			&ensp;&ensp;&ensp;&ensp;|— I2C master
 
 ​	&ensp;|— **Interface in datapath**:
 
-​			&ensp;&ensp;|— I2S receiver
+​			&ensp;&ensp;&ensp;&ensp;|— I2S receiver
 
-​			&ensp;&ensp;|— UDP_ethernet
+​			&ensp;&ensp;&ensp;&ensp;|— UDP_ethernet
 
-​					&ensp;&ensp;&ensp;&ensp;|—CRC
+​					&ensp;&ensp;&ensp;&ensp;&ensp;|—CRC
 
 ​	&ensp;|— **Simple-Algorithm :**
 
-​			&ensp;&ensp;|— _single register_
+​			&ensp;&ensp;&ensp;&ensp;|— _single register_
 
-​			&ensp;&ensp;|— _shift register_
+​			&ensp;&ensp;&ensp;&ensp;|— _shift register_
 
-​			&ensp;&ensp;|— _power estimation_
+​			&ensp;&ensp;&ensp;&ensp;|— _power estimation_
 
-​			&ensp;&ensp;|— _max_
+​			&ensp;&ensp;&ensp;&ensp;|— _max_
 
-​			&ensp;&ensp;|— _panning accumulator_
+​			&ensp;&ensp;&ensp;&ensp;|— _panning accumulator_
 
-​			&ensp;&ensp;|— _fader_
+​			&ensp;&ensp;&ensp;&ensp;|— _fader_
 
-​			&ensp;&ensp;|—_mixer_
+​			&ensp;&ensp;&ensp;&ensp;|—_mixer_
 
 ​	&ensp;|—**other files**
 
-​			&ensp;&ensp;|—PLL
+​			&ensp;&ensp;&ensp;&ensp;|—PLL
 
 
 
@@ -238,7 +238,7 @@ end entity I2C_Interface;
 ```
 
 
-![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png=400x300)
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png =400x300)
 
 
 
