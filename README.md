@@ -133,7 +133,7 @@ MATLAB provides a toolbox to receive streams through UDP, also, like what we use
 
 A file tree to show our project design here (_also in the newest released version folder_): 
 
-\***<font size=5>TOP.vhdl </font>**
+\***<font size=4>TOP.vhdl </font>**
 
 ​	&ensp;|— **Control unit:**
 
@@ -149,7 +149,7 @@ A file tree to show our project design here (_also in the newest released versio
 
 ​			&ensp;&ensp;&ensp;&ensp;|— UDP_ethernet
 
-​					&ensp;&ensp;&ensp;&ensp;&ensp;|—CRC
+​					&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;|—CRC
 
 ​	&ensp;|— **Simple-Algorithm :**
 
@@ -238,11 +238,11 @@ end entity I2C_Interface;
 ```
 
 
-![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png =400x300)
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png 400x300)
 
 
 
-<font size=4>**TOP.vhdl workflow** (_newest version_)</font>
+## <font size=4>**TOP.vhdl workflow** (_newest version_)</font>
 
 - ACFC decides how to configure ADC (using FSM)
 
@@ -268,7 +268,7 @@ end entity I2C_Interface;
 
 
 
-<font size=4>**Test Environment**</font>
+## <font size=4>**Test Environment**</font>
 
 
 
