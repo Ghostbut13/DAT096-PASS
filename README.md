@@ -48,7 +48,7 @@
 
 
 
-##　\*<font size=4>**What can be better in future?**</font>
+## <font size=4>**What can be better in future?**</font>
 
 - **Branch A**  --- Algorithm in MATLAB
 
@@ -111,6 +111,8 @@ As core of the system, we have designed and tested the algorithm's structure con
 
 
 
+
+
 ##  <font size=4>**Communication between MATLAB and FPGA**</font>
 
 The 100 MHz high-speed **Ethernet** port supported by Nexys 100T, facilitates the efficient transmission of 64-bit audio streams in LAB environment to a PC to polish up our algorithm design. An Ethernet frame comprises headers, data, and Cyclic Redundancy Check (CRC). The headers are parsed by the PC receiver to extract information such as MAC and IP addresses, as well as the transmission protocol. The ***User Datagram Protocol (UDP)*** provides a concise and reliable transmission mechanism for real-time audio data, making it the preferred option over ***Transmission Control Protocol (TCP)***. Additionally, the received data and the checksum can be verified using the CRC.
@@ -119,11 +121,17 @@ MATLAB provides a toolbox to receive streams through UDP, also, like what we use
 
 
 
+
+
 ## <font size=4>**KEY Parameter**</font>
 
 - Audio : I$2$S audio format with 48kHz FSYNC, 6.144MHz BCLK, and 16-bit wordlength
 - Ethernet : 100MHz
 - 
+
+
+
+
 
 -----
 
@@ -239,6 +247,10 @@ end entity I2C_Interface;
 
 <img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "500" />
 
+
+
+
+
 ## <font size=4>**TOP.vhdl workflow** (_newest version_)</font>
 
 - ACFC decides how to configure ADC (using FSM)
@@ -259,7 +271,10 @@ end entity I2C_Interface;
 
 - DAC outputs the audio processed by the algorithm.
 
-  
+
+
+
+
 
 ---
 
