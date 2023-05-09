@@ -9,7 +9,7 @@ USE ieee.std_logic_1164.ALL;
 USE work.parameter.ALL;
 
 ENTITY shiftregister IS
-PORT(clk_read: IN STD_LOGIC; --bclk
+PORT(clk_read: IN STD_LOGIC; --system clk
      clk_write: IN STD_LOGIC; --fsync
      rst_n: IN STD_LOGIC;
 	 enable : IN STD_LOGIC;
@@ -27,7 +27,6 @@ SIGNAL data_read : STD_LOGIC_VECTOR(15 DOWNTO 0):= (OTHERS =>'0')
 SIGNAL dout_PE_signal: outputdata := (OTHERS => (OTHERS => '0'));
 SIGNAL dout_xcorr_signal: outputdata := (OTHERS => (OTHERS => '0'));
 -- the index of the output data, when index = 1, output the outputarray for cross-correlation
-SIGNAL data_index : INTEGER := 0;
 SIGNAL write_en : STD_LOGIC := '0';
 SIGNAL read_en : STD_LOGIC := '0';
 SIGNAL write_we : STD_LOGIC := '1';
