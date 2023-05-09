@@ -24,7 +24,41 @@ for lag = -140:140
 end
 
 save("LUTv", "LUTv")
+%%
+n=1; 
+megaStr = "memory_initialization_radix=2; \n memory_initialization_vector = \n";%char(length(A)*140*95);
+for lag=1:140
+   if lag>1
+        megaStr = megaStr + ", \n";
+   end
+   for i=1:95
+        A = LUTv(i, 1, lag);
+        B = LUTv(i, 2, lag);
+        if A <0
+            A = res-A;
+        end
+        if B <0
+            B = res-A;
+        end
+        A(A>=res) = res-1;
+        B(B>=res) = res-1;
+        A = dec2bin(A, 6);
+        B = dec2bin(B,6);
+        if length(A) > 6
+           Report = "AHHH"
+           break;
+        end
+        if length(B) > 6
+           Report = "BAHHH"
+           break;
+        end
+        megaStr = megaStr + A + B;
+   end
+end
 
+fileId = fopen("LUT.coe", 'w');
+fprintf(fileId, megaStr);
+fclose(fileId);
 
 
 function XY=VectorLUT(delay, resolution, micD, maxD)
