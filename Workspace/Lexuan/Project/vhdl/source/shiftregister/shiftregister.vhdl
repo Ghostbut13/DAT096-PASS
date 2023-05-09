@@ -16,7 +16,8 @@ PORT(clk_read: IN STD_LOGIC; --system clk
      rst_n: IN STD_LOGIC;
      din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
      dout_PE: OUT outputdata;
-	 dout_xcorr: OUT outputdata
+	 dout_xcorr_lag: OUT outputdata;
+	 dout_xcorr_ref: OUT outputdata
 	 );
 END shiftregister;
 
@@ -26,17 +27,13 @@ SIGNAL addr_write : STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
 SIGNAL addr_read : STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
 SIGNAL data_read : STD_LOGIC_VECTOR(15 DOWNTO 0):= (OTHERS =>'0');
 SIGNAL dout_PE_signal: outputdata := (OTHERS => (OTHERS => '0'));
-SIGNAL dout_xcorr_signal: outputdata := (OTHERS => (OTHERS => '0'));
--- the index of the output data, when index = 1, output the outputarray for cross-correlation
+SIGNAL dout_xcorr_lag_signal: outputdata := (OTHERS => (OTHERS => '0'));
+SIGNAL dout_xcorr_ref_signal: outputdata := (OTHERS => (OTHERS => '0'));
 SIGNAL write_en : STD_LOGIC := '0';
 SIGNAL read_en : STD_LOGIC := '0';
 SIGNAL write_we : STD_LOGIC := '1';
 SIGNAL bufferfull : STD_LOGIC := '0';
 
--- data_counter = 0 , idle
--- data_counter = 1 , write data into BRAM
--- data_counter = 2-3 , get data for power estimation
--- data_counter = 4-565 , get data for cross-correlation
 SIGNAL counter : SIGNED(10 DOWNTO 0) := (OTHERS => '0');
 
 COMPONENT simple_dual_two_clocks is
@@ -105,9 +102,19 @@ END PROCESS wirte_process;
 read_process:
 PROCESS(counter, addr_write)
 BEGIN
+ -- get the newest reference for cross-correlation
   IF counter = 0 THEN
-      read_en <= '1';
-  --
+    read_en <= '1';
+	IF addr_write > 280 or bufferfull = '1' THEN 
+      addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - 140) MOD 10000);
+	END IF;
+	
+   -- get the oldest reference for cross-correlation
+  ELSIF counter = 1 THEN
+    IF addr_write > 280 or bufferfull = '1' THEN 
+	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 1 - 140) MOD 10000);
+	END IF;
+	
   ELSIF counter = 2 THEN
     -- get newest data for power estimation
 	addr_read <= addr_write;
@@ -129,9 +136,9 @@ BEGIN
   ELSIF counter < 563 THEN
 	-- get the newest data for cross-correlation
 	IF counter(0) = '0' THEN
-	  IF addr_write > 280 or bufferfull = '1' then 
-	  addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
-	  end if;
+	  IF addr_write > 280 or bufferfull = '1' THEN 
+	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
+	  END IF;
 	-- get the oldest data for cross-correlation
 	ELSIF counter(0) = '1' THEN
 	  IF bufferfull = '1' THEN
@@ -153,9 +160,23 @@ PROCESS(clk_read)
 BEGIN
   IF FALLING_EDGE(clk_read) THEN
   
-    IF counter = 3 THEN
-	dout_PE_signal(0) <= data_read;
-	dout_PE_signal(1) <= dout_PE_signal(1);
+    IF counter = 1 THEN
+	  IF addr_write > 280 or bufferfull = '1' THEN 
+	    dout_xcorr_ref_signal(0) <= data_read;
+	  ELSE
+	    dout_xcorr_ref_signal(0) <= (OTHERS => '0');
+	  END IF;
+	  
+	ELSIF counter = 2 THEN
+	   IF addr_write > 280 or bufferfull = '1' THEN 
+	    dout_xcorr_ref_signal(1) <= data_read;
+	  ELSE
+	    dout_xcorr_ref_signal(1) <= (OTHERS => '0');
+	  END IF;
+	  
+    ELSIF counter = 3 THEN
+	  dout_PE_signal(0) <= data_read;
+	  dout_PE_signal(1) <= dout_PE_signal(1);
 
 	-- release PE data
     ELSIF counter = 4 THEN
@@ -175,16 +196,16 @@ BEGIN
 		dout_PE_signal <= dout_PE_signal;
 		IF counter(0) = '1' THEN
 		  IF addr_write > 280 or bufferfull = '1' then
-		   dout_xcorr_signal(0) <= data_read;
+		   dout_xcorr_lag_signal(0) <= data_read;
 		  ELSE
-		   dout_xcorr_signal(0) <= (OTHERS => '0');
+		   dout_xcorr_lag_signal(0) <= (OTHERS => '0');
 		  end if;		
 
 		ELSIF counter(0) = '0' THEN
 		  IF bufferfull = '0' THEN
-			dout_xcorr_signal(1) <= (OTHERS => '0');
+			dout_xcorr_lag_signal(1) <= (OTHERS => '0');
 		  ELSE
-			dout_xcorr_signal(1) <= data_read;
+			dout_xcorr_lag_signal(1) <= data_read;
 		  END IF;	  
 		END IF;
 	ELSE
@@ -194,8 +215,8 @@ BEGIN
 END PROCESS assignment_proc;
 
 dout_PE <= dout_PE_signal;
-dout_xcorr <= dout_xcorr_signal;
-
+dout_xcorr_lag <= dout_xcorr_lag_signal;
+dout_xcorr_ref <= dout_xcorr_ref_signal;
 
 END ARCHITECTURE arch_shiftregister;
 
