@@ -17,7 +17,7 @@
   2.	Sweepable filter with damping/amplification and variable Q.
   3.	Adaptive filter for elimination of positive audio feedback from speaker to microphone.
 
-
+<br>
 
 ----
 
@@ -82,7 +82,7 @@
   - Reducing switches.
   - Add display terminal.
 
-
+<br>
 
 
 ------
@@ -93,13 +93,13 @@
 
 ![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/DAT096-Block_Diagram.png)
 
-The system consists of FPGA, peripheral ADC + DAC. Four microphones as Left1/2-Right1/2 channels sample analog audio and ADC will convert data to digital. **I$$^2$$S receiver** operates at a sample rate of 48Khz and a BCLK-FSYNC ratio of 128, splitting the audio into four 16-bit wordlengths. We prepare two **algorithms** for panning channels according to acoustic source distance off each microphone. A virtual distribution figure shows the correct position estimation out of ***timing-delay*** or ***power estimation***, respectively in two algorithms.  Align with enhancement and filter modules, the algorithm part enhances the acoustic performance. DAC, the end of the *data path*, can output the processed audio stream. 
+The system consists of FPGA, peripheral ADC + DAC. Four microphones as Left1/2-Right1/2 channels sample analog audio and ADC will convert data to digital. **I<sup>2</sup>S receiver** operates at a sample rate of 48Khz and a BCLK-FSYNC ratio of 128, splitting the audio into four 16-bit wordlengths. We prepare two **algorithms** for panning channels according to acoustic source distance off each microphone. A virtual distribution figure shows the correct position estimation out of ***timing-delay*** or ***power estimation***, respectively in two algorithms.  Align with enhancement and filter modules, the algorithm part enhances the acoustic performance. DAC, the end of the *data path*, can output the processed audio stream. 
 
-To customize the peripheral ADC parameters, such as the I$2$S protocol and differential input, it is necessary to configure the relative registers in the ADC using *control path*. The **I$2$C master** provides valid control information writing mechanisms to ADC, and the **ADC-Configuration-Flow-Controller (_ACFC_) module** manages the priority, location, and implicit value of the register writes based on the datasheet and datapath requirements. MCLK is generated from **PLL module** as the source clock for ADC.
+To customize the peripheral ADC parameters, such as the I<sup>2</sup>S protocol and differential input, it is necessary to configure the relative registers in the ADC using *control path*. The **I<sup>2</sup>C master** provides valid control information writing mechanisms to ADC, and the **ADC-Configuration-Flow-Controller (_ACFC_) module** manages the priority, location, and implicit value of the register writes based on the datasheet and datapath requirements. MCLK is generated from **PLL module** as the source clock for ADC.
 
 \* _ADC is PCM6240_Q1, DAC is DC2459C, FPGA is Nexys 100T._
 
-
+<br>
 
 
 
@@ -118,7 +118,7 @@ The key thought is that algorithms should **extract** acoustic information from 
 
 
 
-
+<br>
 
 ##  <font size=4>**Communication between MATLAB and FPGA**</font>
 
@@ -128,17 +128,17 @@ MATLAB provides a toolbox to receive streams through UDP, also, like what we use
 
 
 
-
+<br>
 
 ## <font size=4>**KEY Parameter**</font>
 
-- Audio : I$2$S audio format with 48kHz FSYNC, 6.144MHz BCLK, and 16-bit wordlength
+- Audio : I<sup>2</sup>S audio format with 48kHz FSYNC, 6.144MHz BCLK, and 16-bit wordlength
 - Ethernet : 100MHz
 - 
 
 
 
-
+<br>
 
 -----
 
@@ -156,11 +156,11 @@ A file tree to show our project design here (_also in the newest released versio
 
 ​	&ensp;|— **Interface in control path**
 
-​			&ensp;&ensp;&ensp;&ensp;|— I2C master
+​			&ensp;&ensp;&ensp;&ensp;|— I<sup>2</sup>C master
 
 ​	&ensp;|— **Interface in datapath**:
 
-​			&ensp;&ensp;&ensp;&ensp;|— I2S receiver
+​			&ensp;&ensp;&ensp;&ensp;|— I<sup>2</sup>S receiver
 
 ​			&ensp;&ensp;&ensp;&ensp;|— UDP_ethernet
 
@@ -188,7 +188,7 @@ A file tree to show our project design here (_also in the newest released versio
 
 
 
-FSM design is used widely in the control unit and interfaces. A **_half-fixed_ **big FSM in ACFC decides WHERE and WHAT we need to write to registers in ADC to configure it (so common in any chip configuration way). We fixed the order of key-configuration states like ***START***, ***RELEASE_ SOFT_SHUTDOWN***, ***ENABLE_CHANNEL,*** etc... apart from which, like decides FSYNC, BCLK, MASTER_MODE, AUDIO_FORMAT, is in ***unfixed code region***. That means we hew a stall state (region) up to wait for configuration by out-of-order switches. Each of the states in this ***FSM*** will call a small ‘***fsm***’ which implements I2C (master) protocol with fixed timing and format,   to write value into ADC. The relation between ***FSM*** and ***fsm*** is analog to Brain and Hand - the brain makes decisions and controls the Hand to write.
+FSM design is used widely in the control unit and interfaces. A **_half-fixed_ **big FSM in ACFC decides WHERE and WHAT we need to write to registers in ADC to configure it (so common in any chip configuration way). We fixed the order of key-configuration states like ***START***, ***RELEASE_ SOFT_SHUTDOWN***, ***ENABLE_CHANNEL,*** etc... apart from which, like decides FSYNC, BCLK, MASTER_MODE, AUDIO_FORMAT, is in ***unfixed code region***. That means we hew a stall state (region) up to wait for configuration by out-of-order switches. Each of the states in this ***FSM*** will call a small ‘***fsm***’ which implements I<sup>2</sup>C (master) protocol with fixed timing and format,   to write value into ADC. The relation between ***FSM*** and ***fsm*** is analog to Brain and Hand - the brain makes decisions and controls the Hand to write.
 
 ```vhdl
 --The Brain
@@ -232,7 +232,7 @@ case state is
 ----
 
 
-So we provide the '_start_',  '_config\_addr_', and '_config\_value_' input ports as Brain's commands in I2C. And the '_done_' output port will tell ACFC when I2C writing process is over.
+So we provide the '_start_',  '_config\_addr_', and '_config\_value_' input ports as Brain's commands in I<sup>2</sup>C. And the '_done_' output port will tell ACFC when I<sup>2</sup>C writing process is over.
 
 ```vhdl
 --The hand
@@ -256,21 +256,21 @@ end entity I2C_Interface;
 
 
 
-
+<br>
 
 ## <font size=4>**TOP.vhdl workflow** (_newest version_)</font>
 
 - ACFC decides how to configure ADC (using FSM)
 
-- ACFC transmits value into I2C and launches I2C to push value into ADC
+- ACFC transmits value into I<sup>2</sup>C and launches I<sup>2</sup>C to push value into ADC
 
-- PLL generates MCLK to ADC, such that ADC can generate BCLK and FSync from it.
+- PLL generates MCLK to ADC, such that ADC can generate BCLK and FSYNC from it.
 
 - ADC working...
 
-- I2S receiver collects DATA from ADC and sends the four channels -- ***left1 left2 right1 right2***-- to the algorithm.
+- I<sup>2</sup>S receiver collects DATA from ADC and sends the four channels -- ***left1 left2 right1 right2***-- to the algorithm.
 
-- Ethernet supports 100M high speed for real-time audio data transmission every fsync.
+- Ethernet supports 100M high speed for real-time audio data transmission every FSYNC.
 
 - When both the datapath and Ethernet are enabled, audio data can be transmitted from the FPGA port to the PC port for further analysis.
 
@@ -278,7 +278,7 @@ end entity I2C_Interface;
 
 - DAC outputs the audio processed by the algorithm.
 
-
+<br>
 
 
 
