@@ -192,9 +192,6 @@ FSM design is used widely in the control unit and interfaces. A **_half-fixed_ *
 
 ```vhdl
 --The Brain
-	.
-    .
-    .
 case state is
   when idle_state =>  
 	....         
@@ -222,17 +219,13 @@ case state is
     next_state <=  waiting_state;
   when waiting_state =>
     next_state <=  waiting_state;
-	.
-	.
-	.
-	.
-	
+
 ```
 
 ----
 
 
-So we provide the '_start_',  '_config\_addr_', and '_config\_value_' input ports as Brain's commands in I<sup>2</sup>C. And the '_done_' output port will tell ACFC when I<sup>2</sup>C writing process is over.
+So we provide the '_start_',  '_config\_addr_', and '_config\_value_' input ports as Brain's commands for I<sup>2</sup>C. And the '_done_' output port will tell ACFC when I<sup>2</sup>C writing process is over.
 
 ```vhdl
 --The hand
@@ -252,7 +245,9 @@ entity I2C_Interface is
 end entity I2C_Interface;
 ```
 
-<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "500" />
+<br>
+
+<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "600" />
 
 
 
