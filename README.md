@@ -52,7 +52,7 @@
 
 - **Branch A**  --- Algorithm in MATLAB
 
-  - "_Any algo substitution ??_ ". 
+  - "_Any algorithm substitution ??_ ". 
   - Suitable ***filter*** cutting up ***audio feedback***.
   - Suitable filter improving noise.
   - Suitable quantization parameters for testing. 
@@ -93,7 +93,7 @@
 
 ![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/DAT096-Block_Diagram.png)
 
-The system consists of FPGA, peripheral ADC + DAC. Four microphones as Left1/2-Right1/2 channels sample analog audio and ADC will convert data to digital. **I^2^S receiver **operates at a sample rate of 48Khz and a BCLK-FSYNC ratio of 128, splitting the audio into four 16-bit wordlengths. We prepare two **algorithms** for panning channels according to acoustic source distance off each microphone. A virtual distribution figure shows the correct position estimation out of *timing-delay* or *power estimation*, respectively in two algorithms.  Align with enhancement and filter modules, the algorithm part enhances the acoustic performance. DAC, the end of the *data path*, can output the processed audio stream. 
+The system consists of FPGA, peripheral ADC + DAC. Four microphones as Left1/2-Right1/2 channels sample analog audio and ADC will convert data to digital. **I^2^S receiver **operates at a sample rate of 48Khz and a BCLK-FSYNC ratio of 128, splitting the audio into four 16-bit wordlengths. We prepare two **algorithms** for panning channels according to acoustic source distance off each microphone. A virtual distribution figure shows the correct position estimation out of ***timing-delay*** or ***power estimation***, respectively in two algorithms.  Align with enhancement and filter modules, the algorithm part enhances the acoustic performance. DAC, the end of the *data path*, can output the processed audio stream. 
 
 To customize the peripheral ADC parameters, such as the I$2$S protocol and differential input, it is necessary to configure the relative registers in the ADC using *control path*. The **I$2$C master** provides valid control information writing mechanisms to ADC, and the **ADC-Configuration-Flow-Controller (_ACFC_) module** manages the priority, location, and implicit value of the register writes based on the datasheet and datapath requirements. MCLK is generated from **PLL module** as the source clock for ADC.
 
@@ -103,11 +103,18 @@ To customize the peripheral ADC parameters, such as the I$2$S protocol and diffe
 
 
 
-## <font size=4>**MATLAB algorithm design** </font>
+## <font size=4>**MATLAB algorithm design (extraction + addressing + combination)** </font>
 
-As core of the system, we have designed and tested the algorithm's structure consisting of multiple sub-modules.
+As the core of the system, we designed and tested the algorithms' structure consisting of multiple modules.
 
-(add more)
+The key thought is that algorithms should **extract** acoustic information from audio in each channel and **combine** them into "_join force_". It is possible to **calculate** the 2D position profile according to this _force_.
+
+- The _cross-correlation_ module extracts the signal similarity between 1-2, 2-3, 3-4 channels.
+- Calculation resources are rarely such that we pre-store all possible 2D positions in ROM, rather than real-time calculation. In other words, we replace calculation with **addressing** operations by sacrificing the performance (refresh rate = 0.5 ms) in an acceptable range.
+- The _Picture Creator_ module is a control unit to **address** the ROM.
+- The _ADD_ and _MAX_ modules ***combine*** the output from _Picture Creator_ module.
+
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/complex_algo_description.png)
 
 
 
