@@ -12,20 +12,21 @@ entity simple_dual_two_clocks is
  ena : in std_logic;
  enb : in std_logic;
  wea : in std_logic;
- addra : in std_logic_vector(12 downto 0);
- addrb : in std_logic_vector(12 downto 0);
+ addra : in std_logic_vector(13 downto 0);
+ addrb : in std_logic_vector(13 downto 0);
  dia : in std_logic_vector(15 downto 0);
  dob : out std_logic_vector(15 downto 0)
  );
 end simple_dual_two_clocks;
 
 architecture syn of simple_dual_two_clocks is
- type ram_type is array (8191 downto 0) of std_logic_vector(15 downto 0);
+ type ram_type is array (9999 downto 0) of std_logic_vector(15 downto 0);
  shared variable RAM : ram_type;
 begin
 
  process(clka)
  begin
+ -- reading clock is system clk 
  if FALLING_EDGE(clka) then
    if ena = '1' then
      if wea = '1' then
@@ -35,6 +36,7 @@ begin
  end if;
  end process;
  
+ -- writing clock, fsync
  process(clkb)
  begin
  if RISING_EDGE(clkb) then
