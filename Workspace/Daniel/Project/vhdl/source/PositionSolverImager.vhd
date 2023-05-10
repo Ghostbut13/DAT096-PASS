@@ -38,11 +38,20 @@ architecture Behavioral of PositionSolverImager is
 	);
 	END COMPONENT Picture_Frame;
 	
+	COMPONENT maxLUT IS 
+	PORT (
+	   clk		   : IN STD_LOGIC;
+	   rst_n 	   : IN STD_LOGIC;
+	   din 	   : IN STD_LOGIC_VECTOR (7 downto 0);
+	   xy_pos_in  : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
+	   xy_pos_out : OUT STD_LOGIC_VECTOR(12 DOWNTO 0)
+	);
+    END COMPONENT maxLUT;
+	
 	
 	SIGNAL lag: 		STD_LOGIC_VECTOR(8 DOWNTO 0); -- signal representing the lag value (-140 to 140)
 	Signal pCounter: 	STD_LOGIC_VECTOR(6 DOWNTO 0); -- pixel counter, (0 to 94);
 	Signal LUTXY:		STD_LOGIC_VECTOR(11 DOWNTO 0);
-	SIGNAL maxIsDone:	STD_LOGIC;	--done flag from max function
 	
 	TYPE state_type IS (reset_state, newLine_state, pixelAdd_state, MaxAndResetFrame_state);
 	SIGNAL present_state_signal:state_type;
@@ -64,11 +73,17 @@ architecture Behavioral of PositionSolverImager is
 	SIGNAL LUTlag:	STD_LOGIC_VECTOR(8 DOWNTO 0);
 	
 	SIGNAL PICaddr: std_logic_vector(14 DOWNTO 0);
-	SIGNAL PIXY: std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY1: std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY2: std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY3: std_logic_vector(12 DOWNTO 0);
+	SIGNAL MaxCounter: std_logic_vector(12 DOWNTO 0);
+	SIGNAL maxReset: std_logic;
+	SIGNAL pixelVal123: std_logic_vector(7 DOWNTO 0);
+	SIGNAL XY_signal: std_logic_vector(12 DOWNTO 0);
 	
 begin
     PICaddr <= LUTlag(7 DOWNTO 0) & pCounter;
-    
+    pixelVal123 <= ("00" & currentPixel1) + ("00" & currentPixel2) + ("00" & currentPixel3);
     
 	LUTv_Inst:
 	component LUTv
@@ -83,10 +98,10 @@ begin
 	port map(
 		clka => sysCLK,
 		wea => replacePixel1,
-		addra => PIXY,
+		addra => PIXY1,
 		dina => corr1,
 		clkb => sysCLK,
-		addrb => PIXY,
+		addrb => PIXY1,
 		doutb => currentPixel1
 	);
 	Frame2:
@@ -94,10 +109,10 @@ begin
 	port map(
 		clka => sysCLK,
 		wea => replacePixel2,
-		addra => PIXY,
+		addra => PIXY2,
 		dina => corr2,
 		clkb => sysCLK,
-		addrb => PIXY,
+		addrb => PIXY2,
 		doutb => currentPixel2
 	);
 	Frame3:
@@ -105,12 +120,23 @@ begin
 	port map(
 		clka => sysCLK,
 		wea => replacePixel3,
-		addra => PIXY,
+		addra => PIXY3,
 		dina => corr3,
 		clkb => sysCLK,
-		addrb => PIXY,
+		addrb => PIXY3,
 		doutb => currentPixel3
 	);
+
+    max:
+    COMPONENT maxLUT
+	port map (
+	   clk => sysCLK,
+	   rst_n => maxReset,
+	   din => pixelVal123,
+	   xy_pos_in => PIXY2,
+	   xy_pos_out => XY_signal
+	);
+	
 
 	
 	solver_tran_proc:
@@ -125,14 +151,14 @@ begin
 	
 	
 	solver_flow_proc:
-	PROCESS(sysCLK, lag, pCounter, maxIsDone, present_state_signal)
+	PROCESS(sysCLK, lag, pCounter, present_state_signal, MaxCounter)
 	BEGIN
 		case present_state_signal is
 			when reset_state =>
 				next_state_signal <= newLine_state;
 			
 			when newLine_state =>
-				if lag < 280 then
+				if lag < 279 then
 					next_state_signal <= pixelAdd_state;
 				else
 					next_state_signal <= MaxAndResetFrame_state;
@@ -146,7 +172,7 @@ begin
 				end if;
 				
 			when MaxAndResetFrame_state =>
-				if maxIsDone='1' then
+				if MaxCounter >= 6592 then -- 103*64
 					next_state_signal <= reset_state;
 				else
 					next_state_signal <= MaxAndResetFrame_state;
@@ -156,13 +182,17 @@ begin
 
 	
 	solver_state_proc:
-	PROCESS(sysCLK, lag, LUTXY)
+	PROCESS(sysCLK, lag, LUTXY, present_state_signal)
 	BEGIN
 	if RISING_EDGE(sysCLK) then
 		case present_state_signal is
 			when reset_state =>
 				lag <= (others => '0');
 				pCounter <= (others => '0');
+				MaxCounter <= (others => '0');
+				maxReset <= '0';
+				PositionX <= XY_signal(12 DOWNTO 6);
+				PositionY <= XY_signal(5 DOWNTO 0);
 			when newLine_state =>
 				lag <= lag +1;
 				pCounter <= (others => '0');
@@ -193,20 +223,44 @@ begin
 				end if;
 				
 			when MaxAndResetFrame_state =>
+				maxReset <= '1';
+			    MaxCounter <= MaxCounter +1;
 				corr1 <= (others => '0');
 				corr2 <= (others => '0');
 				corr3 <= (others => '0');
+				replacePixel1 <= "1";
+				replacePixel2 <= "1";
+				replacePixel3 <= "1";
+				lag <= (others => '0'); -- prevent non allocated memory access
 		end case;
 	end if;
 	
-	if lag < 141 then
-		LUTlag <= lag;
-		PIXY <= '0' & LUTXY;
-	else
-		LUTlag <= lag-141;
-		PIXY <= '1' & LUTXY;
-	end if;
 	
+	
+	
+	if present_state_signal = pixelAdd_state then
+	   if lag < 140 then
+		  LUTlag <= lag;
+		  PIXY1 <= ('1' & LUTXY);
+		  PIXY2 <= ('1' & LUTXY);
+		  PIXY3 <= ('1' & LUTXY);
+	   else
+		  LUTlag <= lag-140;
+		  PIXY1 <= '0' & LUTXY;
+		  PIXY2 <= '0' & LUTXY;
+		  PIXY3 <= '0' & LUTXY;
+	   end if;
+	elsif present_state_signal = MaxAndResetFrame_state then
+	   PIXY1 <= MaxCounter + 1664; -- 26*64 (shift 26 pixels in X)
+	   PIXY2 <= MaxCounter + 832; --13* 64 (shift 13 pixels in X)
+	   PIXY3 <= MaxCounter;
+	   
+    else
+        PIXY1 <= PIXY1;
+        PIXY2 <= PIXY2;
+        PIXY3 <= PIXY3;
+	   
+	end if;
 	END PROCESS solver_state_proc;
 	
 	
