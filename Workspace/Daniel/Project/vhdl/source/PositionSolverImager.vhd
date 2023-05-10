@@ -2,23 +2,18 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.std_logic_unsigned.all;
 use IEEE.NUMERIC_STD.ALL;
+USE work.parameter.ALL;
 
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity PositionSolverImager is
-  port(
-	sysCLK:		in STD_LOGIC; --system clock 100MHz
-	reset:		in STD_LOGIC; --system reset
-	PositionX:	out STD_LOGIC_VECTOR(6 DOWNTO 0); -- position 0 to 128, middle 64
-	PositionY:	out STD_LOGIC_VECTOR(5 DOWNTO 0) -- position 0 to 64
+    port(
+		sysCLK:		in STD_LOGIC; --system clock 100MHz
+		reset:		in STD_LOGIC; --system reset
+		PositionX:	out STD_LOGIC_VECTOR(6 DOWNTO 0); -- position 0 to 128, middle 64
+		PositionY:	out STD_LOGIC_VECTOR(5 DOWNTO 0); -- position 0 to 64
+		Correlation1:	in corrData;
+		Correlation2:	in corrData;
+		Correlation3:	in corrData
     );
 end PositionSolverImager;
 
@@ -49,7 +44,7 @@ architecture Behavioral of PositionSolverImager is
 	Signal LUTXY:		STD_LOGIC_VECTOR(11 DOWNTO 0);
 	SIGNAL maxIsDone:	STD_LOGIC;	--done flag from max function
 	
-	TYPE state_type IS (reset_state, newLine_state, pixelAdd_state, waitMax_state);
+	TYPE state_type IS (reset_state, newLine_state, pixelAdd_state, MaxAndResetFrame_state);
 	SIGNAL present_state_signal:state_type;
 	SIGNAL next_state_signal:state_type;
 
@@ -94,6 +89,28 @@ begin
 		addrb => PIXY,
 		doutb => currentPixel1
 	);
+	Frame2:
+	component Picture_Frame
+	port map(
+		clka => sysCLK,
+		wea => replacePixel2,
+		addra => PIXY,
+		dina => corr2,
+		clkb => sysCLK,
+		addrb => PIXY,
+		doutb => currentPixel2
+	);
+	Frame3:
+	component Picture_Frame
+	port map(
+		clka => sysCLK,
+		wea => replacePixel3,
+		addra => PIXY,
+		dina => corr3,
+		clkb => sysCLK,
+		addrb => PIXY,
+		doutb => currentPixel3
+	);
 
 	
 	solver_tran_proc:
@@ -108,7 +125,7 @@ begin
 	
 	
 	solver_flow_proc:
-	PROCESS(sysCLK, lag, pCounter, maxIsDone)
+	PROCESS(sysCLK, lag, pCounter, maxIsDone, present_state_signal)
 	BEGIN
 		case present_state_signal is
 			when reset_state =>
@@ -118,7 +135,7 @@ begin
 				if lag < 280 then
 					next_state_signal <= pixelAdd_state;
 				else
-					next_state_signal <= waitMax_state;
+					next_state_signal <= MaxAndResetFrame_state;
 				end if;
 				
 			when pixelAdd_state =>
@@ -128,18 +145,18 @@ begin
 					next_state_signal <= newLine_state;
 				end if;
 				
-			when waitMax_state =>
+			when MaxAndResetFrame_state =>
 				if maxIsDone='1' then
 					next_state_signal <= reset_state;
 				else
-					next_state_signal <= waitMax_state;
+					next_state_signal <= MaxAndResetFrame_state;
 				end if;
 		end case;
 	END PROCESS solver_flow_proc;
 
 	
 	solver_state_proc:
-	PROCESS(sysCLK)
+	PROCESS(sysCLK, lag, LUTXY)
 	BEGIN
 	if RISING_EDGE(sysCLK) then
 		case present_state_signal is
@@ -149,17 +166,36 @@ begin
 			when newLine_state =>
 				lag <= lag +1;
 				pCounter <= (others => '0');
+				
 				-- retrieve new corr1/2/3 values
+				corr1 <= correlation1(TO_INTEGER(unsigned(lag)));
+				corr2 <= correlation2(TO_INTEGER(unsigned(lag)));
+				corr3 <= correlation3(TO_INTEGER(unsigned(lag)));
 			when pixelAdd_state =>
 				pCounter <= pCounter +1;
+				
 				if currentPixel1 < corr1 then
 					replacePixel1 <= "1";
 				else
 					replacePixel1 <= "0";
 				end if;
 				
-			when waitMax_state =>
+				if currentPixel2 < corr2 then
+					replacePixel2 <= "1";
+				else
+					replacePixel2 <= "0";
+				end if;
 				
+				if currentPixel3 < corr3 then
+					replacePixel3 <= "1";
+				else
+					replacePixel3 <= "0";
+				end if;
+				
+			when MaxAndResetFrame_state =>
+				corr1 <= (others => '0');
+				corr2 <= (others => '0');
+				corr3 <= (others => '0');
 		end case;
 	end if;
 	

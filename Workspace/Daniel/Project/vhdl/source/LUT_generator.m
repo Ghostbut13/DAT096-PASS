@@ -31,9 +31,14 @@ for lag=1:140
    if lag>1
         megaStr = megaStr + "\n";
    end
-   for i=1:95
-        A = LUTv(i, 1, lag);
-        B = LUTv(i, 2, lag);
+   for i=1:128
+       if i <= 95
+            A = LUTv(i, 1, lag);
+            B = LUTv(i, 2, lag);
+       else
+           A = 0;
+           B = 0;
+       end
         if A <0
             A = res-A;
         end
