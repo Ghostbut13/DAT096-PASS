@@ -72,9 +72,9 @@ architecture Behavioral of PositionSolverImager_TB is
 	signal	PositionX_tb : STD_LOGIC_VECTOR(6 DOWNTO 0);
 	signal	PositionY_tb : STD_LOGIC_VECTOR(5 DOWNTO 0);
 
-	signal  Correlation_tb_1 : corrData := (others => (others =>'0'));
-	signal  Correlation_tb_2 : corrData := (others => (others =>'0'));
-	signal  Correlation_tb_3 : corrData := (others => (others =>'0'));
+	signal  Correlation_tb_1 : corrData;
+	signal  Correlation_tb_2 : corrData;
+	signal  Correlation_tb_3 : corrData;
     
 	signal correlation1_ARRAY: word_array;
 	signal correlation2_ARRAY: word_array;
@@ -88,6 +88,10 @@ architecture Behavioral of PositionSolverImager_TB is
 
 		
    begin -- start architecture
+   reset_tb <= '0' after 0 ns,
+               '1' after 6 ns;
+   
+   
 	-- clk generation
 	process
 	begin
@@ -108,9 +112,9 @@ architecture Behavioral of PositionSolverImager_TB is
 		);
 	
    -- change these to your destinatino on the PC
-   correlation1_ARRAY  <= load_words(string'("C:\Users\ammar\Desktop\ModelSim\DAT096\PositionSolverImager\corr1.txt"));
-   correlation2_ARRAY  <= load_words(string'("C:\Users\ammar\Desktop\ModelSim\DAT096\PositionSolverImager\corr2.txt"));
-   correlation3_ARRAY  <= load_words(string'("C:\Users\ammar\Desktop\ModelSim\DAT096\PositionSolverImager\corr3.txt"));
+   correlation1_ARRAY  <= load_words(string'("Z:\Desktop\DAT096-PASS-main\DAT096-PASS-main\Workspace\Daniel\Project\vhdl\source\corr1.txt"));
+   correlation2_ARRAY  <= load_words(string'("Z:\Desktop\DAT096-PASS-main\DAT096-PASS-main\Workspace\Daniel\Project\vhdl\source\corr2.txt"));
+   correlation3_ARRAY  <= load_words(string'("Z:\Desktop\DAT096-PASS-main\DAT096-PASS-main\Workspace\Daniel\Project\vhdl\source\corr3.txt"));
    
 	
    to_array_proc:
