@@ -1,68 +1,222 @@
---shift register
---Input signal: 16-bit vector
---Output signal: a 2-D array: 16 columns * 100 rows
---first sample on the left end
---neweast sample on the right end
---when a new sample comes, all the samples shift up
-
--- 2 ways of implementation
--- 1. connect 100 of 16-bit-register together
--- 2. create a 1600-bit vector
-
+-- shift register
+-- read data from BRAM and send it to power estimation and cross-correlation
+-- power estimation needs two data: the newest sample and the oldest sample(100)
+-- cross-correlation needs two data: the newest sample and the oldest sample(10000)
 
 LIBRARY ieee;
 LIBRARY work;
 USE ieee.std_logic_1164.ALL;
+use ieee.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
 USE work.parameter.ALL;
 
 ENTITY shiftregister IS
-  GENERIC(INPUT_WIDTH : INTEGER;
-          REGISTER_NUM : INTEGER);
-  PORT(clk: IN STD_LOGIC;
-       rst_n: IN STD_LOGIC;
-       din: IN STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0);
-       dout: OUT outputdata);
+PORT(clk_read: IN STD_LOGIC; --system clk 
+     clk_write: IN STD_LOGIC; --fsync
+     rst_n: IN STD_LOGIC;
+     din: IN STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
+     dout_PE: OUT outputdata;
+	 dout_xcorr_lag: OUT outputdata;
+	 dout_xcorr_ref: OUT outputdata
+	 );
 END shiftregister;
 
 ARCHITECTURE arch_shiftregister OF shiftregister IS
 
-SIGNAL data: STD_LOGIC_VECTOR(INPUT_WIDTH*REGISTER_NUM-1 DOWNTO 0) := (others => '0');
-signal dout_sig: outputdata := ((others => (others=>'0')));
+SIGNAL addr_write : STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
+SIGNAL addr_read : STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
+SIGNAL data_read : STD_LOGIC_VECTOR(15 DOWNTO 0):= (OTHERS =>'0');
+SIGNAL dout_PE_signal: outputdata := (OTHERS => (OTHERS => '0'));
+SIGNAL dout_xcorr_lag_signal: outputdata := (OTHERS => (OTHERS => '0'));
+SIGNAL dout_xcorr_ref_signal: outputdata := (OTHERS => (OTHERS => '0'));
+SIGNAL write_en : STD_LOGIC := '0';
+SIGNAL read_en : STD_LOGIC := '0';
+SIGNAL write_we : STD_LOGIC := '1';
+SIGNAL bufferfull : STD_LOGIC := '0';
 
+SIGNAL counter : SIGNED(10 DOWNTO 0) := (OTHERS => '0');
 
-COMPONENT singleregister IS
-  GENERIC (INPUT_WIDTH : INTEGER);
-  PORT (clk: IN STD_LOGIC;
-        din: IN STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0);
-        dout: OUT STD_LOGIC_VECTOR(INPUT_WIDTH-1 DOWNTO 0));
-END COMPONENT singleregister;
+COMPONENT simple_dual_two_clocks is
+ port(
+ clka : in std_logic;
+ clkb : in std_logic;
+ ena : in std_logic;
+ enb : in std_logic;
+ wea : in std_logic;
+ addra : in std_logic_vector(13 downto 0);
+ addrb : in std_logic_vector(13 downto 0);
+ dia : in std_logic_vector(15 downto 0);
+ dob : out std_logic_vector(15 downto 0)
+ );
+end COMPONENT simple_dual_two_clocks;
 
 BEGIN
 
-  G: FOR i IN 0 TO REGISTER_NUM-1 GENERATE
-	register_i:
-    COMPONENT singleregister
-	GENERIC MAP (INPUT_WIDTH => INPUT_WIDTH)
-  	PORT MAP(clk => clk,
-             din => data(INPUT_WIDTH*(i+1)-1 DOWNTO INPUT_WIDTH*i),
-             dout => dout_sig(i));
-END GENERATE;
+BRAM_inst:
+COMPONENT simple_dual_two_clocks
+ port map(
+ clka => clk_write,
+ clkb => clk_read,
+ ena => write_en,
+ enb => read_en,
+ wea => write_we,
+ addra => addr_write,
+ addrb => addr_read,
+ dia => din,
+ dob => data_read
+ );
 
-
---
-shift_process:
-PROCESS(clk, rst_n)
+counter_process:
+PROCESS(clk_read)
 BEGIN
-IF rst_n = '0' THEN
-	data <= (OTHERS=> '0');
-END IF;
-IF RISING_EDGE(clk) THEN
-   data(INPUT_WIDTH*REGISTER_NUM-1 DOWNTO INPUT_WIDTH) <= data(INPUT_WIDTH*(REGISTER_NUM-1)-1 DOWNTO 0);
-   data(INPUT_WIDTH-1 DOWNTO 0) <= din;
- END IF;
-END PROCESS shift_process;
+  IF RISING_EDGE(clk_read) THEN -- system clk
+    IF clk_write = '0' THEN
+	    IF counter < 564 THEN 
+          counter <= counter + 1;
+		ELSE
+		  counter <= counter;
+	    END IF;
+	ELSE
+	  	counter <= (OTHERS =>'0');
+	END IF;
+  END IF;
+END PROCESS counter_process;
 
-dout <= dout_sig;
+wirte_process:
+PROCESS(clk_write)
+BEGIN
+  IF RISING_EDGE(clk_write) THEN
+     -- write din into BRAM
+	 write_en <= '0';
+	IF addr_write < "10011100001111" THEN --0001000000000000 111111111111
+	  addr_write <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 1);
+	ELSE
+	  addr_write <= (OTHERS => '0'); 
+	  bufferfull <= '1';
+	END IF;
+	write_en <= '1';
+  END IF;
+END PROCESS wirte_process;
 
-END arch_shiftregister;
+
+read_process:
+PROCESS(counter, addr_write)
+BEGIN
+ -- get the newest reference for cross-correlation
+  IF counter = 0 THEN
+    read_en <= '1';
+	IF addr_write > 280 or bufferfull = '1' THEN 
+      addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - 140) MOD 10000);
+	END IF;
+	
+   -- get the oldest reference for cross-correlation
+  ELSIF counter = 1 THEN
+    IF bufferfull = '1' THEN 
+	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 141) MOD 10000);
+	END IF;
+	
+  ELSIF counter = 2 THEN
+    -- get newest data for power estimation
+	addr_read <= addr_write;
+	
+  -- get oldest data for power estimation	
+  ELSIF  counter = 3 THEN
+	IF bufferfull = '0' THEN
+	  IF addr_write >= POWER_WINDOW THEN
+	    addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) - POWER_WINDOW);
+      END IF;
+	ELSE
+	  IF addr_write < POWER_WINDOW THEN
+	    addr_read <= STD_LOGIC_VECTOR(9999 - POWER_WINDOW + SIGNED(addr_write));
+	  ELSE 
+	    addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) - POWER_WINDOW);
+	  END IF;
+	END IF;
+
+  ELSIF counter < 563 THEN
+	-- get the newest data for cross-correlation
+	IF counter(0) = '0' THEN
+	  IF addr_write > 280 or bufferfull = '1' THEN 
+	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
+	  END IF;
+	-- get the oldest data for cross-correlation
+	ELSIF counter(0) = '1' THEN
+	  IF bufferfull = '1' THEN
+	    IF addr_write = "0000000000000" THEN
+		  addr_read <= (OTHERS => '1');
+		ELSE 		  
+		  addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 281 - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
+		END IF;
+	  END IF;
+    END IF;
+	
+   ELSE
+   --idele
+   END IF;
+END PROCESS read_process;
+
+assignment_proc:
+PROCESS(clk_read)
+BEGIN
+  IF FALLING_EDGE(clk_read) THEN
+  
+    IF counter = 1 THEN
+	  IF addr_write > 280 or bufferfull = '1' THEN 
+	    dout_xcorr_ref_signal(0) <= data_read;
+	  ELSE
+	    dout_xcorr_ref_signal(0) <= (OTHERS => '0');
+	  END IF;
+	  
+	ELSIF counter = 2 THEN
+	   IF bufferfull = '1' THEN 
+	    dout_xcorr_ref_signal(1) <= data_read;
+	  ELSE
+	    dout_xcorr_ref_signal(1) <= (OTHERS => '0');
+	  END IF;
+	  
+    ELSIF counter = 3 THEN
+	  dout_PE_signal(0) <= data_read;
+	  dout_PE_signal(1) <= dout_PE_signal(1);
+
+	-- release PE data
+    ELSIF counter = 4 THEN
+	  dout_PE_signal(0) <= dout_PE_signal(0);
+	  IF bufferfull = '0' THEN
+	    IF addr_write < POWER_WINDOW THEN
+	      dout_PE_signal(1) <= (OTHERS => '0');
+	    ELSE
+	      dout_PE_signal(1) <= data_read;
+        END IF;
+	  ELSE
+	      dout_PE_signal(1) <= data_read;
+	  END IF;
+	
+	-- release CrossCorelation data
+	ELSIF counter < 564 THEN
+		dout_PE_signal <= dout_PE_signal;
+		IF counter(0) = '1' THEN
+		  IF addr_write > 280 or bufferfull = '1' then
+		   dout_xcorr_lag_signal(0) <= data_read;
+		  ELSE
+		   dout_xcorr_lag_signal(0) <= (OTHERS => '0');
+		  end if;		
+
+		ELSIF counter(0) = '0' THEN
+		  IF bufferfull = '0' THEN
+			dout_xcorr_lag_signal(1) <= (OTHERS => '0');
+		  ELSE
+			dout_xcorr_lag_signal(1) <= data_read;
+		  END IF;	  
+		END IF;
+	ELSE
+		dout_PE_signal <= dout_PE_signal;
+	END IF;
+  END IF;
+END PROCESS assignment_proc;
+
+dout_PE <= dout_PE_signal;
+dout_xcorr_lag <= dout_xcorr_lag_signal;
+dout_xcorr_ref <= dout_xcorr_ref_signal;
+
+END ARCHITECTURE arch_shiftregister;
 
