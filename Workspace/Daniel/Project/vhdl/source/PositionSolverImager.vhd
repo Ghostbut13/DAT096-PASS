@@ -27,7 +27,7 @@ architecture Behavioral of PositionSolverImager is
     END COMPONENT LUTv;
 	
 	COMPONENT Picture_Frame IS 	-- picture frame to store image from each cross-correlation.
-	PORT (						-- 6 bit depth of grayscale value, 64 by 128 pixels
+	PORT (						-- 32 bit depth of grayscale value, 64 by 128 pixels
 		clka: 	IN STD_LOGIC;
 		wea:  	IN STD_LOGIC_VECTOR(0 DOWNTO 0);
 		addra: 	IN STD_LOGIC_VECTOR(12 DOWNTO 0);
@@ -204,19 +204,19 @@ begin
 			when pixelAdd_state =>
 				pCounter <= pCounter +1;
 				
-				if currentPixel1 < corr1 then
+				if signed(currentPixel1) < signed(corr1) then
 					replacePixel1 <= "1";
 				else
 					replacePixel1 <= "0";
 				end if;
 				
-				if currentPixel2 < corr2 then
+				if signed(currentPixel2) < signed(corr2) then
 					replacePixel2 <= "1";
 				else
 					replacePixel2 <= "0";
 				end if;
 				
-				if currentPixel3 < corr3 then
+				if signed(currentPixel3) < signed(corr3) then
 					replacePixel3 <= "1";
 				else
 					replacePixel3 <= "0";
