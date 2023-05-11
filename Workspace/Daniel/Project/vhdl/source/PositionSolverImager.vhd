@@ -7,10 +7,10 @@ USE work.parameter.ALL;
 
 entity PositionSolverImager is
     port(
-		sysCLK:		in STD_LOGIC; --system clock 100MHz
-		reset:		in STD_LOGIC; --system reset
-		PositionX:	out STD_LOGIC_VECTOR(6 DOWNTO 0); -- position 0 to 128, middle 64
-		PositionY:	out STD_LOGIC_VECTOR(5 DOWNTO 0); -- position 0 to 64
+		sysCLK:			in STD_LOGIC; --system clock 100MHz
+		reset:			in STD_LOGIC; --system reset
+		PositionX:		out STD_LOGIC_VECTOR(6 DOWNTO 0); -- position 0 to 128, middle 64
+		PositionY:		out STD_LOGIC_VECTOR(5 DOWNTO 0); -- position 0 to 64
 		Correlation1:	in corrData;
 		Correlation2:	in corrData;
 		Correlation3:	in corrData
@@ -20,31 +20,31 @@ end PositionSolverImager;
 architecture Behavioral of PositionSolverImager is
 	COMPONENT LUTv IS 	-- look-up-table with vectors for each pixel in each correlation line
 	PORT (				-- 12 bits of position data (6 bit X and 6 bit for Y), 95(128) points per line, 140 lines (17920)
-		clka : IN STD_LOGIC;
-		addra : IN STD_LOGIC_VECTOR(14 DOWNTO 0);
-		douta : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
+		clka: 	IN STD_LOGIC;
+		addra: 	IN STD_LOGIC_VECTOR(14 DOWNTO 0);
+		douta: 	OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
 	);
     END COMPONENT LUTv;
 	
 	COMPONENT Picture_Frame IS 	-- picture frame to store image from each cross-correlation.
 	PORT (						-- 6 bit depth of grayscale value, 64 by 128 pixels
-		clka : IN STD_LOGIC;
-		wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-		addra : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
-		dina : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-		clkb : IN STD_LOGIC;
-		addrb : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
-		doutb : OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
+		clka: 	IN STD_LOGIC;
+		wea:  	IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+		addra: 	IN STD_LOGIC_VECTOR(12 DOWNTO 0);
+		dina: 	IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		clkb: 	IN STD_LOGIC;
+		addrb: 	IN STD_LOGIC_VECTOR(12 DOWNTO 0);
+		doutb: 	OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
 	);
 	END COMPONENT Picture_Frame;
 	
 	COMPONENT maxLUT IS 
 	PORT (
-	   clk		   : IN STD_LOGIC;
-	   rst_n 	   : IN STD_LOGIC;
-	   din 	   : IN STD_LOGIC_VECTOR (7 downto 0);
-	   xy_pos_in  : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
-	   xy_pos_out : OUT STD_LOGIC_VECTOR(12 DOWNTO 0)
+	   clk: 		IN STD_LOGIC;
+	   rst_n: 		IN STD_LOGIC;
+	   din: 		IN STD_LOGIC_VECTOR (33 downto 0);
+	   xy_pos_in: 	IN STD_LOGIC_VECTOR(12 DOWNTO 0);
+	   xy_pos_out:	OUT STD_LOGIC_VECTOR(12 DOWNTO 0)
 	);
     END COMPONENT maxLUT;
 	
@@ -58,13 +58,13 @@ architecture Behavioral of PositionSolverImager is
 	SIGNAL next_state_signal:state_type;
 
 
-	SIGNAL corr1:		STD_LOGIC_VECTOR(5 DOWNTO 0) := "000001";
-	SIGNAL corr2:		STD_LOGIC_VECTOR(5 DOWNTO 0) := "000010";
-	SIGNAL corr3:		STD_LOGIC_VECTOR(5 DOWNTO 0) := "000011";
+	SIGNAL corr1:		STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL corr2:		STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL corr3:		STD_LOGIC_VECTOR(31 DOWNTO 0);
 	
-	SIGNAL currentPixel1: STD_LOGIC_VECTOR(5 DOWNTO 0);
-	SIGNAL currentPixel2: STD_LOGIC_VECTOR(5 DOWNTO 0);
-	SIGNAL currentPixel3: STD_LOGIC_VECTOR(5 DOWNTO 0);
+	SIGNAL currentPixel1: STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL currentPixel2: STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL currentPixel3: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	
 	SIGNAL replacePixel1: STD_LOGIC_VECTOR(0 DOWNTO 0);
 	SIGNAL replacePixel2: STD_LOGIC_VECTOR(0 DOWNTO 0);
@@ -73,13 +73,13 @@ architecture Behavioral of PositionSolverImager is
 	SIGNAL LUTlag:	STD_LOGIC_VECTOR(8 DOWNTO 0);
 	
 	SIGNAL PICaddr: std_logic_vector(14 DOWNTO 0);
-	SIGNAL PIXY1: std_logic_vector(12 DOWNTO 0);
-	SIGNAL PIXY2: std_logic_vector(12 DOWNTO 0);
-	SIGNAL PIXY3: std_logic_vector(12 DOWNTO 0);
-	SIGNAL MaxCounter: std_logic_vector(12 DOWNTO 0);
-	SIGNAL maxReset: std_logic;
-	SIGNAL pixelVal123: std_logic_vector(7 DOWNTO 0);
-	SIGNAL XY_signal: std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY1: 	std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY2: 	std_logic_vector(12 DOWNTO 0);
+	SIGNAL PIXY3: 	std_logic_vector(12 DOWNTO 0);
+	SIGNAL MaxCounter: 	std_logic_vector(12 DOWNTO 0);
+	SIGNAL maxReset: 	std_logic;
+	SIGNAL pixelVal123: std_logic_vector(33 DOWNTO 0);
+	SIGNAL XY_signal: 	std_logic_vector(12 DOWNTO 0);
 	
 begin
     PICaddr <= LUTlag(7 DOWNTO 0) & pCounter;
@@ -88,53 +88,53 @@ begin
 	LUTv_Inst:
 	component LUTv
 	port map(
-		clka => sysCLK,
-		addra => PICaddr,
-		douta => LUTXY
+		clka 	=> sysCLK,
+		addra 	=> PICaddr,
+		douta 	=> LUTXY
 	);
 	
 	Frame1:
 	component Picture_Frame
 	port map(
-		clka => sysCLK,
-		wea => replacePixel1,
-		addra => PIXY1,
-		dina => corr1,
-		clkb => sysCLK,
-		addrb => PIXY1,
-		doutb => currentPixel1
+		clka 	=> sysCLK,
+		wea 	=> replacePixel1,
+		addra 	=> PIXY1,
+		dina 	=> corr1,
+		clkb 	=> sysCLK,
+		addrb 	=> PIXY1,
+		doutb 	=> currentPixel1
 	);
 	Frame2:
 	component Picture_Frame
 	port map(
-		clka => sysCLK,
-		wea => replacePixel2,
-		addra => PIXY2,
-		dina => corr2,
-		clkb => sysCLK,
-		addrb => PIXY2,
-		doutb => currentPixel2
+		clka 	=> sysCLK,
+		wea 	=> replacePixel2,
+		addra 	=> PIXY2,
+		dina 	=> corr2,
+		clkb 	=> sysCLK,
+		addrb 	=> PIXY2,
+		doutb 	=> currentPixel2
 	);
 	Frame3:
 	component Picture_Frame
 	port map(
-		clka => sysCLK,
-		wea => replacePixel3,
-		addra => PIXY3,
-		dina => corr3,
-		clkb => sysCLK,
-		addrb => PIXY3,
-		doutb => currentPixel3
+		clka 	=> sysCLK,
+		wea 	=> replacePixel3,
+		addra 	=> PIXY3,
+		dina 	=> corr3,
+		clkb 	=> sysCLK,
+		addrb 	=> PIXY3,
+		doutb 	=> currentPixel3
 	);
 
     max:
     COMPONENT maxLUT
 	port map (
-	   clk => sysCLK,
-	   rst_n => maxReset,
-	   din => pixelVal123,
-	   xy_pos_in => PIXY2,
-	   xy_pos_out => XY_signal
+	   clk 			=> sysCLK,
+	   rst_n 		=> maxReset,
+	   din 			=> pixelVal123,
+	   xy_pos_in 	=> PIXY2,
+	   xy_pos_out 	=> XY_signal
 	);
 	
 
@@ -182,7 +182,7 @@ begin
 
 	
 	solver_state_proc:
-	PROCESS(sysCLK, lag, LUTXY, present_state_signal)
+	PROCESS(sysCLK, lag, LUTXY, present_state_signal, MaxCounter)
 	BEGIN
 	if RISING_EDGE(sysCLK) then
 		case present_state_signal is

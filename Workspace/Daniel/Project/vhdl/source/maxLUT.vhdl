@@ -13,7 +13,7 @@ ENTITY maxLUT IS
 	PORT(
 	clk		   : IN STD_LOGIC;
 	rst_n 	   : IN STD_LOGIC;
-	din 	   : IN STD_LOGIC_VECTOR (7 downto 0);
+	din 	   : IN STD_LOGIC_VECTOR (33 downto 0);
 	xy_pos_in  : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
 	xy_pos_out : OUT STD_LOGIC_VECTOR(12 DOWNTO 0)
 	);
@@ -21,7 +21,7 @@ END ENTITY maxLUT;
 
 ARCHITECTURE arch_maxLUT OF maxLUT IS
 
-signal current_MAX 		 : std_logic_vector(7 downto 0) := (others=>'0');
+signal current_MAX 		 : std_logic_vector(33 downto 0) := (others=>'0');
 signal xy_pos_out_signal : std_logic_vector(12 downto 0) := (others=>'0'); -- 6 bits x, 6 bits y.
 
   begin 
