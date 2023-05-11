@@ -104,15 +104,25 @@ PROCESS(counter, addr_write)
 BEGIN
  -- get the newest reference for cross-correlation
   IF counter = 0 THEN
-    read_en <= '1';
-	IF addr_write > 280 or bufferfull = '1' THEN 
-      addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - 140) MOD 10000);
+    IF addr_write >= 1 THEN
+      read_en <= '1';
+	END IF;
+	IF addr_write >= 140 THEN 
+      addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) - 140);
+	ELSE
+	  IF bufferfull = '1' THEN
+	    addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 9999 - 140);
+	  END IF;
 	END IF;
 	
    -- get the oldest reference for cross-correlation
   ELSIF counter = 1 THEN
-    IF bufferfull = '1' THEN 
-	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 141) MOD 10000);
+    IF bufferfull = '1' THEN
+	   IF SIGNED(addr_write) <= 9858 THEN
+	     addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 141);
+	   ELSE
+	     addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 141 -9999);
+	   END IF;
 	END IF;
 	
   ELSIF counter = 2 THEN
@@ -136,22 +146,31 @@ BEGIN
   ELSIF counter < 563 THEN
 	-- get the newest data for cross-correlation
 	IF counter(0) = '0' THEN
-	  IF addr_write > 280 or bufferfull = '1' THEN 
-	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
+	  IF addr_write >= 280 THEN
+	    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(10 DOWNTO 1)) - 2)));
+	  ELSE
+	    IF bufferfull = '1' THEN
+		  IF SIGNED(addr_write) > (SIGNED('0'& counter(10 DOWNTO 1)) - 2) THEN
+		    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) - (SIGNED('0'& counter(10 DOWNTO 1)) - 2)));
+		  ELSE
+		    addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 9999 - (SIGNED('0'& counter(10 DOWNTO 1)) - 2)));
+		  END IF;
+		END IF;
 	  END IF;
 	-- get the oldest data for cross-correlation
 	ELSIF counter(0) = '1' THEN
 	  IF bufferfull = '1' THEN
-	    IF addr_write = "0000000000000" THEN
-		  addr_read <= (OTHERS => '1');
-		ELSE 		  
-		  addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 281 - (SIGNED('0'& counter(9 DOWNTO 1)) - 2)) MOD 10000);
-		END IF;
+		 IF (SIGNED(addr_write) + 1 + (SIGNED('0'& counter(10 DOWNTO 1)) - 2) -9999) < 0 THEN
+		   addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 1 +(SIGNED('0'& counter(10 DOWNTO 1)) - 2)));
+		 ELSE
+		   addr_read <= STD_LOGIC_VECTOR((SIGNED(addr_write) + 1 - 9999 +(SIGNED('0'& counter(10 DOWNTO 1)) - 2)));
+		 END IF;
 	  END IF;
     END IF;
 	
    ELSE
    --idele
+   read_en <= '0';
    END IF;
 END PROCESS read_process;
 
@@ -161,17 +180,17 @@ BEGIN
   IF FALLING_EDGE(clk_read) THEN
   
     IF counter = 1 THEN
-	  IF addr_write > 280 or bufferfull = '1' THEN 
-	    dout_xcorr_ref_signal(0) <= data_read;
-	  ELSE
+	  IF addr_write < 280 and bufferfull = '0' THEN 
 	    dout_xcorr_ref_signal(0) <= (OTHERS => '0');
+	  ELSE
+	    dout_xcorr_ref_signal(0) <= data_read;
 	  END IF;
 	  
 	ELSIF counter = 2 THEN
-	   IF bufferfull = '1' THEN 
-	    dout_xcorr_ref_signal(1) <= data_read;
-	  ELSE
+	   IF bufferfull = '0' THEN 
 	    dout_xcorr_ref_signal(1) <= (OTHERS => '0');
+	  ELSE
+	    dout_xcorr_ref_signal(1) <= data_read;
 	  END IF;
 	  
     ELSIF counter = 3 THEN
@@ -195,10 +214,10 @@ BEGIN
 	ELSIF counter < 564 THEN
 		dout_PE_signal <= dout_PE_signal;
 		IF counter(0) = '1' THEN
-		  IF addr_write > 280 or bufferfull = '1' then
-		   dout_xcorr_lag_signal(0) <= data_read;
-		  ELSE
+		  IF addr_write < 280 and bufferfull = '0' then
 		   dout_xcorr_lag_signal(0) <= (OTHERS => '0');
+		  ELSE
+		   dout_xcorr_lag_signal(0) <= data_read;
 		  end if;		
 
 		ELSIF counter(0) = '0' THEN

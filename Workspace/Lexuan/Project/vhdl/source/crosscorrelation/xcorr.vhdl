@@ -22,7 +22,7 @@ SIGNAL newest_data_1_signal : STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHE
 SIGNAL newest_data_2_signal : STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
 SIGNAL oldest_data_1_signal : STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
 SIGNAL oldest_data_2_signal : STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
-SIGNAL accumulator_output : STD_LOGIC_VECTOR(2*SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
+SIGNAL accumulator_output : STD_LOGIC_VECTOR(xcorr_SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
 SIGNAL dout_signal : xcorrdata := (OTHERS =>(OTHERS =>'0'));
 SIGNAL counter : SIGNED(10 DOWNTO 0) := (OTHERS => '0');
 
@@ -88,7 +88,7 @@ output_proc:
 PROCESS(counter)
 BEGIN
   IF counter > 7 and counter < 567 THEN
-    dout_signal(TO_INTEGER(SIGNED('0' & counter(9 DOWNTO 1)) - 4)) <= accumulator_output;
+    dout_signal(TO_INTEGER(279 - SIGNED('0' & counter(9 DOWNTO 1)) + 4)) <= accumulator_output;
   END IF;
 END PROCESS output_proc;
 

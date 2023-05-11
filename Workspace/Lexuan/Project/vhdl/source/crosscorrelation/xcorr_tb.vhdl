@@ -17,7 +17,7 @@ ARCHITECTURE arch_xcorr_tb OF xcorr_tb IS
   constant WL : positive := 16;
 
   -- adder wordlength
-  constant CYCLES : positive := 10000;
+  constant CYCLES : positive := 19999;
   -- number of test vectors to load word_array
   type word_array is array (0 to CYCLES) of std_logic_vector(WL-1 downto 0);
   -- type used to store WL-bit test vectors for CYCLES cycles. array[0-999] every element is 16-bit
@@ -54,17 +54,21 @@ ARCHITECTURE arch_xcorr_tb OF xcorr_tb IS
     return memory;
   end load_words;
 
-  SIGNAL din_1_tb:STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
-  SIGNAL din_2_tb:STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0);
+  
+  SIGNAL din_1_tb:STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL din_2_tb:STD_LOGIC_VECTOR(SIGNAL_WIDTH-1 DOWNTO 0) := (OTHERS => '0');
   SIGNAL clk_fsync_tb: STD_LOGIC := '0';
   SIGNAL clk_bclk_tb: STD_LOGIC := '0';
+  SIGNAL rst_n_tb : STD_LOGIC := '1';
   SIGNAL dout_PE_1_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_PE_2_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_xcorr_lag_1_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_xcorr_lag_2_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_xcorr_ref_1_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_xcorr_ref_2_tb:outputdata  := (OTHERS => (OTHERS => '0'));
-  SIGNAL dout_tb : xcorrdata := (OTHERS => (OTHERS => '0'));
+  SIGNAL xcorr_output : xcorrdata := (OTHERS => (OTHERS => '0'));
+  SIGNAL dout_tb : STD_LOGIC_VECTOR(29 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL dout_index_tb :STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
   signal A_array : word_array;
 
 COMPONENT shiftregister IS
@@ -88,6 +92,16 @@ COMPONENT Xcc IS
 	dout: OUT xcorrdata
 	);
 END COMPONENT Xcc;
+
+COMPONENT MAX1000counter IS 
+	PORT(
+	bclk : IN STD_LOGIC;
+	fsync : IN STD_LOGIC;
+	rst_n : IN STD_LOGIC;
+	din : IN xcorrdata;
+	dout : OUT STD_LOGIC_VECTOR(29 DOWNTO 0) -- last 14 bits is the index first 16 is the actual value
+	);
+END COMPONENT MAX1000counter;
 
 BEGIN 
 
@@ -120,10 +134,19 @@ BEGIN
 	clk => clk_bclk_tb,
 	din_reference => dout_xcorr_ref_1_tb,
 	din_xcorr => dout_xcorr_lag_2_tb,
-	rst_n => '1',
-	dout => dout_tb
+	rst_n => rst_n_tb,
+	dout => xcorr_output
 	);
 	
+	max_inst:
+	COMPONENT MAX1000counter
+	PORT MAP(
+	bclk => clk_bclk_tb,
+	fsync => clk_fsync_tb,
+	rst_n => rst_n_tb,
+	din => xcorr_output,
+	dout => dout_tb -- last 14 bits is the index first 16 is the actual value
+	);
   -- read input values
   A_array  <= load_words(string'("C:\Users\lexuan\Downloads\DAT096-PASS-main (1)\DAT096-PASS-main\Workspace\Lexuan\Project\vhdl\source\shiftregister\data10000.txt"));
 
@@ -140,7 +163,7 @@ BEGIN
 	WAIT FOR 10400 ns;
 	clk_fsync_tb <= NOT(clk_fsync_tb); 
   END PROCESS fsync_proc;
- 
+
  verification_1_proc:
  PROCESS 
  VARIABLE n : natural := 1;
@@ -183,4 +206,6 @@ BEGIN
   
   END PROCESS verification_2_proc;
 
+  dout_index_tb <= dout_tb(13 DOWNTO 0);
+  
 END ARCHITECTURE arch_xcorr_tb;
