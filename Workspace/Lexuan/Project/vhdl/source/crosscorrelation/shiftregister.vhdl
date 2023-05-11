@@ -118,7 +118,7 @@ BEGIN
    -- get the oldest reference for cross-correlation
   ELSIF counter = 1 THEN
     IF bufferfull = '1' THEN
-	   IF SIGNED(addr_write) <= 9858 THEN
+	   IF SIGNED(addr_write)- 9858 <= 0 THEN
 	     addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 141);
 	   ELSE
 	     addr_read <= STD_LOGIC_VECTOR(SIGNED(addr_write) + 141 -9999);
