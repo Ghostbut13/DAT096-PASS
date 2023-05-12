@@ -67,7 +67,7 @@ ARCHITECTURE arch_xcorr_tb OF xcorr_tb IS
   SIGNAL dout_xcorr_ref_1_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL dout_xcorr_ref_2_tb:outputdata  := (OTHERS => (OTHERS => '0'));
   SIGNAL xcorr_output : xcorrdata := (OTHERS => (OTHERS => '0'));
-  SIGNAL dout_tb : STD_LOGIC_VECTOR(29 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL dout_tb : STD_LOGIC_VECTOR(45 DOWNTO 0) := (OTHERS => '0');
   SIGNAL dout_index_tb :STD_LOGIC_VECTOR(13 DOWNTO 0) := (OTHERS => '0');
   signal A_array : word_array;
 
@@ -99,7 +99,7 @@ COMPONENT MAX1000counter IS
 	fsync : IN STD_LOGIC;
 	rst_n : IN STD_LOGIC;
 	din : IN xcorrdata;
-	dout : OUT STD_LOGIC_VECTOR(29 DOWNTO 0) -- last 14 bits is the index first 16 is the actual value
+	dout : OUT STD_LOGIC_VECTOR(45 DOWNTO 0) -- last 14 bits is the index first 16 is the actual value
 	);
 END COMPONENT MAX1000counter;
 
@@ -148,7 +148,7 @@ BEGIN
 	dout => dout_tb -- last 14 bits is the index first 16 is the actual value
 	);
   -- read input values
-  A_array  <= load_words(string'("C:\Users\lexuan\Downloads\DAT096-PASS-main (1)\DAT096-PASS-main\Workspace\Lexuan\Project\vhdl\source\shiftregister\data10000.txt"));
+  A_array  <= load_words(string'("C:\Users\lexuan\Downloads\DAT096-PASS-main\Workspace\Lexuan\Project\vhdl\source\crosscorrelation\data20000.txt"));
 
   bclk_proc:
   PROCESS
@@ -190,7 +190,7 @@ BEGIN
  VARIABLE n : natural := 1;
  BEGIN
 
-  WAIT FOR 26000 ns;
+  WAIT FOR 213200 ns;
     din_2_tb <= A_array(0);
   WAIT FOR 20800 ns;
   
