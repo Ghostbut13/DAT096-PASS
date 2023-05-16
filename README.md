@@ -116,7 +116,7 @@ The key thought is that algorithms should **extract** acoustic information from 
 - The _Picture Creator_ is a control unit to **address** the ROM.
 - The _ADD_ and _MAX_ ***combine*** the output from _Picture Creator_.
 
-<center>![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/complex_algo_description.png)</center>
+![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/complex_algo_description.png)
 
 (Fig.2 Algorithm)
 
@@ -231,7 +231,9 @@ case state is
 Each of the states in this ***FSM*** will call a small ‘***fsm***’ which implements I<sup>2</sup>C (master) protocol with fixed timing and format,   to write value into ADC. The relation between ***FSM*** and ***fsm*** is analog to Brain and Hand - the brain makes decisions and controls the Hand to write.
 <br>
 
-<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "600" />
+<center>
+
+<img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "600" /></center>
 
 (Fig.3 FSM-fsm)
 
