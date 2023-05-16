@@ -232,7 +232,7 @@ Each of the states in this ***FSM*** will call a small ‘***fsm***’ which imp
 <br>
 
 <center>
-    <img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "600" />
+    <img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "400" />
 </center>
 
 
