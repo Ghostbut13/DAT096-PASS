@@ -93,6 +93,8 @@
 
 ![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/DAT096-Block_Diagram.png)
 
+(Fig.1 Block Diagram)
+
 The system consists of FPGA, peripheral ADC + DAC. Four microphones as Left1/2-Right1/2 channels sample analog audio and ADC will convert data to digital. **I<sup>2</sup>S receiver** operates at a sample rate of 48Khz and a BCLK-FSYNC ratio of 128, splitting the audio into four 16-bit wordlengths. We prepare two **algorithms** for panning channels according to acoustic source distance off each microphone. A virtual distribution figure shows the correct position estimation out of ***timing-delay*** or ***power estimation***, respectively in two algorithms.  Align with enhancement and filter, the algorithm part enhances the acoustic performance. DAC, the end of the *data path*, can output the processed audio stream. 
 
 To customize the peripheral ADC parameters, such as the I<sup>2</sup>S protocol and differential input, it is necessary to configure the relative registers in the ADC using *control path*. The **I<sup>2</sup>C master** provides valid control information writing mechanisms to ADC, and the **ADC-Configuration-Flow-Controller (_ACFC_) ** manages the priority, location, and implicit value of the register writes based on the datasheet and datapath requirements. MCLK is generated from **PLL module** as the source clock for ADC.
@@ -103,7 +105,7 @@ To customize the peripheral ADC parameters, such as the I<sup>2</sup>S protocol 
 
 
 
-## <font size=5>**MATLAB Algorithm Design (Extraction + Addressing + Combination)** </font>
+## <font size=5>**Algorithm Design (Extraction + Addressing + Combination)** </font>
 
 As the core of the system, we designed and tested the algorithms' structure consisting of multiple entities.
 
@@ -114,9 +116,9 @@ The key thought is that algorithms should **extract** acoustic information from 
 - The _Picture Creator_ is a control unit to **address** the ROM.
 - The _ADD_ and _MAX_ ***combine*** the output from _Picture Creator_.
 
-![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/complex_algo_description.png)
+<center>![Block_Diagram](https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/complex_algo_description.png)</center>
 
-(Fig.1 Block_Diagram)
+(Fig.2 Algorithm)
 
 <br>
 
@@ -231,7 +233,7 @@ Each of the states in this ***FSM*** will call a small ‘***fsm***’ which imp
 
 <img src="https://github.com/Ghostbut13/DAT096-PASS/blob/main/Diagram/ACFC_and_I2C_fsm.png"    height = "600" />
 
-(Fig.2 FSM-fsm)
+(Fig.3 FSM-fsm)
 
 <br>
 
@@ -259,19 +261,23 @@ end entity I2C_Interface;
 
 SCL provides the clock reference for I<sup>2</sup>C communication from a master. SDA falls when SCL = '1' represents a _launch_ then SCL will pulse at a fixed frequency to transmit data through SDA in every 8 bits PLUS 1 bit, to receive acknowledge. In other words, we set 9 states to send 8 bits and the last state is ACK state. 
 
-Registers' addresses and values are 8 bits that 2×9 states in two launch-set can configure one register in PCM6240_Q1. Before this two-launch, however, we also need one more launch-set to appoint to the I<sup>2</sup>C slave address (fixed in datasheet) in case there are any other slaves sharing common bus (see in Fig.2).
-
-
+Registers' addresses and values are 8 bits that 2×9 states in two launch-set can configure one register in PCM6240_Q1. Before this two-launch, however, we also need one more launch-set to appoint to the I<sup>2</sup>C slave address (fixed in datasheet) in case there are any other slaves sharing common bus (see in Fig.3).
 
 <br>
 
-### <font size=4>Parallel-to-Serial in I<sup>2</sup>S</font>
+### <font size=4>Serial-to-Parallel in I<sup>2</sup>S</font>
 
+Serial stream mixtures 4 channels' audio in SDOUT. Simple counter or fsm design can parallel channels in one FSYNC cycle since the channels' wordlength and BCLK is same one. 
 
+<br>
 
 ### <font size=4> IP core design in PLL and ROM, BRAM</font>
 
+Xilinx provides IP core to assistant design.  
 
+<br>
+
+<br>
 
 
 
@@ -310,19 +316,29 @@ Registers' addresses and values are 8 bits that 2×9 states in two launch-set ca
 
 ### <font size=4>Switches Assignment</font>
 
+(fig here)
 
+As introduced before, switches work in unfix region but also to start (or reset) some modules like Ethernet and Algorithm. 
+
+<br>
 
 ### <font size=4>Wire Connection</font>
 
 
 
+<br>
+
 ### <font size=4>Signal Simulti and Speaker</font>
 
+Wave generator 
+
+<br>
+
+### <font size=4>Microphone and Data</font>
 
 
-### <font size=4>Microphone and data</font>
 
-
+<br>
 
 
 
