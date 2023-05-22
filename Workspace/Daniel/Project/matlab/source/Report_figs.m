@@ -219,8 +219,16 @@ xlabel("Position [m]")
 ylabel("Position [m]")
 
 %%
+% attenuation compensation
+close all
+y = linspace(0, 64, 1000);
+g = y*bin2dec("1000");
+g(g<bin2dec("000110010")) = 2^6;
+plot(5*y/64,100*g/2^6)
+xlabel("y (m)");
+ylabel("gain (%)");
 
-
+%%
 
 function [x,y] = circle(X,Y,r,res)
     phi = linspace(0,2*pi,res);
