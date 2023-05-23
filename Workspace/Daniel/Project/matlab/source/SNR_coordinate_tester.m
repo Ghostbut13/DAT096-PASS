@@ -1,10 +1,10 @@
 run("soundstage2.m")
 
 %normalize
-a = max(max(mY));
+a = max(max(mY));   
 mY = mY/a;
 noiseStrength = 0.0001;
-mY = mY+noiseStrength*randn(length(mY(:,1)),length(mY(1,:)));
+%mY = mY+noiseStrength*randn(length(mY(:,1)),length(mY(1,:)));
 
 %% pure summing
 X = mY(:,1) + mY(:,2) +mY(:,3) + mY(:,4);
@@ -12,10 +12,11 @@ X = mY(:,1) + mY(:,2) +mY(:,3) + mY(:,4);
 close all
 % plot(linspace(-1.5, 1.5, len),X.^2)
 plot(linspace(3, 1, len),X.^2)
-xlabel("position y (m)")
+xlabel("position x (m)")
 ylabel("power")
 figure
 snr(X,Fs)
+
 
 Y = fft(X);
 P2 = abs(Y/len);
@@ -24,7 +25,6 @@ P1(2:end-1) = 2*P1(2:end-1);
 f = Fs*(0:(len/2))/len;
 P1 = 20*log(P1);
 figure
-hold on
 semilogx(f,P1) 
 xlabel("f (Hz)")
 ylabel("|P1(f)| (dB)")
@@ -32,7 +32,7 @@ ylabel("|P1(f)| (dB)")
 
 %% delay compensation
 close all
-load("choords_sim");
+load("choords_simY");
 x = 5*(choords(1,:)-128)/64;
 y = 5*choords(2,:)/64;
 % plot(x);
@@ -70,8 +70,8 @@ for i=1:len-20
 end
 
 
-% plot(linspace(-1.5, 1.5, len),X.^2)
-plot(linspace(3, 1, len),X.^2)
+plot(linspace(-1.5, 1.5, len),X.^2)
+% plot(linspace(3, 1, len),X.^2)
 xlabel("position (m)")
 ylabel("power")
 figure
@@ -90,6 +90,7 @@ ylabel("|P1(f)| (dB)")
 %% attenuation compensation
 close all
 load("choords_simY");
+% load("choords_simX");
 x = 5*(choords(1,:)-128)/64;
 % y = 5*choords(2,:)/64;
 y = choords(2,:);
@@ -101,12 +102,12 @@ len = length(mY(:,1));
 X = mY(:,1) + mY(:,2) +mY(:,3) + mY(:,4);
 for i=1:len-20
     a = floor(i/20)+1;
-    X(i) = X(i)*g(a);
+    X(i) = X(i)*(g(a)^1);
 end
 
-%plot(linspace(-1.5, 1.5, len),X.^2)
+% plot(linspace(-1.5, 1.5, len),X.^2)
 plot(linspace(3, 1, len),X.^2)
-%axis([-1.5, 1.5, 0, 5])
+% axis([-1.5, 1.5, 0, 150])
 %axis([1, 3, 0, 8])
 xlabel("position y (m)")
 ylabel("power")
