@@ -1,7 +1,7 @@
 clc, clear all, close all
 
 % choose input file to be read {
-    InputFile = "simMic_1.txt";
+    InputFile = "outputLOG.log";
     % InputFile = "Correct_DAC.txt";
     % InputFile = "Ylog.log";
     % InputFile = "PanningLOG.log";
