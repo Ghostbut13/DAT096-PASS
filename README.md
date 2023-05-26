@@ -59,7 +59,7 @@
 
 - **Branch B**  --- Algorithm mapping into VHDL
 
-  - Improving the quality of code to get ***lower occupied space***.
+  - Improving the quality of code to get ***lower hardware utilization***.
   - Better testbench for more coverage.
   - Pipeline design for better performance.
 
