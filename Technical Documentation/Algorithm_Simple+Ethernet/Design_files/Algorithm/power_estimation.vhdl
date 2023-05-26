@@ -27,9 +27,9 @@ signal abs_power: std_logic_vector(LEN_DATA-1 downto 0):=(others=>'0');
 begin
 	clk_proc: process (clk, reset_n, data_in)  is
 	  begin
-	 -- data_in <= power_arr;
+	 -- To find the absolute value of the data
 	    if data_in(REGISTER_LENGTH-1)(SIGNAL_WIDTH-1)= '1' then
-		old_data_abs <= '0' & std_logic_vector(signed(NOT data_in(REGISTER_LENGTH-1)(SIGNAL_WIDTH-2 DOWNTO 0)) +1);
+		old_data_abs <= '0' & std_logic_vector(signed(NOT data_in(REGISTER_LENGTH-1)(SIGNAL_WIDTH-2 DOWNTO 0)) +1); 
 		else 
 		old_data_abs <= data_in(REGISTER_LENGTH-1);
 		end if;
@@ -39,7 +39,7 @@ begin
 		else
 		new_data_abs <= data_in(0);	
 		end if;
-		
+		--
 		if reset_n = '0' then
 			old_data_abs <=(others=>'0');
 			new_data_abs <=(others=>'0');
@@ -48,8 +48,8 @@ begin
 			power_data_sig <= (others =>'0');
 		elsif falling_edge(clk) then			
 			power_data_sig <= std_logic_vector(signed(new_data_abs) - signed(old_data_abs));
-			abs_power <= std_logic_vector(signed(abs_power) + signed(power_data_sig));
-			power_data <= std_logic_vector(abs_power(LEN_DATA-1 downto LEN_DATA-16));   
+			abs_power <= std_logic_vector(signed(abs_power) + signed(power_data_sig)); --calculating the mean power of the samples stored in the shift registers
+			power_data <= std_logic_vector(abs_power(LEN_DATA-1 downto LEN_DATA-16));   --truncating it to the upper 16-bits.
 		end if;
 	end process clk_proc;
 	
