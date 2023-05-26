@@ -1,0 +1,35 @@
+																	-----------------------------------------------
+
+V2
+1. 1st slide - Name of the project n team membs
+2. agenda-> ppt struct
+3. INtro-> 	
+	The goal of the project and the achievments
+	Very brief description of the two algorithm(less text)
+4. review of previous presentation -> summarize the last presentation
+4+++.Issue with the previous problem solver
+5. Design
+	system overview - diagram with control path and audio path   ----weihan
+	5.1 Complex algo -> blocks
+			Position calculation --reson for the highpass filter	 ---------------------------Lexuan
+			Filters--aravind
+			Attenuation compensation		--aravind
+6. Verification --Weihan
+	6.-1 Test enviornment. 
+	6.0 methods- behavioral, matlab
+	6.1 ethernet
+		->The reason for ethernet
+		
+7. Results
+	7.1 Slides showing the matlab results matches vhdl results  --aravind
+		Figures showing the index and the position matlab vs VHDL
+	7.2 perforamce Evaluation --aravind
+			System performance of the actors moving in x and y direction N state we have stable results.
+			Mention the advantage of simple and complex.
+	7.3 analysis based on con-audio path(simple vs complex) --aravind
+		Timing
+		Hardware Utilization
+		Figure showing the oscilloscope result
+8. Video(2-3 mins) 
+9.  explain the video --ar
+10. Thank you(5mins)
