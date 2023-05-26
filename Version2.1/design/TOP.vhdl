@@ -34,8 +34,8 @@ entity TOP is
     DIN                 : in    std_logic;
     start_I2S           : in    std_logic;
 	---------------Ethernet communication------
-	MDIO                : inout std_logic; --configurate register
-    MDC                 : out   std_logic; --configurate clk
+	--MDIO                : inout std_logic; --configurate register
+    --MDC                 : out   std_logic; --configurate clk
     rstn_ethernet       : in    std_logic; -- reset ethernet on switch
     
     resetN              : out   std_logic; -- reset the PHY ; last 100us at least
@@ -133,8 +133,8 @@ architecture arch_TOP_i2s_i2c_acfc of TOP is
   
   component UDP_Ethernet is 
     port (
-		MDIO                : inout std_logic; --configurate register
-		MDC                 : out   std_logic; --configurate clk
+		--MDIO                : inout std_logic; --configurate register
+		--MDC                 : out   std_logic; --configurate clk
 		
 		resetN              : out   std_logic; -- reset the PHY ; last 100us at least
 		CLKIN               : out   std_logic; -- 50MHz to PHY
@@ -263,8 +263,8 @@ begin  -- architecture
 	  
 	inst_Ethernet: component UDP_Ethernet
 	 port map(
-			  MDIO => MDIO,
-			  MDC => MDC,
+			  --MDIO => MDIO,
+			  --MDC => MDC,
 			  
 			  resetN => resetN,
 			  CLKIN => CLKIN,

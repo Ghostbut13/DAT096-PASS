@@ -1,0 +1,1 @@
+These input files are used as input vectors for the testbenches. Some of just signals like sine wave, and some of them are pure microphone data like 1.2 million and cross-corrlation.

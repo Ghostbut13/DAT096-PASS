@@ -201,8 +201,8 @@ set_property -dict { PACKAGE_PIN F3    IOSTANDARD LVCMOS33 } [get_ports { JD[8] 
 
 ##SMSC Ethernet PHY
 
-set_property -dict {PACKAGE_PIN C9 IOSTANDARD LVCMOS33} [get_ports MDC]
-set_property -dict {PACKAGE_PIN A9 IOSTANDARD LVCMOS33} [get_ports MDIO]
+#set_property -dict {PACKAGE_PIN C9 IOSTANDARD LVCMOS33} [get_ports MDC]
+#set_property -dict {PACKAGE_PIN A9 IOSTANDARD LVCMOS33} [get_ports MDIO]
 set_property -dict {PACKAGE_PIN B3 IOSTANDARD LVCMOS33} [get_ports resetN]
 set_property -dict {PACKAGE_PIN D9 IOSTANDARD LVCMOS33} [get_ports CRSDV_MODE2]
 set_property -dict {PACKAGE_PIN C10 IOSTANDARD LVCMOS33} [get_ports RXERR_PHYAD0]

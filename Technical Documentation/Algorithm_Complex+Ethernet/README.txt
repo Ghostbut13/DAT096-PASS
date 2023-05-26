@@ -1,0 +1,1 @@
+The complex algorithm calculates the position of an actor based on cross-correlation. It can after that compensate for attenuation
