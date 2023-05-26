@@ -50,7 +50,7 @@ architecture Behavioral of PositionSolverImager is
 	
 	
 	SIGNAL lag: 		STD_LOGIC_VECTOR(8 DOWNTO 0); -- signal representing the lag value (-140 to 140)
-	Signal pCounter: 	STD_LOGIC_VECTOR(6 DOWNTO 0); -- pixel counter, (0 to 94);
+	Signal pCounter: 	STD_LOGIC_VECTOR(6 DOWNTO 0); -- point counter, (0 to 94);
 	Signal LUTXY:		STD_LOGIC_VECTOR(11 DOWNTO 0);
 	
 	TYPE state_type IS (reset_state, newLine_state, pixelComp_state, pixelAdd_state, MaxAndResetFrame_state);
@@ -169,6 +169,7 @@ begin
 				next_state_signal <= newLine_state;
 			
 			when newLine_state =>
+				-- loop through the 280 available lag lines
 				if lag < 279 then
 					next_state_signal <= pixelComp_state;
 				else
@@ -179,6 +180,7 @@ begin
 			     next_state_signal <= pixelAdd_state;
 				
 			when pixelAdd_state =>
+				-- loop through every available point in each lag line
 				if pCounter < 95 then
 					next_state_signal <= pixelComp_state;
 				else
@@ -186,6 +188,7 @@ begin
 				end if;
 				
 			when MaxAndResetFrame_state =>
+				-- loop through every pixel in the overlapping window of pictureFrames
 				if MaxCounter >= 6592 then -- 103*64
 					next_state_signal <= reset_state;
 				else
@@ -201,6 +204,7 @@ begin
 	if RISING_EDGE(sysCLK) then
 		case present_state_signal is
 			when reset_state =>
+				-- resets accumulators and stores the position from the previous run to the output
 				lag <= (others => '0');
 				pCounter <= (others => '0');
 				MaxCounter <= (others => '0');
@@ -208,6 +212,7 @@ begin
 				PositionX <= XY_signal(12 DOWNTO 6);
 				PositionY <= XY_signal(5 DOWNTO 0);
 			when newLine_state =>
+				-- grab new correlation line and its correlation value
 				lag <= lag +1;
 				pCounter <= (others => '0');
 				
@@ -216,7 +221,7 @@ begin
 				corr2 <= correlation2(TO_INTEGER(unsigned(lag)));
 				corr3 <= correlation3(TO_INTEGER(unsigned(lag)));
 			when pixelComp_state =>
-				
+				-- compare the correlation value corresponding to the lag line with the current pixel value and sets the flag accordingly
 				if signed(currentPixel1) < signed(corr1) then
 					replacePixel1 <= '1';
 				else
@@ -237,11 +242,13 @@ begin
 				
 				
 			when pixelAdd_state =>
+				-- prepare to read new pixel. writeEnable = true so if replacePixelx is true then a new value will be written to the pictureFrame
 				pCounter <= pCounter +1;
 				
 			when MaxAndResetFrame_state =>
+				-- read each picture frame and send to MAXlut, aswell as reset pixel value to 0
 				maxReset <= '1';
-			    MaxCounter <= MaxCounter +1;
+			    	MaxCounter <= MaxCounter +1;
 				corr1 <= (others => '0');
 				corr2 <= (others => '0');
 				corr3 <= (others => '0');
